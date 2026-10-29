@@ -1,0 +1,143 @@
+/* Juste — identité visuelle commune (extension, page CV, export, appli mobile).
+   Le vocabulaire du recrutement : le vert sapin du logo pour la marque, le surligneur jaune pour ce que
+   le CV a en commun avec l'offre, le stylo rouge du correcteur pour les rejets et les erreurs.
+   Police : Schibsted Grotesk (SIL Open Font License), embarquée — aucune ressource externe. */
+
+@font-face {
+  font-family: "Schibsted Grotesk"; font-style: normal; font-display: swap; font-weight: 400 900;
+  src: url("fonts/schibsted-grotesk-latin-wght-normal.woff2") format("woff2-variations"), url("fonts/schibsted-grotesk-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Schibsted Grotesk"; font-style: normal; font-display: swap; font-weight: 400 900;
+  src: url("fonts/schibsted-grotesk-latin-ext-wght-normal.woff2") format("woff2-variations"), url("fonts/schibsted-grotesk-latin-ext-wght-normal.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  --font: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Couleurs de marque */
+  --fond: #eaefec;
+  --papier: #ffffff;
+  --papier-2: #f5f8f6;
+  --trait: #d3dcd7;
+  --trait-fort: #b4c3bb;
+  --texte: #15201c;
+  --texte-2: #55645d;
+  --sapin: #1f5a46;
+  --sapin-fonce: #164536;
+  --sapin-clair: #e2ede8;
+  --entete: #1f5a46;
+  --surligneur: #ffe066;
+  --surligneur-doux: #fff3bf;
+  --surligneur-trait: #e4b72d;
+  --surligneur-texte: #4a3a00;
+  --stylo: #b4233c;
+  --stylo-clair: #fbe9ec;
+  --stylo-trait: #e7b3bd;
+  --rayon: 8px;
+  --rayon-s: 5px;
+  --ombre: 0 1px 0 rgba(21, 32, 28, .05);
+  --ombre-haute: 0 14px 30px -18px rgba(21, 50, 40, .45);
+
+  /* Correspondance avec les anciens jetons (panel-match.css, jury.css, pages existantes) */
+  --v4-bg: var(--fond); --v4-card: var(--papier); --v4-border: var(--trait); --v4-border-strong: var(--trait-fort);
+  --v4-ink: var(--texte); --v4-ink-2: var(--texte-2); --v4-teal: var(--sapin); --v4-teal-2: var(--sapin-fonce);
+  --v4-tint: var(--sapin-clair); --v4-tint-2: var(--papier-2); --v4-honey: var(--surligneur-trait); --v4-honey-soft: var(--surligneur-doux);
+  --v4-radius: var(--rayon); --v4-shadow: var(--ombre); --v4-shadow-hover: 0 0 0 1px var(--trait-fort); --v4-sans: var(--font);
+  /* Ce qui correspond à l'offre est surligné ; ce qui manque est corrigé au stylo rouge. */
+  --surligneur-plein: #f2c230;
+  --m-ok: var(--sapin); --m-ok-bg: var(--sapin-clair); --m-ok-mark: rgba(255, 214, 64, .62);
+  --m-part: var(--surligneur-trait); --m-part-bg: var(--papier); --m-part-mark: rgba(255, 214, 64, .26);
+  --m-gap: var(--stylo); --m-gap-ink: var(--stylo); --m-gap-bg: var(--stylo-clair); --m-gap-line: var(--stylo-trait);
+  --j-out: var(--stylo); --j-out-bg: var(--stylo-clair);
+  color-scheme: light;
+}
+
+/* Thème sombre : choisi dans l'extension (data-theme) ou suivi du système (appli mobile). */
+:root[data-theme="dark"] {
+  --fond: #0e1513; --papier: #16201c; --papier-2: #1b2722; --trait: #2a3a33; --trait-fort: #3c5047;
+  --texte: #e7eeea; --texte-2: #9fb2a9; --sapin: #84d0b3; --sapin-fonce: #a3dcc6; --sapin-clair: #1d322a; --entete: #14382c;
+  --surligneur: #e9c84f; --surligneur-doux: #3a3216; --surligneur-trait: #c9a63a; --surligneur-texte: #f4e3a1;
+  --stylo: #ff8796; --stylo-clair: #3b1d24; --stylo-trait: #6e3540;
+  --ombre: none; --ombre-haute: 0 14px 30px -18px rgba(0, 0, 0, .8);
+  --surligneur-plein: #d9b23d; --m-ok-mark: rgba(233, 200, 79, .34); --m-part-mark: rgba(233, 200, 79, .14);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --fond: #0e1513; --papier: #16201c; --papier-2: #1b2722; --trait: #2a3a33; --trait-fort: #3c5047;
+    --texte: #e7eeea; --texte-2: #9fb2a9; --sapin: #84d0b3; --sapin-fonce: #a3dcc6; --sapin-clair: #1d322a; --entete: #14382c;
+    --surligneur: #e9c84f; --surligneur-doux: #3a3216; --surligneur-trait: #c9a63a; --surligneur-texte: #f4e3a1;
+    --stylo: #ff8796; --stylo-clair: #3b1d24; --stylo-trait: #6e3540;
+    --ombre: none; --ombre-haute: 0 14px 30px -18px rgba(0, 0, 0, .8);
+    --surligneur-plein: #d9b23d; --m-ok-mark: rgba(233, 200, 79, .34); --m-part-mark: rgba(233, 200, 79, .14);
+    color-scheme: dark;
+  }
+}
+
+/* Le surligneur : un trait de marqueur posé sous le texte, pas un bloc de couleur. */
+.surligne, mark.hl-ok, .proof mark {
+  background: linear-gradient(transparent 12%, var(--m-ok-mark) 12%, var(--m-ok-mark) 90%, transparent 90%);
+  color: inherit; box-decoration-break: clone; -webkit-box-decoration-break: clone; padding: 0 2px; border-radius: 2px; box-shadow: none !important;
+}
+mark.hl-part { background: none !important; box-shadow: none !important; text-decoration: underline 2px var(--surligneur-trait); text-underline-offset: 3px; color: inherit; }
+
+/* « Ce que demande l'offre » : surligné quand le CV le montre, souligné en pointillé quand c'est en partie, au stylo rouge quand ça manque. */
+.match-bar { background: var(--papier-2) !important; border-radius: 3px !important; height: 8px !important; gap: 2px !important; }
+.match-bar i { border-radius: 0 !important; }
+.match-bar .seg-ok { background: var(--surligneur-plein) !important; }
+.match-bar .seg-part { background: repeating-linear-gradient(135deg, var(--surligneur-plein) 0 4px, transparent 4px 7px) !important; }
+.match-bar .seg-gap { background: var(--stylo) !important; }
+.match-legend .dot.ok { background: var(--surligneur-plein) !important; }
+.match-legend .dot.part { background: transparent !important; box-shadow: inset 0 0 0 2px var(--surligneur-plein); }
+.match-legend .dot.gap { background: var(--stylo) !important; }
+.match-count b { color: var(--texte) !important; }
+.mchip { border-radius: var(--rayon-s) !important; font-family: var(--font) !important; font-weight: 600 !important; }
+.mchip-ok { background: var(--surligneur) !important; color: #1d1800 !important; border: 1px solid var(--surligneur-trait) !important; }
+.mchip-ok .mchip-ico { background: #1d1800 !important; color: var(--surligneur) !important; }
+.mchip-part { background: var(--papier) !important; color: var(--texte) !important; border: 1.5px dashed var(--surligneur-trait) !important; }
+.mchip-part .mchip-ico { background: linear-gradient(90deg, var(--surligneur-plein) 50%, transparent 50%) !important; border-color: var(--surligneur-trait) !important; }
+.mchip-gap { background: var(--papier) !important; color: var(--stylo) !important; border: 1.5px solid var(--stylo-trait) !important; }
+.mchip-gap .mchip-ico { background: var(--stylo-clair) !important; color: var(--stylo) !important; border: 0 !important; }
+.mchip small { background: rgba(0, 0, 0, .08) !important; color: inherit !important; font-weight: 650 !important; }
+.mchip[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--papier), 0 0 0 4px var(--texte) !important; }
+.md-cv p { background: var(--m-ok-mark) !important; box-shadow: inset 3px 0 0 var(--surligneur-plein) !important; }
+.md-offer p { background: var(--papier-2) !important; box-shadow: inset 3px 0 0 var(--trait-fort) !important; }
+.match-detail { border-radius: var(--rayon) !important; border-left-width: 3px !important; }
+.match-detail.tone-ok { border-left-color: var(--surligneur-plein) !important; }
+.match-detail.tone-gap { border-left-color: var(--stylo) !important; background: var(--papier) !important; }
+.md-level.md-obligatoire { background: var(--stylo-clair) !important; color: var(--stylo) !important; border-color: var(--stylo-trait) !important; }
+.match-cv-text { background: var(--papier) !important; border-radius: var(--rayon-s) !important; font-family: var(--font) !important; }
+mark.hl.flash { animation: brand-flash 1.4s ease-out !important; }
+@keyframes brand-flash { 0%, 35% { background: var(--surligneur-plein); } 100% { background: linear-gradient(transparent 12%, var(--m-ok-mark) 12%, var(--m-ok-mark) 90%, transparent 90%); } }
+
+/* Le jury : retenu en vert sapin, rejeté au stylo rouge ; les erreurs annotées comme une copie corrigée. */
+.judge { border-radius: var(--rayon) !important; }
+.j-num { border-radius: var(--rayon-s) !important; }
+.j-verdict { border-radius: var(--rayon-s) !important; background: transparent !important; border: 1.5px solid currentColor; padding: 2px 7px !important; letter-spacing: .01em; }
+.is-ok .j-verdict { color: var(--sapin) !important; } .is-out .j-verdict { color: var(--stylo) !important; }
+.jd { border-radius: 2px !important; height: 6px !important; }
+.jury-score { border-radius: var(--rayon) !important; background: var(--papier) !important; box-shadow: inset 0 0 0 1.5px var(--trait-fort) !important; color: var(--texte) !important; }
+.jury-line { border-radius: var(--rayon) !important; background: var(--papier) !important; border-left: 3px solid var(--sapin) !important; }
+.j-reasons q, .err q { background: none !important; box-shadow: none !important; padding: 0 !important; text-decoration: underline wavy var(--stylo); text-decoration-thickness: 1px; text-underline-offset: 4px; font-style: normal; }
+.err { border-radius: var(--rayon) !important; }
+.err-bloquant { border-left-color: var(--stylo) !important; } .err-majeur { border-left-color: var(--surligneur-trait) !important; }
+.sev { border-radius: var(--rayon-s) !important; }
+.sev-bloquant { background: var(--stylo) !important; color: #fff !important; }
+.sev-majeur { background: var(--surligneur-doux) !important; color: var(--surligneur-texte) !important; }
+.err-fix span { color: var(--sapin) !important; text-transform: none !important; letter-spacing: 0 !important; font-size: 12px !important; }
+.err-fix { color: var(--texte) !important; }
+.kw { border-radius: var(--rayon-s) !important; }
+.kw-state { border-radius: 4px !important; }
+.kw-ok { background: var(--surligneur) !important; color: #1d1800 !important; }
+.kw-part { background: transparent !important; border: 1.5px dashed var(--surligneur-trait) !important; color: var(--texte) !important; }
+.kw-gap { background: transparent !important; border: 1.5px solid var(--stylo-trait); color: var(--stylo) !important; }
+mark.todo { background: var(--surligneur-doux) !important; color: var(--surligneur-texte) !important; border: 1.5px dashed var(--surligneur-trait) !important; border-radius: 3px !important; }
+.todo-banner { border-radius: var(--rayon) !important; background: var(--surligneur-doux) !important; border: 1px solid var(--surligneur-trait) !important; color: var(--surligneur-texte) !important; }
+.qa { border-radius: var(--rayon) !important; }
+.qa-badge { background: var(--surligneur) !important; color: #1d1800 !important; border-radius: 4px !important; }
+.qa-list textarea { border-radius: var(--rayon-s) !important; font-family: var(--font) !important; }
+.jury-wait, .cv-wait { border-radius: var(--rayon) !important; }
+.md-quote span { text-transform: none !important; letter-spacing: 0 !important; font-size: 11.5px !important; }
+.j-question { font-style: normal !important; }
