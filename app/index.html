@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#070b09" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#070b09" media="(prefers-color-scheme: dark)" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>Juste</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="../assets/logo-mark.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <link rel="stylesheet" href="app.css" />
+  <link rel="stylesheet" href="shared/panel-match.css" />
+  <link rel="stylesheet" href="shared/jury.css" />
+  <link rel="stylesheet" href="shared/brand.css" />
+  <link rel="stylesheet" href="app-brand.css" />
+  <link rel="stylesheet" href="shared/nocturne.css" />
+  <script src="config.js"></script>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="#" data-go="home" aria-label="Juste, accueil"><img src="../assets/logo-mark.svg" alt="" width="30" height="30" /><span>Juste</span></a>
+    <div class="top-actions">
+      <span id="quota-pill" class="quota-pill" hidden></span>
+      <button id="go-profile" class="icon-btn" aria-label="Mon CV et mon profil" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></button>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Profil : CV ajouté une fois, gardé sur ce téléphone -->
+    <section id="v-setup" class="view" hidden>
+      <div id="setup-pending" class="banner" hidden></div>
+      <div class="hero">
+        <h1 id="setup-title">Ajoutez votre CV une fois.</h1>
+        <p>Ensuite, depuis une offre Indeed, un geste suffit : <b>Partager</b>, puis <b>Analyser avec Juste</b>.</p>
+      </div>
+
+      <section class="card">
+        <div class="card-head"><span class="step" data-step="cv">1</span><div><h2>Votre CV</h2><p class="sub">PDF, Word ou texte. Il reste enregistré sur cet appareil.</p></div></div>
+        <label class="drop" id="drop">
+          <input id="file" type="file" accept=".pdf,.docx,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" />
+          <span class="drop-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span>
+          <strong>Choisir mon CV</strong>
+          <span class="drop-sub">depuis Fichiers, iCloud Drive ou Google Drive</span>
+        </label>
+        <div class="or"><span>ou collez le texte</span></div>
+        <label for="cv" class="sr">Texte de votre CV</label>
+        <textarea id="cv" rows="9" placeholder="Expérience&#10;2023–2024 — Vendeur, magasin de sport : conseil client, stocks…&#10;&#10;Formation&#10;BTS MCO…&#10;&#10;Compétences&#10;Excel, anglais B2…"></textarea>
+        <div class="quality" aria-live="polite">
+          <div class="quality-row"><span>Qualité du CV</span><span><span id="chars">0</span> caractères</span></div>
+          <span class="meter"><i id="meter"></i></span>
+          <div class="checks"><span data-check="exp">Expériences</span><span data-check="form">Formation</span><span data-check="comp">Compétences</span><span data-check="lang">Langues</span></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head"><span class="step" data-step="contact">2</span><div><h2>Vos coordonnées</h2><p class="sub">Pour l'en-tête du CV. Jamais envoyées à l'IA.</p></div></div>
+        <div class="grid">
+          <label class="field"><span>Prénom et nom</span><input id="name" autocomplete="name" placeholder="Camille Durand" /></label>
+          <label class="field"><span>Ville</span><input id="city" autocomplete="address-level2" placeholder="Nancy" /></label>
+          <label class="field"><span>Email</span><input id="email" type="email" autocomplete="email" inputmode="email" placeholder="camille@exemple.fr" /></label>
+          <label class="field"><span>Téléphone</span><input id="phone" type="tel" autocomplete="tel" placeholder="06 12 34 56 78" /></label>
+        </div>
+      </section>
+
+      <p class="privacy"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg><span>Votre CV reste sur cet appareil. Pour l'analyse, son texte part sans vos coordonnées vers notre serveur et OpenAI.</span></p>
+      <div class="sticky-bar">
+        <p id="setup-status" class="status" aria-live="polite"></p>
+        <button id="save" class="btn btn-primary btn-block">Enregistrer mon CV</button>
+      </div>
+    </section>
+
+    <!-- Accueil -->
+    <section id="v-home" class="view" hidden>
+      <div class="hero compact">
+        <p class="hello" id="home-hello">Bonjour</p>
+        <h1>Analysez une offre <span class="ton">en un geste.</span></h1>
+      </div>
+
+      <section class="card jobs-card">
+        <h2>Trouver des offres</h2>
+        <p class="muted small">Des offres France Travail triées selon leur proximité avec votre CV : celles qui vous correspondent déjà, et celles que vous visez, avec ce qu'il vous manque.</p>
+        <div class="jobs-entry"><button class="btn btn-primary" data-go="jobs" data-mode="cv">Qui me correspondent</button><button class="btn btn-ghost" data-go="jobs" data-mode="cible">Que je vise</button></div>
+      </section>
+
+      <section class="card share-card">
+        <h2>Depuis Indeed</h2>
+        <ol class="share-steps">
+          <li><span class="n">1</span><span>Ouvrez l'offre dans <b>Safari</b></span></li>
+          <li><span class="n">2</span><span>Touchez <span class="share-ico" aria-label="Partager"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M5 11v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/></svg></span> <b>Partager</b></span></li>
+          <li><span class="n">3</span><span>Choisissez <b>Analyser avec Juste</b></span></li>
+        </ol>
+        <p class="muted small">Le résultat s'affiche ici, en quelques secondes. Fonctionne aussi avec Welcome to the Jungle, HelloWork, France Travail, APEC et JobTeaser.</p>
+        <button class="btn btn-ghost btn-block" data-go="guide">Installer le bouton Partager</button>
+      </section>
+
+      <section class="card">
+        <h2>Ou collez une offre</h2>
+        <label for="paste" class="sr">Texte de l'offre</label>
+        <textarea id="paste" rows="5" placeholder="Copiez l'intitulé et la description de l'offre, puis collez-les ici."></textarea>
+        <button id="analyze-paste" class="btn btn-primary btn-block">Analyser cette offre</button>
+        <p id="paste-status" class="status" aria-live="polite"></p>
+      </section>
+
+      <section class="card jury-card">
+        <h2>Faire juger mon CV</h2>
+        <p class="muted small">Sans offre : le logiciel de tri et le recruteur (7 évaluateurs avec Premium) cherchent pourquoi ils le rejetteraient, puis vous recevez votre CV corrigé.</p>
+        <button id="jury-only" class="btn btn-ghost btn-block">Lancer le jury sur mon CV</button>
+      </section>
+
+      <button id="last-result" class="btn btn-ghost btn-block" hidden>Revoir mon dernier résultat</button>
+      <p id="home-quota" class="muted small center"></p>
+    </section>
+
+    <!-- Analyse en cours -->
+    <section id="v-loading" class="view" hidden>
+      <div class="loading">
+        <div class="pulse" aria-hidden="true"></div>
+        <h1 id="loading-job">Lecture de l'offre…</h1>
+        <ul class="steps" id="steps">
+          <li>Lecture de l'offre</li>
+          <li>Comparaison avec votre CV</li>
+          <li>Points communs et compétences à acquérir</li>
+        </ul>
+        <p class="muted small center">Le premier résultat arrive en quelques secondes. Votre CV adapté suit juste après.</p>
+      </div>
+    </section>
+
+    <!-- Résultat -->
+    <section id="v-result" class="view" hidden>
+      <div class="score-card">
+        <div class="score-orbit">
+          <svg class="ring gauge" viewBox="0 0 120 66" aria-hidden="true"><defs><linearGradient id="gauge-grad" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#1f5a46"/><stop offset=".55" stop-color="#5fbf95"/><stop offset="1" stop-color="#ffe066"/></linearGradient></defs><circle class="track" cx="60" cy="60" r="52" transform="rotate(180 60 60)"/><circle class="bar" id="ring-bar" cx="60" cy="60" r="52" transform="rotate(180 60 60)"/><path class="gauge-tick" d="M85.9 24.4 95.3 11.5"/></svg>
+          <div class="score-num"><span id="score">0</span><small>%</small></div>
+        </div>
+        <div class="score-copy">
+          <span class="score-caption">Correspondance avec l'offre</span>
+          <p id="score-label" class="score-label"></p>
+          <p id="result-job" class="muted small"></p>
+        </div>
+        <div class="score-scale" aria-hidden="true"><i></i></div>
+        <p id="resume" class="resume"></p>
+        <p class="disclaimer">Une estimation pour vous guider, pas une probabilité d'embauche.</p>
+      </div>
+
+      <section id="match" class="match" hidden aria-labelledby="match-title">
+        <div class="match-head">
+          <h2 id="match-title">Ce que demande l'offre</h2>
+          <span id="match-count" class="match-count"></span>
+        </div>
+        <div id="match-bar" class="match-bar" aria-hidden="true"><i class="seg-ok"></i><i class="seg-part"></i><i class="seg-gap"></i></div>
+        <div class="match-legend" aria-hidden="true"><span><i class="dot ok"></i>Dans votre CV</span><span><i class="dot part"></i>En partie</span><span><i class="dot gap"></i>Manquant</span></div>
+        <p id="match-method" class="match-method" hidden></p>
+        <div class="match-group" id="match-common-group"><h3>Points communs</h3><div id="match-common" class="match-chips"></div></div>
+        <div class="match-group" id="match-missing-group"><h3>Compétences à acquérir</h3><p class="match-help">Absentes de votre CV : à développer, ou à préciser si vous les avez réellement.</p><div id="match-missing" class="match-chips"></div></div>
+        <div id="match-detail" class="match-detail" hidden aria-live="polite"></div>
+        <details id="match-cv" class="match-cv">
+          <summary><span>Voir mon CV surligné</span><small id="match-cv-count"></small></summary>
+          <p class="match-cv-legend"><mark class="hl hl-ok">Surligné</mark> : correspond à l'offre. <mark class="hl hl-part">Souligné</mark> : correspond en partie.</p>
+          <div id="match-cv-text" class="match-cv-text"></div>
+        </details>
+      </section>
+
+      <nav class="tabs" role="tablist" aria-label="Votre analyse">
+        <button role="tab" data-tab="jury" aria-selected="false">Jury <span id="count-jury" class="count">…</span></button>
+        <button role="tab" data-tab="forts" aria-selected="true" class="active">Atouts <span id="count-forts" class="count">0</span></button>
+        <button role="tab" data-tab="ecarts" aria-selected="false">Pistes <span id="count-ecarts" class="count">0</span></button>
+        <button role="tab" data-tab="cible" aria-selected="false">Poste</button>
+        <button role="tab" data-tab="cv" aria-selected="false">CV</button>
+      </nav>
+      <div id="tab-jury" class="tab" role="tabpanel" hidden></div>
+      <div id="tab-forts" class="tab" role="tabpanel"></div>
+      <div id="tab-ecarts" class="tab" role="tabpanel" hidden></div>
+      <div id="tab-cible" class="tab" role="tabpanel" hidden></div>
+      <div id="tab-cv" class="tab" role="tabpanel" hidden>
+        <div id="cv-todo" class="todo-banner" hidden></div>
+        <article id="cv-paper" class="cv-paper"></article>
+        <div id="qa-box"></div>
+        <div class="cv-actions">
+          <button id="print-cv" class="btn btn-primary btn-block">Enregistrer en PDF</button>
+          <button id="copy-cv" class="btn btn-ghost btn-block">Copier le texte</button>
+          <p class="muted small center">Relisez avant d'envoyer : la proposition est assistée par IA.</p>
+        </div>
+      </div>
+      <div class="result-foot">
+        <p id="result-quota" class="muted small center"></p>
+        <button class="btn btn-ghost btn-block" data-go="home">Analyser une autre offre</button>
+      </div>
+    </section>
+
+    <!-- Offres France Travail -->
+    <section id="v-jobs" class="view" hidden>
+      <button class="back" data-go="home"><span aria-hidden="true">←</span> Retour</button>
+      <div class="hero compact">
+        <h1>Des offres <span class="ton">pour votre parcours.</span></h1>
+        <p>Offres publiées sur France Travail, triées selon leur proximité avec votre CV.</p>
+      </div>
+      <div class="seg" role="tablist" aria-label="Type de recherche">
+        <button type="button" role="tab" id="jobs-mode-cv" data-jobs-mode="cv" aria-selected="true">Qui me correspondent</button>
+        <button type="button" role="tab" id="jobs-mode-cible" data-jobs-mode="cible" aria-selected="false">Que je vise</button>
+      </div>
+      <form id="jobs-form" class="card jobs-form" novalidate>
+        <label class="field"><span id="jobs-terms-label">Métiers tirés de votre CV</span><input id="jobs-terms" autocomplete="off" maxlength="160" /></label>
+        <p id="jobs-terms-help" class="muted small">Séparés par des virgules, trois au plus. Modifiez-les si besoin.</p>
+        <label class="field"><span>Département ou code postal</span><input id="jobs-dep" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="54 ou 54000 (vide : toute la France)" /></label>
+        <button class="btn btn-primary btn-block" type="submit" id="jobs-search">Chercher des offres</button>
+        <p class="muted small">Seuls ces métiers et le département sont envoyés : ni votre CV, ni vos coordonnées. La recherche n'utilise pas votre quota d'analyses.</p>
+      </form>
+      <p id="jobs-status" class="status" role="status" aria-live="polite"></p>
+      <ol id="jobs-list" class="jobs-list"></ol>
+      <button id="jobs-more" class="btn btn-ghost btn-block" hidden>Afficher plus d'offres</button>
+    </section>
+
+    <!-- Installer le bouton Partager -->
+    <section id="v-guide" class="view" hidden>
+      <button class="back" data-go="home"><span aria-hidden="true">←</span> Retour</button>
+      <div class="hero compact">
+        <h1>Le bouton « Analyser avec Juste »</h1>
+        <p>Il apparaît dans le menu Partager de Safari, sur iPhone et iPad.</p>
+      </div>
+      <a id="shortcut-link" class="btn btn-primary btn-block" hidden>Ajouter le raccourci en un geste</a>
+      <ol class="guide">
+        <li><b>Autorisez les scripts des raccourcis.</b> Réglages → Apps → Raccourcis → Avancé → activez « Autoriser l'exécution de scripts ». <span class="muted">(Avant iOS 18 : Réglages → Raccourcis → Avancé.)</span></li>
+        <li><b>Créez le raccourci.</b> Ouvrez l'app Raccourcis, touchez <b>+</b>, puis nommez-le « Analyser avec Juste ».</li>
+        <li><b>Ajoutez l'action « Exécuter JavaScript sur la page web ».</b> Remplacez le code d'exemple par le script ci-dessous.
+          <div class="code-box"><button id="copy-script" class="btn btn-ghost btn-sm">Copier le script</button><pre id="script-preview" class="code"></pre></div>
+        </li>
+        <li><b>Ajoutez l'action « Ouvrir les URL ».</b> Elle reçoit automatiquement le « Résultat JavaScript ».</li>
+        <li><b>Affichez-le dans Partager.</b> Touchez ⓘ (en bas), activez « Afficher dans la feuille de partage », puis gardez « Pages web Safari ».</li>
+      </ol>
+      <div class="card tip">
+        <h2>Pour l'utiliser</h2>
+        <p>Sur une offre ouverte dans Safari : <b>Partager</b> → <b>Analyser avec Juste</b>. La première fois, iOS demande d'autoriser l'accès au site : choisissez « Toujours autoriser ».</p>
+      </div>
+      <details class="card more">
+        <summary>Sur Android ou un autre navigateur : un favori</summary>
+        <p class="muted small">Créez un favori nommé « Analyser avec Juste » et remplacez son adresse par ce code. Sur une offre, ouvrez vos favoris et touchez-le.</p>
+        <div class="code-box"><button id="copy-bookmarklet" class="btn btn-ghost btn-sm">Copier le code du favori</button></div>
+      </details>
+    </section>
+
+    <!-- Erreur -->
+    <section id="v-error" class="view" hidden>
+      <div class="empty">
+        <h1 id="err-title">L'analyse n'a pas pu aboutir</h1>
+        <p id="err-msg" class="muted"></p>
+        <button class="btn btn-primary" data-go="home">Revenir à l'accueil</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="vendor/mammoth.browser.min.js" defer></script>
+  <script type="module" src="app.mjs"></script>
+</body>
+</html>

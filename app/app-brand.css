@@ -1,0 +1,134 @@
+/* Juste — appli mobile aux couleurs de la marque (chargée après app.css et shared/brand.css). */
+:root {
+  --bg: var(--fond); --card: var(--papier); --line: var(--trait); --line-2: var(--trait-fort); --ink: var(--texte); --muted: var(--texte-2);
+  --primary: var(--sapin); --primary-2: var(--sapin-fonce); --tint: var(--sapin-clair); --tint-2: var(--papier-2);
+  --ok: var(--sapin); --honey: var(--surligneur-trait); --honey-soft: var(--surligneur-doux); --rose: var(--stylo); --rose-soft: var(--stylo-clair);
+  --radius: var(--rayon); --sans: var(--font); --shadow: none; --shadow-2: var(--ombre-haute);
+  --glass: var(--fond); --glass-card: var(--fond);
+}
+body { font-family: var(--font); background: var(--fond); color: var(--texte); }
+::selection { background: var(--surligneur); color: #1d1800; }
+
+/* En-tête de marque */
+.top { background: var(--entete); border-bottom: 0; -webkit-backdrop-filter: none; backdrop-filter: none; color: #fff; }
+.brand { color: #fff; } .brand b { color: var(--surligneur); } .brand img { border-radius: 6px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .25); }
+.quota-pill { background: transparent; color: #fff; border: 1px solid rgba(255, 255, 255, .3); border-radius: var(--rayon-s); }
+.icon-btn { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .3); border-radius: var(--rayon-s); }
+:focus-visible { outline-color: var(--sapin); }
+
+/* Titres sobres, sans encart teinté */
+.hero, .hero.compact { background: none; border: 0; border-radius: 0; padding: 4px 0 2px; }
+.hero::after { display: none; }
+.hero h1 { margin-top: 0; font-weight: 780; letter-spacing: -.025em; max-width: 18ch; }
+.hello { font-size: 14px; font-weight: 600; color: var(--texte-2); margin-bottom: 2px; }
+.kicker { display: none; }
+.banner { border-radius: var(--rayon); background: var(--surligneur-doux); border-color: var(--surligneur-trait); }
+
+.card { border-radius: var(--rayon); box-shadow: none; }
+.step { border-radius: var(--rayon-s); background: var(--papier-2); color: var(--texte); box-shadow: inset 0 0 0 1px var(--trait-fort); }
+.step.done { background: var(--sapin); box-shadow: none; }
+input, textarea { border-radius: var(--rayon-s); font-family: var(--font); }
+.drop { border-radius: var(--rayon); border: 1.5px dashed var(--trait-fort); background: var(--papier-2); }
+.drop-ico { border-radius: var(--rayon-s); box-shadow: none; border: 1px solid var(--trait); }
+.drop.reading { border-color: var(--surligneur-trait); }
+.quality { border-radius: var(--rayon); background: var(--papier); }
+.meter, .meter i { border-radius: 2px; }
+.meter i { background: var(--stylo); } .meter i[data-level="mid"] { background: var(--surligneur-plein); } .meter i[data-level="good"] { background: var(--sapin); }
+.checks span { border-radius: var(--rayon-s); }
+.checks span.ok { background: var(--surligneur); color: #1d1800; border-color: var(--surligneur-trait); }
+.sticky-bar { background: var(--papier); -webkit-backdrop-filter: none; backdrop-filter: none; border-top-color: var(--trait-fort); }
+
+.btn { border-radius: var(--rayon-s); font-weight: 650; letter-spacing: -.005em; }
+.btn-primary { box-shadow: none; }
+.btn-primary:not(:disabled):hover { background: var(--sapin-fonce); }
+.btn-ghost { border-color: var(--trait-fort); color: var(--texte); }
+.back { color: var(--sapin); }
+
+/* Accueil */
+.share-card { background: var(--papier); }
+.share-steps .n { border-radius: var(--rayon-s); background: var(--sapin); color: #fff; }
+.share-ico { border-radius: 5px; color: #0a7aff; }
+.jury-card { border-left: 3px solid var(--surligneur-plein); }
+
+/* Analyse en cours : le surligneur balaie la ligne */
+.loading { justify-items: start; text-align: left; padding-top: 22px; }
+.pulse { width: 100%; height: 12px; border-radius: 2px; background: linear-gradient(90deg, var(--surligneur) 0 45%, var(--trait) 45% 100%); background-size: 220% 100%; animation: app-sweep 1.8s cubic-bezier(.6, 0, .4, 1) infinite; }
+.pulse::before, .pulse::after { display: none; }
+@keyframes app-sweep { from { background-position: 100% 0; } to { background-position: 0 0; } }
+.loading h1 { font-size: 22px; font-weight: 780; letter-spacing: -.02em; }
+.loading .center { text-align: left; }
+.steps li.doing::before { border-color: var(--sapin); border-right-color: transparent; }
+
+/* Fiche d'évaluation */
+.score-card { grid-template-columns: auto 1fr; align-items: end; background: var(--papier); border: 1px solid var(--trait); border-radius: var(--rayon); }
+.score-orbit { width: auto; height: auto; }
+.score-orbit .ring { display: none; }
+.score-num { position: static; inset: auto; display: flex; align-items: baseline; font-weight: 800; line-height: .95; letter-spacing: -.045em; padding: 0 4px; background: linear-gradient(transparent 52%, var(--surligneur) 52%, var(--surligneur) 94%, transparent 94%); }
+.score-num span { font-size: 54px; }
+.score-num small { font-size: 20px; color: var(--texte); align-self: baseline; margin: 0 0 0 2px; }
+.score-caption { font-size: 12.5px; font-weight: 600; color: var(--texte-2); }
+.score-label { color: var(--texte) !important; font-size: 17px; font-weight: 780; letter-spacing: -.01em; }
+.score-scale { grid-column: 1 / -1; position: relative; height: 6px; margin: 10px 0 2px; border-radius: 2px; background: var(--papier-2); box-shadow: inset 0 0 0 1px var(--trait); }
+.score-scale i { position: absolute; inset: 0 auto 0 0; width: calc(var(--score, 0) * 1%); background: var(--sapin); border-radius: 2px; transition: width 1s cubic-bezier(.2, .8, .2, 1); }
+.score-scale::after { content: ""; position: absolute; left: 70%; top: -4px; bottom: -4px; width: 2px; background: var(--texte); opacity: .55; }
+@media (prefers-color-scheme: dark) { .score-num { background: linear-gradient(transparent 74%, var(--surligneur) 74%, var(--surligneur) 94%, transparent 94%); } }
+
+/* Onglets d'index */
+.tabs { background: var(--fond); border: 0; border-bottom: 1px solid var(--trait-fort); border-radius: 0; box-shadow: none; padding: 0; gap: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.tabs button { position: relative; border-radius: 0; background: none; color: var(--texte-2); min-height: 44px; }
+.tabs button.active { background: none; color: var(--texte); font-weight: 750; }
+.tabs button.active::after { content: ""; position: absolute; left: 6px; right: 6px; bottom: -1px; height: 3px; background: var(--sapin); border-radius: 2px 2px 0 0; }
+.count, .active .count { border-radius: 4px; background: var(--papier); border: 1px solid var(--trait); color: var(--texte-2); }
+.active .count { color: var(--texte); border-color: var(--trait-fort); }
+@media (prefers-color-scheme: dark) { .tabs button.active { color: var(--texte); } }
+
+/* Atouts, pistes, poste */
+.item { border-radius: var(--rayon); border-left-width: 1px; animation: none; }
+.item.gap { border-left: 3px solid var(--surligneur-plein); }
+.item-k { display: none; }
+.proof span { text-transform: none; letter-spacing: 0; font-size: 11.5px; }
+.req summary { color: var(--sapin); }
+.pill { border-radius: 4px; }
+.pill-mint { background: var(--sapin-clair); color: var(--sapin); }
+.pill-amber { background: var(--surligneur-doux); color: var(--surligneur-texte); }
+.pill-rose { background: var(--papier); color: var(--stylo); border: 1px solid var(--stylo-trait); }
+.chips span { border-radius: 4px; background: var(--papier-2); border: 1px solid var(--trait); color: var(--texte); }
+.cv-paper { border-radius: 3px; }
+.cv-paper h4 { text-transform: none; letter-spacing: .01em; font-size: 12.5px; }
+.cv-paper mark.todo { background: #fff3bf !important; color: #4a3a00 !important; border-color: #e4b72d !important; }
+
+/* Guide */
+.guide li { border-radius: var(--rayon); }
+.guide li::before { border-radius: var(--rayon-s); background: var(--sapin); }
+.tip { background: var(--papier); border-left: 3px solid var(--surligneur-plein); }
+.code { border-radius: var(--rayon-s); }
+.toast { border-radius: var(--rayon-s); background: var(--texte); color: var(--fond); }
+
+/* Offres France Travail */
+.jobs-entry { display: grid; gap: 8px; }
+.jobs-entry .btn { width: 100%; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 999px; background: var(--papier-2); border: 1px solid var(--bord, var(--trait)); }
+.seg button { min-height: 40px; border: 0; border-radius: 999px; background: none; color: var(--texte-2); font: 650 14px/1.2 var(--font); cursor: pointer; }
+.seg button.active { background: var(--pill-on-bg, var(--texte)); color: var(--pill-on-fg, var(--fond)); }
+.jobs-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.job-card { display: grid; gap: 8px; }
+.jc-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.jc-title { min-width: 0; }
+.jc-title h3 { margin: 0 0 2px; font: 720 16.5px/1.28 var(--display, var(--font)); font-stretch: 104%; letter-spacing: -.01em; color: var(--texte); overflow-wrap: anywhere; }
+.jc-fit { flex: none; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.fit-high { background: var(--surligneur); color: #141100; }
+.fit-mid { border: 1.5px dashed var(--surligneur-trait); color: var(--texte); }
+.fit-low { border: 1px solid var(--trait-fort); color: var(--texte-2); }
+.jc-bar { height: 6px; border-radius: 999px; background: var(--papier-2); overflow: hidden; }
+.jc-bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #1f5a46, #5fbf95 60%, #ffe066); }
+.jc-meta { margin: 0; font-size: 12.5px; color: var(--texte-2); }
+.jc-label { margin: 4px 0 0; font-size: 12px; font-weight: 650; color: var(--texte-2); }
+.jc-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.jc-ok { padding: 3px 10px; border-radius: 999px; background: var(--surligneur); color: #141100; font-size: 12.5px; font-weight: 600; }
+.jc-gap { padding: 2px 10px; border-radius: 999px; border: 1.5px solid var(--stylo-trait); color: var(--stylo); font-size: 12.5px; font-weight: 600; }
+.jc-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.jc-actions .btn { flex: 1 1 140px; }
+
+/* Jury : potentiel avec les réponses et phrase d'explication (partagés avec l'extension, jury-view.mjs). */
+.jury-potential { margin: 4px 0 0; font-size: 13px; font-weight: 650; color: var(--sapin); }
+.jury-intro { margin: 0; font-size: 12.5px; line-height: 1.55; color: var(--texte-2); padding: 10px 12px; border-radius: 12px; background: var(--papier-2); border: 1px solid var(--trait); }
