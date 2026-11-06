@@ -1,226 +1,805 @@
-<!doctype html>
-<html lang="fr">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Juste — Votre vrai CV, adapté à chaque offre.</title>
-<meta name="description" content="Une extension Chrome qui lit l'offre d'emploi affichée, montre ce que votre CV a en commun avec elle et prépare une version adaptée à relire, sans rien inventer.">
-<meta name="theme-color" content="#070b09"><meta property="og:title" content="Juste — Votre vrai CV, adapté à chaque offre."><meta property="og:description" content="Votre parcours. Une offre. Les mots qui font le lien."><meta property="og:image" content="assets/og-logo.png">
-<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="site.css">
-<script src="config.js" defer></script><script src="app.js" defer></script><script src="studio.js" defer></script>
-</head>
-<body>
-<a class="skip" href="#contenu">Aller au contenu</a>
-<header class="header" id="site-header">
-  <a class="brand" href="#accueil" aria-label="Juste, accueil"><img src="assets/logo-mark.svg" alt="" width="28" height="28"><span>juste</span></a>
-  <nav class="desktop-nav" aria-label="Navigation principale"><a href="#demo">L’extension</a><a href="#comment">Le parcours</a><a href="#collection">Les styles</a><a href="#tarifs">Les formules</a><a href="#faq">Vos questions</a></nav>
-  <a class="pill-link header-access" href="#demo">Voir la démo <span aria-hidden="true">↗</span></a>
-  <button class="menu-toggle" id="open-menu" aria-label="Ouvrir le menu" aria-haspopup="dialog"><span></span><span></span></button>
+<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Juste</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Juste lit l'offre d'emploi, mesure votre compatibilité et adapte votre vrai CV en citant chaque ligne qu'il utilise. Rien n'est inventé.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout : page sombre teintée vert sapin. Jaune = prouvé par votre CV, rouge = retiré/absent. Motion : révélations pilotées par le scroll (CSS view()), surlignage qui "passe", compteurs, projecteur au survol des cartes. Tout est visible au repos et désactivé avec prefers-reduced-motion. */
+:root {
+  color-scheme: dark;
+  --bg: #0d1813;
+  --bg-2: #12221b;
+  --surface: #172b22;
+  --surface-2: #1e3529;
+  --line: #2a4436;
+  --fg: #eef3ef;
+  --muted: #a7b9ae;
+  --faint: #7f9488;
+  --sapin: #3f8f68;
+  --sapin-soft: #2c5d46;
+  --mark: #f2df4b;
+  --mark-ink: #1b1a08;
+  --red: #ff6b5e;
+  --red-soft: #3a1d1a;
+  --display: "Fraunces", Georgia, "Times New Roman", serif;
+  --body: "Hanken Grotesk", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --r: 14px;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--fg); font: 17px/1.6 var(--body); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--mark); outline-offset: 3px; border-radius: 6px; }
+.wrap { max-width: 72rem; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+section { padding-block: clamp(4rem, 9vw, 7rem); position: relative; }
+.band { background: var(--bg-2); border-block: 1px solid var(--line); }
+h1, h2, h3 { font-family: var(--display); font-weight: 650; letter-spacing: -0.01em; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.5rem, 6.4vw, 4.9rem); line-height: 1.02; }
+h2 { font-size: clamp(1.9rem, 4.2vw, 3rem); line-height: 1.08; }
+h3 { font-size: 1.25rem; line-height: 1.25; font-weight: 500; }
+p { margin: 0; }
+.lede { font-size: clamp(1.08rem, 1.6vw, 1.25rem); color: var(--muted); max-width: 38rem; }
+.eyebrow { font: 600 .78rem/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--sapin); margin-bottom: 1rem; }
+.hl { background: linear-gradient(transparent 12%, var(--mark) 12%, var(--mark) 88%, transparent 88%); color: var(--mark-ink); padding: 0 .12em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.strike { color: var(--red); text-decoration: line-through; text-decoration-thickness: 2px; }
+.mono { font-family: var(--mono); font-size: .82em; }
+
+/* Boutons */
+.btn { display: inline-flex; align-items: center; gap: .55rem; font: 600 1rem/1 var(--body); padding: .95rem 1.35rem; border-radius: 999px; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform .35s var(--ease), background .25s ease, box-shadow .35s var(--ease), border-color .25s ease; }
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0) scale(.98); }
+.btn-primary { background: var(--mark); color: var(--mark-ink); box-shadow: 0 0 0 0 rgba(242,223,75,0); }
+.btn-primary:hover { background: #f7e86f; box-shadow: 0 14px 34px -12px rgba(242,223,75,.55); }
+.btn-ghost { background: transparent; color: var(--fg); border-color: var(--line); }
+.btn-ghost:hover { background: var(--surface); border-color: var(--sapin-soft); }
+.section-head { display: grid; gap: 1rem; max-width: 46rem; margin-bottom: clamp(2rem, 5vw, 3.5rem); }
+
+/* Barre de progression de lecture (scroll-driven, Chrome/Safari ; inerte ailleurs) */
+.progress { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; height: 2px; background: var(--mark); transform-origin: 0 50%; transform: scaleX(0); z-index: 40; pointer-events: none; }
+@keyframes grow { to { transform: scaleX(1); } }
+
+/* Révélations au scroll : visibles au repos, animées seulement si le navigateur sait le faire et si l'utilisateur accepte le mouvement */
+@keyframes reveal { from { opacity: 0; translate: 0 26px; } to { opacity: 1; translate: 0 0; } }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .progress { animation: grow linear both; animation-timeline: scroll(root block); animation-duration: 1ms; }
+    .reveal { animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 55%; }
+    .stagger > * { animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% cover 22%; }
+  }
+}
+/* Secours JavaScript (Firefox) : la classe fx n'est posée que si view() manque */
+.fx .reveal, .fx .stagger > * { transition: opacity .75s ease, translate .75s var(--ease); }
+.fx .reveal:not(.in), .fx .stagger:not(.in) > * { opacity: 0; translate: 0 26px; }
+.fx .stagger > :nth-child(2) { transition-delay: .08s; } .fx .stagger > :nth-child(3) { transition-delay: .16s; }
+.fx .stagger > :nth-child(4) { transition-delay: .24s; } .fx .stagger > :nth-child(5) { transition-delay: .32s; } .fx .stagger > :nth-child(6) { transition-delay: .4s; }
+
+/* Projecteur au survol des cartes (style Linear) */
+.spot { position: relative; overflow: hidden; }
+.spot::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .45s ease;
+  background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), rgba(63,143,104,.26), transparent 62%); }
+.spot:hover::before, .spot:focus-within::before { opacity: 1; }
+.spot { transition: border-color .35s ease, transform .5s var(--ease); }
+.spot:hover { border-color: var(--sapin); }
+
+/* Nav */
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid transparent; transition: border-color .3s ease, box-shadow .3s ease; }
+.nav.scrolled { border-bottom-color: var(--line); box-shadow: 0 10px 30px -20px rgba(0,0,0,.8); }
+.nav .wrap { display: flex; align-items: center; gap: 1.5rem; min-height: 64px; }
+.logo { display: flex; align-items: center; gap: .55rem; font: 650 1.35rem/1 var(--display); text-decoration: none; }
+.logo-mark { width: 26px; height: 26px; border-radius: 7px; background: var(--sapin); display: grid; place-items: center; transition: transform .5s var(--ease); }
+.logo:hover .logo-mark { transform: rotate(-8deg); }
+.logo-mark span { width: 12px; height: 4px; background: var(--mark); border-radius: 2px; }
+.nav-links { display: flex; gap: 1.4rem; margin-left: auto; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: .95rem; position: relative; }
+.nav-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: var(--mark); transform: scaleX(0); transform-origin: 0 50%; transition: transform .35s var(--ease); }
+.nav-links a:hover { color: var(--fg); }
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav .btn { padding: .7rem 1.05rem; font-size: .92rem; }
+@media (max-width: 860px) { .nav-links { display: none; } .nav .btn { margin-left: auto; } }
+
+/* Héros */
+.hero { padding-block: clamp(3rem, 7vw, 6rem) clamp(4rem, 8vw, 6.5rem); overflow: hidden; }
+.hero::before { content: ""; position: absolute; inset: -20% -10% auto; height: 70%; pointer-events: none; z-index: 0;
+  background: radial-gradient(60% 55% at 70% 30%, rgba(63,143,104,.22), transparent 70%); }
+.hero .wrap { position: relative; z-index: 1; display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.hero-copy { display: grid; gap: 1.6rem; min-width: 0; }
+.hero-cta { display: flex; flex-wrap: wrap; gap: .8rem; }
+.reassure { display: flex; flex-wrap: wrap; gap: .5rem 1.2rem; color: var(--faint); font-size: .92rem; }
+.reassure span::before { content: "✓"; color: var(--sapin); margin-right: .4rem; font-weight: 700; }
+.mobile-note { display: none; color: var(--muted); font-size: .92rem; }
+@media (max-width: 900px) { .hero .wrap { grid-template-columns: 1fr; } }
+@media (hover: none) and (pointer: coarse) { .mobile-note { display: block; } }
+
+/* Titre : chaque ligne monte depuis un masque, puis le surligneur "passe" sur la dernière */
+.line { display: block; overflow: hidden; padding-bottom: .06em; margin-bottom: -.06em; }
+.line > span { display: inline-block; }
+.sweep { background-image: linear-gradient(var(--mark), var(--mark)); background-repeat: no-repeat; background-size: 100% 76%; background-position: 0 58%; color: var(--mark-ink); padding: 0 .12em; }
+@media (prefers-reduced-motion: no-preference) {
+  .line > span { animation: up .9s var(--ease) both; }
+  .line:nth-child(1) > span { animation-delay: .05s; } .line:nth-child(2) > span { animation-delay: .17s; } .line:nth-child(3) > span { animation-delay: .29s; }
+  .sweep { background-size: 0% 76%; color: var(--fg); animation: sweep .8s var(--ease) 1s both; }
+  .hero-copy > :not(h1) { animation: reveal .9s var(--ease) both; }
+  .hero-copy > .eyebrow { animation-delay: 0s; } .hero-copy > .lede { animation-delay: .55s; } .hero-copy > .hero-cta { animation-delay: .7s; } .hero-copy > .reassure, .hero-copy > .mobile-note { animation-delay: .85s; }
+  .panel { animation: panelIn 1.1s var(--ease) .35s both; }
+}
+@keyframes up { from { translate: 0 110%; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+@keyframes sweep { to { background-size: 100% 76%; color: var(--mark-ink); } }
+@keyframes panelIn { from { opacity: 0; translate: 0 30px; rotate: 1.5deg; } to { opacity: 1; translate: 0 0; rotate: 0deg; } }
+
+/* Panneau latéral simulé */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 30px 80px -30px rgba(0,0,0,.65), 0 0 0 1px rgba(63,143,104,.08); overflow: hidden; min-width: 0; }
+.panel-top { display: flex; align-items: center; gap: .6rem; padding: .8rem 1rem; border-bottom: 1px solid var(--line); font-size: .85rem; color: var(--muted); }
+.panel-top .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--sapin); box-shadow: 0 0 0 0 rgba(63,143,104,.6); animation: pulse 2.4s ease-out infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(63,143,104,.6); } 70% { box-shadow: 0 0 0 9px rgba(63,143,104,0); } 100% { box-shadow: 0 0 0 0 rgba(63,143,104,0); } }
+.panel-body { padding: 1.2rem; display: grid; gap: 1rem; }
+.offer-chip { font-size: .85rem; color: var(--muted); }
+.offer-chip strong { color: var(--fg); font-weight: 600; }
+.score-row { display: flex; align-items: baseline; gap: .7rem; }
+.score-big { font: 650 3rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.score-sub { color: var(--muted); font-size: .9rem; }
+.bar { height: 8px; background: var(--bg); border-radius: 99px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--sapin-soft), var(--sapin)); border-radius: 99px; transition: width 1.2s var(--ease); }
+.mini-list { display: grid; gap: .55rem; font-size: .93rem; }
+.mini-item { display: flex; gap: .6rem; align-items: flex-start; padding: .6rem .7rem; border-radius: 10px; background: var(--bg-2); }
+.tag { flex: none; font: 500 .72rem/1 var(--mono); padding: .3rem .4rem; border-radius: 6px; margin-top: .15rem; }
+.tag-ok { background: var(--mark); color: var(--mark-ink); }
+.tag-no { background: var(--red-soft); color: var(--red); }
+@media (prefers-reduced-motion: no-preference) {
+  .hero .mini-item { animation: reveal .6s var(--ease) both; }
+  .hero .mini-item:nth-child(1) { animation-delay: 1.1s; } .hero .mini-item:nth-child(2) { animation-delay: 1.3s; } .hero .mini-item:nth-child(3) { animation-delay: 1.5s; }
+}
+
+/* Bandeau défilant */
+.ticker { overflow: hidden; border-block: 1px solid var(--line); padding-block: .85rem; background: var(--bg-2);
+  -webkit-mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.ticker-track { display: flex; gap: 3rem; width: max-content; padding-left: 3rem; animation: tick 34s linear infinite; }
+.ticker:hover .ticker-track { animation-play-state: paused; }
+.ticker span { white-space: nowrap; font-size: .92rem; color: var(--muted); display: inline-flex; align-items: center; gap: .6rem; }
+.ticker span::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--mark); }
+@keyframes tick { to { translate: -50% 0; } }
+
+/* Chiffres */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.stat { background: var(--bg-2); padding: 1.8rem; display: grid; gap: .7rem; align-content: start; }
+.stat b { font: 650 clamp(2.4rem, 5vw, 3.4rem)/1 var(--display); font-variant-numeric: tabular-nums; }
+.stat p { color: var(--muted); font-size: .98rem; }
+.stat cite { font-style: normal; font-size: .8rem; color: var(--faint); }
+@media (max-width: 820px) { .stats { grid-template-columns: 1fr; } }
+
+/* Démo */
+.demo { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 1.2rem; }
+@media (max-width: 900px) { .demo { grid-template-columns: 1fr; } }
+.demo-controls { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin-bottom: 1.2rem; }
+.seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px; flex-wrap: wrap; }
+.seg button { font: 600 .92rem/1 var(--body); color: var(--muted); background: transparent; border: 0; padding: .65rem 1rem; border-radius: 999px; cursor: pointer; transition: background .3s ease, color .3s ease; }
+.seg button[aria-pressed="true"] { background: var(--sapin-soft); color: var(--fg); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1.3rem; min-width: 0; }
+.card-title { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: .9rem; font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); font-weight: 600; }
+.cv-lines { display: grid; gap: 2px; font-size: .93rem; }
+.cv-line { display: grid; grid-template-columns: 2.4rem 1fr; gap: .5rem; padding: .35rem .5rem; border-radius: 7px; background-image: linear-gradient(var(--mark), var(--mark)); background-repeat: no-repeat; background-size: 0% 100%; transition: background-size .45s var(--ease), color .3s ease; }
+.cv-line .ln { font-family: var(--mono); font-size: .75rem; color: var(--faint); padding-top: .15rem; transition: color .3s ease; }
+.cv-line.on { background-size: 100% 100%; color: var(--mark-ink); }
+.cv-line.on .ln { color: var(--mark-ink); }
+.offer-box { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--line); font-size: .92rem; color: var(--muted); }
+.offer-box strong { color: var(--fg); }
+.result { display: grid; gap: 1rem; align-content: start; }
+.result > div { display: none; }
+.result[data-state="idle"] .res-idle, .result[data-state="loading"] .res-skel, .result[data-state="ready"] .res-body { display: grid; }
+.res-idle { place-items: center; text-align: center; gap: 1rem; min-height: 22rem; color: var(--muted); }
+.res-skel { gap: .8rem; min-height: 22rem; align-content: start; }
+.sk { height: 14px; border-radius: 7px; background: linear-gradient(90deg, var(--surface-2) 25%, var(--line) 50%, var(--surface-2) 75%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
+.sk.big { height: 44px; width: 40%; } .sk.w60 { width: 60%; } .sk.w80 { width: 80%; }
+.res-skel p { color: var(--faint); font-size: .85rem; margin-top: .4rem; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.res-body { gap: 1rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .res-body > * { animation: reveal .55s var(--ease) both; }
+  .res-body > :nth-child(2) { animation-delay: .1s; } .res-body > :nth-child(3) { animation-delay: .2s; } .res-body > :nth-child(4) { animation-delay: .3s; } .res-body > :nth-child(5) { animation-delay: .4s; }
+}
+.score-break { display: grid; gap: .45rem; font-size: .9rem; }
+.req { display: grid; grid-template-columns: 1fr auto; gap: .8rem; align-items: center; padding: .55rem .7rem; border-radius: 9px; background: var(--bg-2); }
+.req small { color: var(--faint); display: block; font-size: .78rem; }
+.pill { font: 600 .75rem/1 var(--body); padding: .35rem .55rem; border-radius: 99px; white-space: nowrap; }
+.pill-ok { background: var(--mark); color: var(--mark-ink); }
+.pill-mid { background: var(--sapin-soft); color: var(--fg); }
+.pill-no { background: var(--red-soft); color: var(--red); }
+.bullets { display: grid; gap: .5rem; }
+.bullet { display: grid; grid-template-columns: 1fr auto; gap: .8rem; align-items: start; padding: .7rem .8rem; border-radius: 10px; background: var(--bg-2); border: 1px solid transparent; cursor: default; transition: border-color .3s ease, translate .3s var(--ease); }
+.bullet:hover, .bullet:focus-visible { border-color: var(--mark); translate: 2px 0; }
+.bullet .src { font: 500 .72rem/1 var(--mono); color: var(--mark); white-space: nowrap; padding-top: .3rem; }
+.bullet.review { box-shadow: inset 3px 0 0 var(--mark); }
+.bullet.review em { display: block; font-style: normal; font-size: .8rem; color: var(--mark); margin-top: .25rem; }
+.removed { display: grid; gap: .5rem; }
+.removed div { padding: .65rem .8rem; border-radius: 10px; background: var(--red-soft); font-size: .92rem; }
+.removed div small { display: block; color: var(--fg); opacity: .85; margin-top: .2rem; font-size: .82rem; }
+.tip { font-size: .92rem; color: var(--muted); padding: .8rem .9rem; border: 1px dashed var(--line); border-radius: 10px; }
+.demo-note { margin-top: 1rem; font-size: .85rem; color: var(--faint); }
+
+/* Étapes */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; counter-reset: s; }
+.step { display: grid; gap: .7rem; align-content: start; padding-top: 1.2rem; border-top: 2px solid var(--line); position: relative; }
+.step::after { content: ""; position: absolute; top: -2px; left: 0; height: 2px; width: 100%; background: var(--sapin); transform: scaleX(0); transform-origin: 0 50%; }
+.step::before { counter-increment: s; content: "Étape " counter(s); font: 500 .78rem/1 var(--mono); color: var(--sapin); }
+.step p { color: var(--muted); }
+@media (max-width: 820px) { .steps { grid-template-columns: 1fr; } }
+@keyframes drawX { to { transform: scaleX(1); } }
+.step::after { transform: scaleX(1); }
+@supports (animation-timeline: view()) { @media (prefers-reduced-motion: no-preference) {
+  .step::after { transform: scaleX(0); animation: drawX linear both; animation-timeline: view(); animation-range: entry 20% entry 80%; }
+} }
+
+/* Fonctionnalités */
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+.feature { display: grid; gap: .6rem; align-content: start; padding: 1.4rem; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); }
+.feature:hover { transform: translateY(-3px); }
+.feature p { color: var(--muted); font-size: .97rem; }
+.feature .k { font: 500 .75rem/1 var(--mono); color: var(--faint); }
+@media (max-width: 960px) { .features { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px) { .features { grid-template-columns: 1fr; } }
+
+/* Fidélité : la rature rouge se trace au scroll, le surlignage jaune passe sur la bonne version */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+.compare .col { padding: 1.5rem; border-radius: var(--r); border: 1px solid var(--line); display: grid; gap: .9rem; align-content: start; }
+.compare .bad { background: var(--bg); }
+.compare .good { background: var(--surface); border-color: var(--sapin-soft); }
+.compare ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .7rem; }
+.compare li { font-size: .98rem; }
+.compare li small { display: block; color: var(--faint); font-size: .84rem; margin-top: .15rem; }
+.draw { color: var(--red); position: relative; text-decoration: none; }
+.draw::after { content: ""; position: absolute; left: 0; right: 0; top: 56%; height: 2px; background: var(--red); transform-origin: 0 50%; }
+.hl-scroll { background-image: linear-gradient(var(--mark), var(--mark)); background-repeat: no-repeat; background-size: 100% 76%; background-position: 0 58%; color: var(--mark-ink); padding: 0 .12em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+@keyframes sweepScroll { from { background-size: 0% 76%; color: var(--fg); } to { background-size: 100% 76%; color: var(--mark-ink); } }
+@supports (animation-timeline: view()) { @media (prefers-reduced-motion: no-preference) {
+  .draw::after { transform: scaleX(0); animation: drawX linear both; animation-timeline: view(); animation-range: entry 40% entry 100%; }
+  .hl-scroll { animation: sweepScroll linear both; animation-timeline: view(); animation-range: entry 40% entry 100%; }
+} }
+@media (max-width: 820px) { .compare { grid-template-columns: 1fr; } }
+
+/* Jury */
+.jury { display: grid; gap: .9rem; max-width: 46rem; }
+.msg { display: grid; grid-template-columns: auto 1fr; gap: .9rem; align-items: start; }
+.who { width: 2.6rem; height: 2.6rem; border-radius: 12px; display: grid; place-items: center; font: 600 .7rem/1 var(--mono); }
+.who-ats { background: var(--surface-2); color: var(--muted); }
+.who-rh { background: var(--sapin); color: var(--fg); }
+.bubble { background: var(--surface); border: 1px solid var(--line); border-radius: 4px 14px 14px 14px; padding: .9rem 1.1rem; min-width: 0; }
+.bubble b { display: block; font-size: .82rem; color: var(--faint); font-weight: 600; margin-bottom: .25rem; }
+
+/* Confidentialité */
+.privacy { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; }
+.privacy div { display: grid; gap: .5rem; align-content: start; }
+.privacy p { color: var(--muted); font-size: .96rem; }
+@media (max-width: 900px) { .privacy { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .privacy { grid-template-columns: 1fr; } }
+
+/* Prix */
+.prices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; align-items: stretch; }
+.price { display: grid; grid-template-rows: auto auto 1fr auto; gap: 1rem; padding: 1.6rem; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); }
+.price.featured { border-color: var(--mark); box-shadow: 0 30px 60px -40px rgba(242,223,75,.35); }
+.price .amount { font: 650 2.6rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.price .amount small { font: 500 .95rem var(--body); color: var(--muted); }
+.price ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .5rem; color: var(--muted); font-size: .96rem; }
+.price li::before { content: "✓"; color: var(--sapin); margin-right: .5rem; font-weight: 700; }
+.price .btn { justify-content: center; }
+.no-renew { margin-top: 1.4rem; font-size: 1.05rem; }
+@media (max-width: 900px) { .prices { grid-template-columns: 1fr; } }
+/* Toast : paiement pas encore branché */
+.toast { position: fixed; left: 50%; bottom: calc(1.2rem + env(safe-area-inset-bottom, 0px)); translate: -50% 0; z-index: 50; max-width: min(92vw, 34rem); background: var(--surface); color: var(--fg); border: 1px solid var(--sapin); border-radius: 12px; padding: .9rem 1.1rem; font-size: .95rem; box-shadow: 0 20px 50px -20px rgba(0,0,0,.8); animation: reveal .4s var(--ease) both; }
+.toast a { color: var(--mark); }
+/* Démo sur mobile : contrôles pleine largeur, libellé adapté au toucher */
+@media (max-width: 620px) { .seg { width: 100%; } .seg button { flex: 1 1 auto; } .demo-controls .btn { width: 100%; justify-content: center; } }
+.touch-only { display: none; } .mouse-only { display: inline; }
+@media (hover: none) and (pointer: coarse) { .touch-only { display: inline; } .mouse-only { display: none; } }
+
+/* FAQ */
+.faq { display: grid; gap: .6rem; max-width: 50rem; }
+.faq details { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 0 1.2rem; transition: border-color .3s ease; }
+.faq details[open] { border-color: var(--sapin-soft); }
+.faq summary { cursor: pointer; padding: 1.1rem 0; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font: 500 1.3rem/1 var(--mono); color: var(--sapin); transition: rotate .35s var(--ease); }
+.faq details[open] summary::after { rotate: 45deg; }
+.faq details p { color: var(--muted); padding-bottom: 1.2rem; max-width: 65ch; }
+@media (prefers-reduced-motion: no-preference) { .faq details[open] p { animation: reveal .4s var(--ease) both; } }
+
+/* CTA final : halo jaune derrière le bouton (comme le CTA final de Linear) */
+.final { text-align: center; overflow: hidden; }
+.final::before { content: ""; position: absolute; left: 50%; top: 55%; width: 60rem; height: 24rem; translate: -50% -50%; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(242,223,75,.14), transparent); }
+.final .wrap { position: relative; display: grid; gap: 1.5rem; justify-items: center; }
+.final .lede { margin: 0 auto; }
+.copy-row { display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center; align-items: center; color: var(--muted); font-size: .92rem; }
+footer { border-top: 1px solid var(--line); padding-block: 2.5rem; color: var(--faint); font-size: .9rem; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 1rem 2rem; justify-content: space-between; align-items: center; }
+footer nav { display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; }
+footer a { color: var(--muted); text-decoration: none; }
+footer a:hover { color: var(--fg); }
+.sources { font-size: .8rem; color: var(--faint); margin-top: 1.4rem; max-width: 60rem; }
+.sources a { color: var(--faint); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .step::after, .draw::after { transform: scaleX(1); }
+}
+</style>
+
+<div class="progress" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Juste, accueil"><span class="logo-mark" aria-hidden="true"><span></span></span>Juste</a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#fonctionnement">Fonctionnement</a>
+      <a href="#demo">Démo</a>
+      <a href="#prix">Prix</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a>
+  </div>
 </header>
 
-<main id="contenu">
-<section class="hero" id="accueil" aria-labelledby="hero-title">
-  <div class="wrap hero-grid">
-    <div class="hero-copy">
-    <span class="badge hero-reveal"><i aria-hidden="true"></i>Bêta gratuite · Votre candidature, avec justesse</span>
-    <h1 id="hero-title" class="hero-reveal">Votre vrai CV. <span class="ton">Adapté à chaque offre.</span></h1>
-    <p class="lead hero-reveal">Comprenez ce que recherche l’entreprise, repérez vos atouts et préparez une version de votre CV à relire. Sans rien inventer.</p>
-    <div class="actions hero-reveal"><a class="button" href="#demo">Voir l’extension en action <span aria-hidden="true">↗</span></a><a class="text-link" href="#comment">Comment ça marche <span aria-hidden="true">↓</span></a></div>
-    <ul class="principles hero-reveal"><li>Rien d’inventé</li><li>Votre CV reste chez vous</li><li>Sur ordinateur et sur téléphone</li></ul>
-    </div>
-    <figure class="hero-visual hero-reveal">
-      <img class="shot shot-back" src="assets/produit/panneau-jury.webp" alt="" width="400" height="900">
-      <img class="shot shot-front" src="assets/produit/panneau-score.webp" alt="Le panneau Juste : score de correspondance de 75 % et exigences de l'offre retrouvées dans le CV" width="400" height="900" fetchpriority="high">
-      <figcaption>Capture réelle de l’extension · CV et offre fictifs</figcaption>
-    </figure>
-  </div>
-</section>
+<main id="top">
+  <!-- Héros -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="eyebrow">Extension Chrome gratuite</p>
+        <h1><span class="line"><span>Votre vrai CV.</span></span><span class="line"><span>Adapté à chaque offre.</span></span><span class="line"><span><span class="sweep">Sans rien inventer.</span></span></span></h1>
+        <p class="lede">Juste lit l'annonce, mesure votre compatibilité et réécrit votre CV en citant chaque ligne qu'il utilise. Ce que vous n'avez pas fait n'apparaît jamais.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome, c'est gratuit</a>
+          <a class="btn btn-ghost" href="#demo">Voir la démo</a>
+        </div>
+        <p class="mobile-note">Sur téléphone, l'extension ne s'installe pas. Essayez la démo ici, puis ouvrez cette page sur votre ordinateur.</p>
+        <div class="reassure"><span>CV stocké dans votre navigateur</span><span>Chaque atout prouvé par une ligne</span><span>Sans abonnement caché</span></div>
+      </div>
 
-<section class="section demo-section" id="demo">
-  <div class="wrap">
-    <div class="section-head reveal"><div><span class="eyebrow">01 · L’extension, en situation</span><h2>Le bon lien, <span class="ton">sous vos yeux.</span></h2></div><p>Choisissez une offre. Explorez les atouts, les pistes et la proposition de CV. Ici, tout se découvre en quelques clics.</p></div>
-    <div class="product reveal">
-      <div class="browser-top"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="address">votre prochaine opportunité</span><img src="assets/logo-mark.svg" width="20" height="20" alt=""></div>
-      <div class="product-body">
-        <div class="listing"><span class="eyebrow">L’offre à explorer</span><span class="company-mark" aria-hidden="true">A.</span><h3 id="demo-job">Assistant logistique</h3><p class="muted">Atelier Rivage · Lyon</p><span class="chip">CDI · Débutant accepté</span><hr><strong>Votre quotidien</strong><p id="demo-job-copy">Participer aux inventaires, au réassort et à la réception des livraisons.</p><div class="skeleton"></div><div class="skeleton short"></div><span class="listing-note">Votre analyse s’ouvre ici, à côté de l’offre <span aria-hidden="true">→</span></span></div>
-        <div class="demo-panel">
-          <div class="demo-brand"><img src="assets/logo-mark.svg" width="22" height="22" alt=""><strong>juste</strong></div>
-          <div class="demo-score"><div class="score-orbit"><span id="demo-score">74<small>%</small></span></div><div><span class="eyebrow">Correspondance estimée</span><strong id="demo-score-label">Des atouts pour cette offre</strong><p id="demo-summary">Votre expérience en magasin est un bon point de départ.</p></div></div>
-          <div class="demo-tabs" role="tablist" aria-label="Explorer la démonstration"><button id="demo-nav-atouts" role="tab" aria-selected="true" aria-controls="demo-content" data-demo-tab="atouts">Les atouts</button><button id="demo-nav-pistes" role="tab" aria-selected="false" tabindex="-1" aria-controls="demo-content" data-demo-tab="pistes">À améliorer</button><button id="demo-nav-cv" role="tab" aria-selected="false" tabindex="-1" aria-controls="demo-content" data-demo-tab="cv">Le CV</button></div>
-          <div id="demo-content" class="demo-content" role="tabpanel" aria-labelledby="demo-nav-atouts" tabindex="0"></div>
-          <button class="button button-block" id="demo-action">Voir le CV adapté <span aria-hidden="true">↗</span></button>
-          <p class="footnote">Exemple fictif · score illustratif, sans prédiction d’embauche</p>
+      <div class="panel spot" aria-label="Aperçu du panneau Juste">
+        <div class="panel-top"><span class="dot" aria-hidden="true"></span>Juste · panneau latéral</div>
+        <div class="panel-body">
+          <p class="offer-chip">Offre lue : <strong>Chargé(e) d'affaires B2B · Lyon</strong></p>
+          <div>
+            <div class="score-row"><span class="score-big" id="heroScore">86</span><span class="score-sub">/ 100 · fourchette 82 à 88</span></div>
+            <div class="bar" aria-hidden="true"><i id="heroBar"></i></div>
+          </div>
+          <div class="mini-list">
+            <div class="mini-item"><span class="tag tag-ok">L4</span><span>Prospection B2B : 25 rendez-vous qualifiés par mois</span></div>
+            <div class="mini-item"><span class="tag tag-ok">L3</span><span>Portefeuille de 80 comptes PME, 1,2 M€ de CA</span></div>
+            <div class="mini-item"><span class="tag tag-no">absent</span><span>Expérience du secteur SaaS : <span class="strike">non ajoutée</span>, absente de votre CV</span></div>
+          </div>
         </div>
       </div>
-      <div class="demo-controls"><span class="eyebrow">Une autre perspective</span><div role="group" aria-label="Choisir un exemple"><button class="selected" data-scenario="logistique" aria-pressed="true">Logistique</button><button data-scenario="client" aria-pressed="false">Relation client</button></div></div>
     </div>
-    <div class="compatibility reveal"><span class="eyebrow">Pensé pour vos recherches sur</span><ul><li>Indeed</li><li>LinkedIn</li><li>Welcome to the Jungle</li><li>HelloWork</li><li>France Travail</li><li>APEC</li><li>JobTeaser</li></ul><p>Sur un autre site, collez simplement le texte de l’annonce dans le panneau.</p></div>
-  </div>
-</section>
+  </section>
 
-<section class="section gallery-section" id="captures" aria-labelledby="captures-title">
-  <div class="wrap">
-    <div class="section-head reveal"><div><span class="eyebrow">Dans votre navigateur</span><h2 id="captures-title">À côté de l’offre. <span class="ton">Jamais à sa place.</span></h2></div><p>Captures réelles du panneau, sur un CV et une offre fictifs. Le panneau s’ouvre à droite de l’annonce, sans modifier la page.</p></div>
-    <div class="gallery">
-      <figure class="reveal"><img src="assets/produit/panneau-offre.webp" alt="Le panneau détecte l’offre affichée : Assistant logistique, Entrepôts Mirabelle" width="400" height="900" loading="lazy"><figcaption><b>01.</b> L’offre est lue, votre CV est prêt.</figcaption></figure>
-      <figure class="reveal"><img src="assets/produit/panneau-jury.webp" alt="Le jury complet de Premium : 7 évaluateurs, notes sur 10 et verdict de chaque juge" width="400" height="900" loading="lazy"><figcaption><b>02.</b> Un jury relit votre CV : 2 juges en accès gratuit, 7 avec Premium.</figcaption></figure>
-      <figure class="reveal"><img src="assets/produit/panneau-cv.webp" alt="Le CV adapté à l’offre, prêt à relire avant l’export PDF" width="400" height="900" loading="lazy"><figcaption><b>03.</b> Votre CV adapté, à relire.</figcaption></figure>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="ticker">
+      <span>Rien d'inventé</span><span>Chaque atout cite sa ligne</span><span>CV stocké dans votre navigateur</span><span>Score décomposé exigence par exigence</span><span>L'avis du jury : logiciel et recruteur</span><span>Export PDF, trois mises en page</span><span>Aucun renouvellement automatique</span>
     </div>
   </div>
-</section>
 
-<section class="section" id="difference" aria-labelledby="difference-title">
-  <div class="wrap">
-    <div class="section-head reveal"><div><span class="eyebrow">Pourquoi Juste</span><h2 id="difference-title">Plus qu’un copier-coller <span class="ton">dans un chatbot.</span></h2></div><p>Un assistant IA généraliste peut aider à rédiger. Juste est fait pour une seule chose : adapter votre vrai CV à l’offre que vous lisez.</p></div>
-    <div class="compare reveal" role="table" aria-label="Juste comparé à un assistant IA généraliste">
-      <div class="compare-row compare-head" role="row"><span role="columnheader"></span><span role="columnheader">Avec Juste</span><span role="columnheader">Avec un assistant IA généraliste</span></div>
-      <div class="compare-row" role="row"><span role="rowheader">L’offre</span><span role="cell">Lue directement à côté de l’annonce, en un clic</span><span role="cell">À copier-coller à chaque fois, avec votre CV</span></div>
-      <div class="compare-row" role="row"><span role="rowheader">Rien d’inventé</span><span role="cell">Ce qui manque reste « à compléter » et bloque le PDF</span><span role="cell">Peut ajouter des chiffres ou des compétences si vous ne vérifiez pas</span></div>
-      <div class="compare-row" role="row"><span role="rowheader">Vos coordonnées</span><span role="cell">Nom, email, téléphone, adresse et liens retirés avant l’envoi</span><span role="cell">Vous collez en général votre CV complet</span></div>
-      <div class="compare-row" role="row"><span role="rowheader">L’avis d’un recruteur</span><span role="cell">Un jury de 2 évaluateurs (7 avec Premium), et des questions pour compléter</span><span role="cell">À demander vous-même, sans grille</span></div>
-      <div class="compare-row" role="row"><span role="rowheader">Le CV final</span><span role="cell">PDF prêt à envoyer, en 3 présentations</span><span role="cell">Texte à remettre en page</span></div>
-    </div>
-  </div>
-</section>
-
-<section class="section" id="approche">
-  <div class="wrap split">
-    <span class="eyebrow reveal">02 · Une candidature qui vous ressemble</span>
-    <div><h2 class="reveal">Ce que vous avez fait. <span class="ton">Ce que cela peut révéler.</span></h2><p class="reveal">Une mission de stage. Un projet étudiant. Une expérience en magasin. Votre parcours contient déjà des acquis. Juste vous aide à faire le lien avec les attentes d’une offre et à les présenter avec justesse.</p><a class="text-link reveal" href="#transformation">Voir ce qui change <span aria-hidden="true">↗</span></a></div>
-  </div>
-</section>
-
-<section class="section transformation" id="transformation">
-  <div class="wrap two-cols">
-    <div class="transformation-visual">
-      <div class="specimen reveal" id="specimen">
-        <span class="specimen-label" id="specimen-label">DANS LE CV D’ORIGINE</span><span class="specimen-name">Camille D.</span><span class="specimen-title">Expérience en magasin</span>
-        <div class="specimen-section">EXPÉRIENCE</div><strong>Vendeuse — Maison Rivage</strong><small>Septembre 2023 — Août 2024</small>
-        <p id="specimen-copy">Réassort des rayons, inventaires et réception des livraisons.</p>
-        <div class="specimen-lines" aria-hidden="true"><i></i><i></i><i></i></div><span class="specimen-foot">Exemple fictif · à relire avant envoi</span>
+  <!-- Le problème, sans peur -->
+  <section>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Ce que disent les études</p>
+        <h2>Les logiciels classent. Les humains décident.</h2>
+        <p class="lede">On vous a dit que les robots jettent votre CV. La réalité est plus simple : un CV adapté et précis convainc mieux la personne qui le lit. À condition de ne rien inventer.</p>
       </div>
-      <span class="visual-label">Le même parcours. Un autre éclairage.</span>
-    </div>
-    <div>
-      <span class="eyebrow reveal">La précision fait la différence</span><h2 class="reveal">Mettre en lumière. <span class="ton">Avec justesse.</span></h2>
-      <p class="reveal">Pour une offre en logistique, vos missions de réception et d’inventaire prennent une autre place. La reformulation s’appuie sur les informations que vous avez fournies.</p>
-      <div class="segmented reveal" role="group" aria-label="Comparer les formulations"><button id="perspective-source" aria-pressed="true">Le CV d’origine</button><button id="perspective-adapted" aria-pressed="false">Pour cette offre</button></div>
-      <p class="perspective-note reveal" id="perspective-note" aria-live="polite">Une mission réelle, telle qu’elle figure dans le CV.</p>
-      <ol class="numbered reveal"><li><span>01.</span><p>Des atouts accompagnés d’un extrait du CV.</p></li><li><span>02.</span><p>Des pistes reliées aux attentes de l’offre.</p></li><li><span>03.</span><p>Une proposition que vous pouvez relire et modifier.</p></li></ol>
-    </div>
-  </div>
-</section>
-
-<section class="section" id="comment" aria-labelledby="journey-title">
-  <div class="wrap">
-    <div class="section-head reveal"><div><span class="eyebrow">03 · De votre document à votre prochaine version</span><h2 id="journey-title">Tout commence par vous. <span class="ton">La suite se construit.</span></h2></div></div>
-    <div class="journey">
-      <div class="journey-stage reveal" data-current-step="cv"><span class="eyebrow">L’expérience en trois temps</span>
-        <div class="paper" data-journey-panel="cv"><span class="paper-kicker">Le document d’origine</span><strong>Camille <em>Démonstration.</em></strong><p>Lyon · Vente et accueil</p><hr><b>Votre expérience en magasin</b><p>Accueil et conseil des clients.<br>Réassort et inventaires mensuels.</p><div class="formats"><span>PDF</span><span>DOCX</span><span>IMAGE</span></div></div>
-        <div class="paper" data-journey-panel="offre" hidden><span class="paper-kicker">La prochaine opportunité</span><strong>Conseiller <em>clientèle.</em></strong><p>Atelier Rivage · Lyon</p><hr><b>Ce que recherche l’offre</b><p>Accueillir les clients.<br>Comprendre leurs besoins.<br>Les accompagner dans leurs achats.</p><span class="formats"><span>Une offre qui vous parle</span></span></div>
-        <div class="paper" data-journey-panel="version" hidden><span class="paper-kicker">Une proposition à relire</span><strong>Votre expérience. <em>Plus lisible.</em></strong><p>Les mêmes faits, une autre présentation.</p><hr><b>Conseil et accompagnement client</b><p>Accueil et conseil des clients en rayon.<br>Encaissement et réassort.</p><span class="check">✓ À ajuster avec vos mots</span></div>
-        <span class="footnote">Exemple fictif · vous gardez la main.</span></div>
-      <div class="journey-controls" role="group" aria-label="Découvrir le parcours">
-        <button data-journey="cv" aria-pressed="true"><span class="index">01</span><span><strong>Votre vrai CV.</strong><small>Importez votre document ou collez son texte. Vérifiez les noms, les dates et les compétences.</small></span></button>
-        <button data-journey="offre" aria-pressed="false"><span class="index">02</span><span><strong>L’offre qui vous plaît.</strong><small>Ouvrez une annonce dans Chrome. Votre espace apparaît à côté de l’offre.</small></span></button>
-        <button data-journey="version" aria-pressed="false"><span class="index">03</span><span><strong>Votre prochaine version.</strong><small>Explorez les atouts et les pistes. Relisez, ajustez, choisissez votre design, puis exportez votre proposition en PDF.</small></span></button>
+      <div class="stats stagger">
+        <div class="stat"><b><span class="count" data-to="92">92</span> %</b><p>des recruteurs interrogés disent que leur logiciel ne rejette pas automatiquement les CV.</p><cite>Enhancv, 25 recruteurs, 2025</cite></div>
+        <div class="stat"><b>×<span class="count" data-to="2">2</span></b><p>de taux d'entretien pour les candidatures avec un CV adapté à l'offre.</p><cite>Huntr, 139 927 candidatures, T1 2026</cite></div>
+        <div class="stat"><b><span class="count" data-to="96.7" data-dec="1">96,7</span> %</b><p>des CV réécrits par une IA sans garde-fous contiennent au moins une affirmation inventée.</p><cite>Takano, arXiv 2608.26171, 2026</cite></div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="section" id="installer" aria-labelledby="installer-title">
-  <div class="wrap two-cols">
-    <div class="reveal"><span class="eyebrow">Simple, même sans être à l’aise avec l’ordinateur</span><h2 id="installer-title">Installer Juste <span class="ton">en 3 étapes.</span></h2><p>Aucun compte à créer, aucune carte bancaire. Si vous bloquez, écrivez-nous à <a href="mailto:contact@justecv.fr">contact@justecv.fr</a> : on vous aide.</p></div>
-    <ol class="numbered big">
-      <li class="reveal"><span>01.</span><div><h3>Ajoutez l’extension à Chrome.</h3><p>Cliquez sur « Rejoindre la bêta gratuite », puis sur le bouton bleu « Ajouter à Chrome ».</p></div></li>
-      <li class="reveal"><span>02.</span><div><h3>Ajoutez votre CV une fois.</h3><p>Un fichier PDF ou Word, une photo de votre CV, ou simplement son texte. Il reste enregistré sur votre ordinateur.</p></div></li>
-      <li class="reveal"><span>03.</span><div><h3>Ouvrez une offre et cliquez sur le « j ».</h3><p>L’icône jaune de Juste, en haut à droite de Chrome, ouvre votre analyse à côté de l’annonce. Sur un autre site, collez le texte de l’offre.</p></div></li>
-    </ol>
-  </div>
-</section>
+  <!-- Démo -->
+  <section id="demo" class="band">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Démo</p>
+        <h2>Voyez ce que Juste garde, prouve et refuse d'inventer.</h2>
+        <p class="lede">Choisissez un profil d'exemple et lancez l'analyse. <span class="mouse-only">Survolez</span><span class="touch-only">Touchez</span> une ligne réécrite pour voir d'où elle vient dans le CV.</p>
+      </div>
 
-<section class="section" id="mobile" aria-labelledby="mobile-title">
-  <div class="wrap two-cols">
-    <div class="reveal"><span class="eyebrow">Sur votre téléphone aussi</span><h2 id="mobile-title">Pas d’ordinateur ? <span class="ton">Juste tient dans votre poche.</span></h2><p>L’appli Juste s’ouvre dans le navigateur de votre téléphone, sans rien installer depuis un magasin d’applications. Ajoutez votre CV, puis collez le texte d’une offre (sur iPhone, vous pouvez aussi la partager avec le raccourci Juste) : vous obtenez la même analyse. Votre CV reste enregistré sur votre téléphone.</p><a class="button" href="app/">Ouvrir l’appli sur mon téléphone <span aria-hidden="true">↗</span></a></div>
-    <ul class="facts-list reveal"><li>Fonctionne sur iPhone et Android</li><li>Même analyse, même jury, même CV adapté</li><li>3 analyses gratuites par semaine pendant la bêta</li></ul>
-  </div>
-</section>
+      <div class="demo-controls reveal">
+        <div class="seg" role="group" aria-label="Profil d'exemple">
+          <button type="button" id="p-ines" data-profile="ines" aria-pressed="true">Commerciale B2B</button>
+          <button type="button" id="p-thomas" data-profile="thomas" aria-pressed="false">Reconversion logistique</button>
+        </div>
+        <button type="button" class="btn btn-primary" id="runDemo">Lancer l'analyse</button>
+      </div>
 
-<section class="section" id="collection" aria-labelledby="collection-title">
-  <div class="wrap">
-    <div class="section-head reveal"><div><span class="eyebrow">04 · Le fond vous appartient. Le style aussi.</span><h2 id="collection-title">Une présence. <span class="ton">À votre image.</span></h2></div><p>Trois présentations à choisir dans l’extension avant l’export PDF. Ci-dessous, de vrais exports d’un CV fictif.</p></div>
-    <div class="collection">
-      <a class="collection-card reveal" href="atelier-cv.html?style=essentiel#atelier"><div class="sheet-shot"><img src="assets/produit/cv-essentiel.webp" alt="CV fictif exporté dans la présentation Essentiel" width="1100" height="1298" loading="lazy"></div><div class="collection-copy"><span class="eyebrow">01 · Une colonne</span><h3>Essentiel</h3><p>La clarté, simplement.</p></div></a>
-      <a class="collection-card reveal" href="atelier-cv.html?style=signature#atelier"><div class="sheet-shot"><img src="assets/produit/cv-signature.webp" alt="CV fictif exporté dans la présentation Signature" width="1100" height="1298" loading="lazy"></div><div class="collection-copy"><span class="eyebrow">02 · Une colonne</span><h3>Signature</h3><p>Une élégance tranquille.</p></div></a>
-      <a class="collection-card reveal" href="atelier-cv.html?style=perspective#atelier"><div class="sheet-shot"><img src="assets/produit/cv-perspective.webp" alt="CV fictif exporté dans la présentation Perspective" width="1100" height="1298" loading="lazy"></div><div class="collection-copy"><span class="eyebrow">03 · Deux colonnes</span><h3>Perspective</h3><p>Un nouvel équilibre.</p></div></a>
+      <div class="demo stagger">
+        <div class="card spot">
+          <div class="card-title"><span>CV d'exemple</span><span class="mono" id="cvName"></span></div>
+          <div class="cv-lines" id="cvLines"></div>
+          <div class="offer-box" id="offerBox"></div>
+        </div>
+
+        <div class="card result spot" id="result" data-state="idle" aria-live="polite">
+          <div class="res-idle">
+            <p>Le résultat de l'analyse s'affichera ici.</p>
+            <button type="button" class="btn btn-ghost" id="runDemo2">Lancer l'analyse</button>
+          </div>
+          <div class="res-skel" aria-hidden="true">
+            <div class="sk big"></div><div class="sk"></div><div class="sk w80"></div><div class="sk w60"></div><div class="sk"></div><div class="sk w80"></div><div class="sk w60"></div>
+            <p>Lecture de l'offre, vérification ligne par ligne…</p>
+          </div>
+          <div class="res-body">
+            <div>
+              <div class="card-title"><span>Compatibilité</span><span id="range"></span></div>
+              <div class="score-row"><span class="score-big" id="score">0</span><span class="score-sub">/ 100</span></div>
+              <div class="bar" aria-hidden="true"><i id="scoreBar"></i></div>
+            </div>
+            <div>
+              <div class="card-title"><span>Exigences de l'offre</span><span>poids</span></div>
+              <div class="score-break" id="reqs"></div>
+            </div>
+            <div>
+              <div class="card-title"><span>CV réécrit pour l'offre</span><span>source</span></div>
+              <div class="bullets" id="bullets"></div>
+            </div>
+            <div>
+              <div class="card-title"><span>Refusé : absent de votre CV</span></div>
+              <div class="removed" id="removed"></div>
+            </div>
+            <p class="tip" id="tip"></p>
+          </div>
+        </div>
+      </div>
+      <p class="demo-note">Démo avec des profils et des offres d'exemple, résultats précalculés. Dans l'extension, l'analyse porte sur votre CV et l'offre que vous consultez.</p>
     </div>
-    <a class="text-link" href="atelier-cv.html#atelier">Explorer la collection <span aria-hidden="true">↗</span></a>
-  </div>
-</section>
+  </section>
 
-<section class="section" id="ameliorer">
-  <div class="wrap two-cols">
-    <div class="reveal"><span class="eyebrow">05 · Chaque détail compte</span><h2>Comprendre. Ajuster. <span class="ton">Avancer.</span></h2><p>Un score devient utile quand vous savez quoi faire ensuite.</p><a class="text-link" href="#demo" id="show-improvements">Explorer les pistes <span aria-hidden="true">↗</span></a></div>
-    <ol class="numbered big">
-      <li class="reveal"><span>01.</span><div><span class="mini-label">À préciser</span><h3>Donner du relief à vos missions.</h3><p>Expliquez comment vous avez utilisé un outil ou mené un projet. Un exemple réel rend votre expérience plus lisible.</p></div></li>
-      <li class="reveal"><span>02.</span><div><span class="mini-label">À mettre en avant</span><h3>Révéler vos acquis pertinents.</h3><p>Une mission de stage ou un engagement peut répondre à l’offre. Décrivez ce que vous avez réellement fait.</p></div></li>
-      <li class="reveal"><span>03.</span><div><span class="mini-label">À développer</span><h3>Identifier votre prochaine étape.</h3><p>Une compétence absente peut devenir une piste d’apprentissage. Ajoutez-la à votre CV une fois acquise.</p></div></li>
-    </ol>
-  </div>
-</section>
-
-<section class="section" id="donnees" aria-labelledby="donnees-title">
-  <div class="wrap">
-    <div class="section-head reveal"><div><span class="eyebrow">Vos données</span><h2 id="donnees-title">Votre CV reste <span class="ton">chez vous.</span></h2></div><p>Ce qui est envoyé, à qui, et combien de temps : tout est écrit noir sur blanc.</p></div>
-    <div class="privacy-grid">
-      <article class="reveal"><h3>Enregistré dans votre navigateur</h3><p>Votre CV et vos résultats ne sont pas stockés sur un compte en ligne.</p></article>
-      <article class="reveal"><h3>Coordonnées retirées</h3><p>Avant chaque analyse, votre nom, votre email, votre téléphone, votre adresse et vos liens sont retirés du texte envoyé.</p></article>
-      <article class="reveal"><h3>Rien de conservé</h3><p>Le serveur de Juste ne garde pas le texte de votre CV : la suite d’une analyse reste 30 minutes en mémoire, jamais sur disque.</p></article>
-      <article class="reveal"><h3>Effacé en un clic</h3><p>« Effacer mon CV » ou « Tout effacer », depuis le panneau. Ni publicité, ni mouchard.</p></article>
+  <!-- Comment ça marche -->
+  <section id="fonctionnement">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Fonctionnement</p>
+        <h2>Trois étapes, moins d'une minute.</h2>
+      </div>
+      <div class="steps stagger">
+        <div class="step"><h3>Ajoutez votre CV une fois</h3><p>PDF, Word, texte ou image. Il reste enregistré dans votre navigateur, découpé en lignes numérotées.</p></div>
+        <div class="step"><h3>Ouvrez une offre d'emploi</h3><p>Cliquez sur l'icône Juste. Le panneau latéral lit l'annonce sur les principaux sites d'emploi, ou le texte que vous collez.</p></div>
+        <div class="step"><h3>Relisez, ajustez, exportez</h3><p>Vérifiez chaque modification, précisez ce qui est vrai, puis exportez en PDF parmi trois mises en page.</p></div>
+      </div>
     </div>
-    <a class="text-link reveal" href="confidentialite.html">Lire la politique de confidentialité <span aria-hidden="true">↗</span></a>
-  </div>
-</section>
+  </section>
 
-<section class="section" id="tarifs">
-  <div class="wrap">
-    <div class="section-head centered reveal"><div><span class="eyebrow">06 · À votre rythme</span><h2>Gratuit pendant la bêta. <span class="ton">Premium ensuite.</span></h2></div><p>Pendant la bêta, Juste est entièrement gratuit. Premium et le Pass recherche ouvriront plus tard ; leurs prix sont annoncés dès maintenant.</p></div>
-    <div class="pricing">
-      <article class="price-card reveal"><span class="eyebrow">Disponible pendant la bêta</span><h3>Accès gratuit</h3><p class="price">0 €<small>sans carte bancaire</small></p><ul><li>3 analyses par semaine</li><li>Score, atouts et pistes à améliorer</li><li>Jury de 2 évaluateurs : logiciel de tri et recruteur</li><li>CV adapté et export PDF</li></ul><button class="button button-block" data-install>Rejoindre la bêta gratuite <span aria-hidden="true">↗</span></button></article>
-      <article class="price-card premium reveal"><span class="eyebrow">Après la bêta</span><h3>Premium</h3><p class="price">7,99 €<small>TTC par mois, prévu</small></p><ul><li>Jusqu’à 50 analyses par mois</li><li>Analyse plus approfondie, avec un modèle d’IA plus avancé</li><li>Jury complet de 7 évaluateurs : manager, concurrent, patron, expert et sceptique en plus</li><li>Toutes les fonctions de l’accès gratuit</li><li>Renouvellement automatique chaque mois</li><li>Résiliation en ligne, à tout moment, depuis l’extension</li></ul><p class="soon">Pas encore disponible : aucun paiement n’est possible pendant la bêta.</p><p class="price-legal">TVA non applicable, art. 293 B du CGI. Prix, renouvellement et résiliation rappelés dans l’extension avant tout paiement.</p></article>
-      <article class="price-card reveal"><span class="eyebrow">Après la bêta</span><h3>Pass recherche</h3><p class="price">19,99 €<small>TTC pour 3 mois, prévu</small></p><ul><li>Tout Premium pendant 3 mois</li><li>Jusqu’à 50 analyses par mois</li><li>Paiement unique, sans abonnement</li><li>Aucun renouvellement : il s’arrête seul</li><li>Pensé pour la durée d’une recherche d’emploi</li></ul><p class="soon">Pas encore disponible : aucun paiement n’est possible pendant la bêta.</p><p class="price-legal">TVA non applicable, art. 293 B du CGI.</p></article>
+  <!-- Ce que vous obtenez -->
+  <section class="band">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Ce que vous obtenez</p>
+        <h2>Une analyse complète, pas un simple score.</h2>
+      </div>
+      <div class="features stagger">
+        <div class="feature spot"><span class="k">score</span><h3>Compatibilité décomposée</h3><p>Une fourchette, exigence par exigence, avec ce qui compte le plus pour le poste. Jamais un « 94 % garanti ».</p></div>
+        <div class="feature spot"><span class="k">atouts</span><h3>Atouts prouvés</h3><p>Chaque point fort renvoie à la ligne exacte de votre CV qui le justifie.</p></div>
+        <div class="feature spot"><span class="k">pistes</span><h3>Pistes concrètes</h3><p>Ce qui manque, et ce que vous pouvez préciser si c'est vrai.</p></div>
+        <div class="feature spot"><span class="k">profil</span><h3>Profil recherché</h3><p>Ce que le recruteur attend vraiment, résumé à partir de l'annonce.</p></div>
+        <div class="feature spot"><span class="k">jury</span><h3>L'avis du jury</h3><p>Le logiciel de tri et le recruteur notent votre CV et disent ce qui les ferait changer d'avis.</p></div>
+        <div class="feature spot"><span class="k">pdf</span><h3>CV reformulé</h3><p>Une version pour l'offre, modifiable, exportable en PDF dans trois mises en page.</p></div>
+      </div>
     </div>
-    <p class="note center">Bêta gratuite : aucun abonnement ne démarre depuis cette page ni depuis l’extension.</p>
-  </div>
-</section>
+  </section>
 
-<section class="section pros" id="accompagnants" aria-labelledby="accompagnants-title">
-  <div class="wrap reveal pros-card"><div><span class="eyebrow">Conseillers, associations, écoles</span><h2 id="accompagnants-title">Vous accompagnez <span class="ton">des candidats ?</span></h2><p>Juste est gratuit pendant la bêta. Faites-le tester à celles et ceux que vous accompagnez, et dites-nous ce qui les aiderait vraiment.</p></div><a class="button" href="mailto:contact@justecv.fr?subject=B%C3%AAta%20Juste%20%E2%80%94%20accompagnement">Écrire à l’équipe <span aria-hidden="true">↗</span></a></div>
-</section>
-
-<section class="section" id="faq">
-  <div class="wrap two-cols">
-    <div class="reveal"><span class="eyebrow">07 · Pour aller plus loin</span><h2>Vos questions. <span class="ton">En toute clarté.</span></h2></div>
-    <div class="faq reveal">
-      <details><summary>Et si je commence mon parcours ?</summary><p>Vos stages, projets, jobs étudiants et engagements comptent. Décrivez-les avec précision : l’outil travaille avec ce que vous fournissez. Un modèle vide doit être complété avant l’analyse.</p></details>
-      <details><summary>Quels fichiers sont acceptés ?</summary><p>PDF, DOCX, TXT, Markdown et images JPG, PNG, WebP ou BMP. Les images et PDF scannés sont lus sur votre ordinateur. Vérifiez toujours le texte extrait, les dates et les niveaux de langues.</p></details>
-      <details><summary>Que signifie le score ?</summary><p>Il estime la correspondance entre le texte de votre CV et celui d’une offre. Il ne prédit pas une décision de recrutement ou le résultat d’un logiciel de recrutement.</p></details>
-      <details><summary>Est-ce que quelque chose est inventé ?</summary><p>Non. Ce qui manque dans votre CV reste marqué « à compléter », et l’export PDF est bloqué tant que ces emplacements ne sont pas remplacés par vos vraies informations ou supprimés.</p></details>
-      <details><summary>Comment mes informations sont-elles traitées ?</summary><p>Votre CV reste enregistré dans votre navigateur. Pour une analyse, le texte du CV et celui de l’offre sont envoyés au serveur de Juste puis à OpenAI, après retrait du nom, de l’email, du téléphone, de l’adresse et des liens reconnus. Vous pouvez tout effacer depuis le panneau. Consultez notre <a href="confidentialite.html">politique de confidentialité</a>.</p></details>
-      <details><summary>Est-ce que mon CV est envoyé automatiquement ?</summary><p>Non. Vous consultez les propositions, les relisez et exportez votre document. Vous choisissez vous-même où et quand candidater.</p></details>
-      <details><summary>Comment accéder à l’extension ?</summary><p>Pendant la bêta, l’extension est diffusée par un lien du Chrome Web Store. Le bouton « Rejoindre la bêta » y mène dès qu’elle est publiée. En attendant, la démonstration de cette page peut déjà être explorée.</p></details>
+  <!-- Promesse de fidélité -->
+  <section>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">La promesse</p>
+        <h2>Fidèle à votre parcours, ligne par ligne.</h2>
+        <p class="lede">Juste vérifie chaque phrase réécrite contre votre CV d'origine. Un chiffre, un outil, un diplôme ou un employeur absent est retiré et signalé.</p>
+      </div>
+      <div class="compare stagger">
+        <div class="col bad">
+          <h3>Une IA générique</h3>
+          <ul>
+            <li><span class="draw">« Maîtrise de HubSpot et Salesforce »</span><small>Votre CV ne mentionne que Salesforce.</small></li>
+            <li><span class="draw">« A dirigé une équipe commerciale »</span><small>Vous avez participé, vous n'avez pas dirigé.</small></li>
+            <li><span class="draw">« Anglais courant »</span><small>Votre CV indique un niveau B2.</small></li>
+          </ul>
+        </div>
+        <div class="col good spot">
+          <h3>Juste</h3>
+          <ul>
+            <li><span class="hl-scroll">Suivi des devis et relances sous Salesforce</span><small>Reformulé à partir de la ligne L7.</small></li>
+            <li><span class="hl-scroll">Négociation et signature de contrats annuels</span><small>Conservé tel quel, ligne L5.</small></li>
+            <li>Anglais : niveau B2<small>Gardé à l'identique. Si vous avez progressé, Juste vous invite à le préciser.</small></li>
+          </ul>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="section final" id="final">
-  <div class="wrap reveal"><span class="eyebrow">Votre prochain chapitre</span><h2>Il commence par <span class="ton">ce que vous savez faire.</span></h2><div class="actions"><a class="button" href="#demo">Explorer la démonstration <span aria-hidden="true">↗</span></a><button class="button button-ghost" data-install>Rejoindre la bêta gratuite <span aria-hidden="true">↗</span></button></div><p class="note">Bêta gratuite, 3 analyses par semaine.</p></div>
-</section>
+  <!-- Le jury -->
+  <section class="band">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Le jury</p>
+        <h2>Deux lecteurs, deux avis, une marche à suivre.</h2>
+        <p class="lede">Juste simule le logiciel qui classe les candidatures et le recruteur qui les lit. Chacun dit ce qui le ferait changer d'avis.</p>
+      </div>
+      <div class="jury stagger">
+        <div class="msg"><span class="who who-ats" aria-hidden="true">ATS</span><div class="bubble"><b>Logiciel de tri · 78 / 100</b>Les mots-clés prospection, CRM et portefeuille clients sont présents. Le secteur SaaS n'apparaît nulle part.</div></div>
+        <div class="msg"><span class="who who-rh" aria-hidden="true">RH</span><div class="bubble"><b>Recruteur · 82 / 100</b>Les chiffres sont concrets et crédibles. Ce qui me ferait changer d'avis : un exemple de vente à une entreprise du numérique.</div></div>
+        <div class="msg"><span class="who who-ats" aria-hidden="true">→</span><div class="bubble"><b>Ce que vous pouvez faire</b>Si vous avez déjà vendu à une entreprise du numérique, ajoutez-le à votre CV. Sinon, Juste ne l'écrira pas à votre place.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Confidentialité -->
+  <section>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Confidentialité</p>
+        <h2>Votre CV reste chez vous.</h2>
+      </div>
+      <div class="privacy stagger">
+        <div><h3>Stocké localement</h3><p>Votre CV et vos réglages sont enregistrés dans votre navigateur, pas sur nos serveurs.</p></div>
+        <div><h3>Envoyé seulement à l'analyse</h3><p>Le texte du CV et de l'offre part vers OpenAI uniquement quand vous lancez une analyse.</p></div>
+        <div><h3>Jamais revendu</h3><p>Aucune revente, aucune publicité, aucun autre usage que l'adaptation de votre CV.</p></div>
+        <div><h3>Effacé en un geste</h3><p>Désinstaller l'extension supprime tout ce qu'elle a enregistré.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prix -->
+  <section id="prix" class="band">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Prix</p>
+        <h2>Payez le temps de votre recherche, pas plus.</h2>
+        <p class="lede">Une recherche d'emploi a une fin. Nos passes aussi : ils s'arrêtent seuls.</p>
+      </div>
+      <div class="prices stagger">
+        <div class="price spot">
+          <h3>Gratuit</h3>
+          <p class="amount">0 €</p>
+          <ul><li>3 analyses complètes</li><li>Score, atouts, pistes et jury</li><li>Export PDF</li></ul>
+          <a class="btn btn-ghost" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Commencer</a>
+        </div>
+        <div class="price featured spot">
+          <h3>Pass 30 jours</h3>
+          <p class="amount">9,90 € <small>TTC</small></p>
+          <ul><li>Analyses illimitées dans la limite d'un usage normal</li><li>Trois mises en page PDF</li><li>Pas de renouvellement automatique</li></ul>
+          <button type="button" class="btn btn-primary buy" data-pass="30 jours">Choisir le pass 30 jours</button>
+        </div>
+        <div class="price spot">
+          <h3>Pass 7 jours</h3>
+          <p class="amount">4,99 € <small>TTC</small></p>
+          <ul><li>Jusqu'à 40 analyses</li><li>Idéal pour une candidature urgente</li><li>Pas de renouvellement automatique</li></ul>
+          <button type="button" class="btn btn-ghost buy" data-pass="7 jours">Choisir le pass 7 jours</button>
+        </div>
+      </div>
+      <p class="no-renew reveal"><span class="hl">Aucun renouvellement automatique.</span> Vous payez une fois, le pass s'arrête à la date prévue.</p>
+      <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">FAQ</p>
+        <h2>Vos questions.</h2>
+      </div>
+      <div class="faq stagger">
+        <details><summary>Est-ce que Juste peut mentir à ma place ?</summary><p>Non. Chaque phrase réécrite doit s'appuyer sur une ligne de votre CV. Un outil, un chiffre, un diplôme ou une expérience absents sont retirés et signalés. Les reformulations plus fortes sont surlignées pour que vous les relisiez.</p></details>
+        <details><summary>Mon CV est-il envoyé quelque part ?</summary><p>Il est stocké dans votre navigateur. Quand vous lancez une analyse, le texte du CV et de l'offre est envoyé à OpenAI pour produire le résultat, puis il n'est utilisé à aucune autre fin. Le détail est dans notre politique de confidentialité.</p></details>
+        <details><summary>Est-ce que ça marche sur téléphone ?</summary><p>L'extension fonctionne sur Chrome pour ordinateur. Une version pour iPhone et iPad est en préparation.</p></details>
+        <details><summary>Quelle différence avec ChatGPT ?</summary><p>ChatGPT réécrit sans vérifier. Juste lit l'offre directement sur la page, décompose la compatibilité exigence par exigence, cite la ligne source de chaque atout et refuse d'ajouter ce que vous n'avez pas fait.</p></details>
+        <details><summary>Puis-je être remboursé ?</summary><p>Les passes ne se renouvellent pas. Pour toute demande de remboursement, écrivez-nous : nous répondons sous 48 heures ouvrées.</p></details>
+        <details><summary>Sur quels sites l'offre est-elle détectée ?</summary><p>Sur les principaux sites d'emploi français. Sur un autre site, cliquez sur l'icône pour lire la page ouverte, ou collez le texte de l'offre dans le panneau.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA final -->
+  <section class="final band">
+    <div class="wrap reveal">
+      <h2>Votre prochaine candidature mérite <span class="hl">votre vrai CV</span>.</h2>
+      <p class="lede">Installez Juste, ajoutez votre CV et obtenez votre première analyse en moins d'une minute.</p>
+      <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome, c'est gratuit</a>
+      <div class="copy-row"><span>Sur téléphone ? Copiez le lien pour l'ouvrir sur votre ordinateur.</span><button type="button" class="btn btn-ghost" id="copyLink">Copier le lien</button></div>
+    </div>
+  </section>
 </main>
 
-<footer class="footer"><div class="wrap"><div class="footer-main"><a class="brand" href="#accueil"><img src="assets/logo-mark.svg" alt="" width="24" height="24"><span>juste</span></a><nav aria-label="Informations"><a href="mentions-legales.html">Mentions légales</a><a href="confidentialite.html">Confidentialité</a><a href="cgv.html">Conditions</a></nav><a class="footer-top" href="#accueil" aria-label="Revenir en haut">↑</a></div><div class="footer-bottom"><span>© 2026 Juste</span><span>Propositions assistées par IA. Votre relecture reste essentielle.</span></div></div></footer>
+<footer>
+  <div class="wrap">
+    <a class="logo" href="#top"><span class="logo-mark" aria-hidden="true"><span></span></span>Juste</a>
+    <nav aria-label="Informations légales">
+      <a href="mentions-legales.html">Mentions légales</a>
+      <a href="cgv.html">CGV</a>
+      <a href="confidentialite.html">Confidentialité</a>
+      <a href="mailto:contact@justecv.fr">Contact : contact@justecv.fr</a>
+    </nav>
+  </div>
+  <div class="wrap">
+    <p class="sources">Sources des chiffres : <a href="https://itbrief.co.uk/story/study-reveals-ats-rarely-auto-rejects-cvs-debunks-75-myth" target="_blank" rel="noopener">étude Enhancv sur les ATS (2025)</a> · rapport Huntr sur les candidatures, T1 2026 · <a href="https://arxiv.org/html/2608.26171" target="_blank" rel="noopener">H. Takano, « Mitigating Fabrication in Multi-Stage LLM Pipelines for Hiring », arXiv 2608.26171</a>. Juste utilise une IA : relisez toujours votre CV avant de l'envoyer.</p>
+  </div>
+</footer>
 
-<dialog id="access-dialog" class="dialog" aria-labelledby="access-title"><button class="dialog-close" id="close-access" aria-label="Fermer">×</button><span class="eyebrow">Bêta gratuite</span><h2 id="access-title">Bientôt, <span class="ton">à vos côtés.</span></h2><p>La bêta ouvre très bientôt. L’installation se fera depuis le Chrome Web Store, par le lien de la bêta.</p><p class="muted">Découvrez dès maintenant le parcours dans notre démonstration interactive.</p><button class="button" id="back-to-demo">Explorer la démonstration <span aria-hidden="true">↗</span></button></dialog>
-<dialog id="mobile-menu" class="menu" aria-label="Navigation principale"><div class="menu-top"><span class="brand"><img src="assets/logo-mark.svg" alt="" width="24" height="24"><span>juste</span></span><button id="close-menu" aria-label="Fermer le menu">×</button></div><nav><a href="#demo">L’extension <span>01</span></a><a href="#installer">Installer <span>·</span></a><a href="#mobile">Sur téléphone <span>·</span></a><a href="#donnees">Vos données <span>·</span></a><a href="#approche">Notre approche <span>02</span></a><a href="#comment">Le parcours <span>03</span></a><a href="#collection">Les styles <span>04</span></a><a href="#tarifs">Les formules <span>06</span></a><a href="#faq">Vos questions <span>07</span></a></nav><p>Chaque parcours a sa place.</p></dialog>
-</body>
-</html>
+<script>
+(function () {
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  /* Bandeau : on double le contenu pour une boucle sans couture */
+  var tk = $("ticker"); tk.innerHTML += tk.innerHTML;
+
+  /* Nav : ombre après le premier défilement */
+  var nav = $("nav");
+  function onScroll() { nav.classList.toggle("scrolled", window.scrollY > 8); }
+  window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+
+  /* Secours pour les navigateurs sans animation-timeline (Firefox) */
+  var hasView = window.CSS && CSS.supports && CSS.supports("animation-timeline: view()");
+  if (!hasView && !reduce && "IntersectionObserver" in window) {
+    document.documentElement.classList.add("fx");
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, { rootMargin: "0px 0px -10% 0px", threshold: .1 });
+    document.querySelectorAll(".reveal, .stagger").forEach(function (el) { io.observe(el); });
+  }
+
+  /* Projecteur qui suit le curseur sur les cartes */
+  document.addEventListener("pointermove", function (e) {
+    var el = e.target.closest && e.target.closest(".spot");
+    if (!el) return;
+    var r = el.getBoundingClientRect();
+    el.style.setProperty("--mx", (e.clientX - r.left) + "px");
+    el.style.setProperty("--my", (e.clientY - r.top) + "px");
+  }, { passive: true });
+
+  /* Compteurs */
+  function fmt(n, dec) { return dec ? n.toFixed(dec).replace(".", ",") : String(Math.round(n)); }
+  function animateNumber(el, to, dec, ms) {
+    if (reduce) { el.textContent = fmt(to, dec); return; }
+    var start = null; ms = ms || 1100;
+    function step(ts) {
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / ms, 1), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(to * e, dec);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  if ("IntersectionObserver" in window && !reduce) {
+    var cio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var el = e.target; cio.unobserve(el);
+        animateNumber(el, parseFloat(el.getAttribute("data-to")), +el.getAttribute("data-dec") || 0, 1400);
+      });
+    }, { threshold: .6 });
+    document.querySelectorAll(".count").forEach(function (el) { cio.observe(el); });
+  }
+
+  /* Démo */
+  var DATA = {
+    ines: {
+      name: "Inès M.",
+      cv: ["Inès Martin · Commerciale B2B", "2022–2026 · Commerciale terrain, Distrib'Pro (Lyon)", "Portefeuille de 80 comptes PME, CA annuel de 1,2 M€", "Prospection téléphonique : 25 rendez-vous qualifiés par mois", "Négociation et signature de contrats annuels", "2020–2022 · Assistante commerciale, Imprim'Express", "Suivi des devis et relances clients sous Salesforce", "Formation : BTS NDRC, 2020", "Anglais : niveau B2 · Permis B"],
+      offer: "<strong>Chargé(e) d'affaires B2B</strong> · éditeur de logiciel RH, Lyon. Prospection, CRM, portefeuille clients, anglais professionnel, permis B.",
+      score: 86, range: "fourchette 82 à 88",
+      reqs: [["Prospection B2B", "obligatoire · ×3", "ok", "prouvé L4"], ["Maîtrise d'un CRM", "obligatoire · ×3", "ok", "prouvé L7"], ["Gestion d'un portefeuille clients", "obligatoire · ×3", "ok", "prouvé L3"], ["Anglais professionnel", "souhaité · ×1", "mid", "partiel L9"], ["Connaissance du secteur SaaS", "souhaité · ×1", "no", "absent"], ["Permis B", "éliminatoire", "ok", "prouvé L9"]],
+      bullets: [["Développement d'un portefeuille de 80 comptes PME représentant 1,2 M€ de CA annuel", [3], ""], ["Prospection B2B : 25 rendez-vous qualifiés obtenus chaque mois", [4], ""], ["Négociation et signature de contrats annuels", [5], ""], ["Suivi du cycle de vente sous Salesforce : devis et relances clients", [7], "Reformulation plus large que l'original : à relire."]],
+      removed: [["Expérience de la vente de logiciels SaaS", "Demandée par l'offre, absente de votre CV. Non ajoutée."], ["Anglais courant", "Votre CV indique B2. Conservé tel quel."]],
+      tip: "Piste : si vous avez déjà vendu à une entreprise du numérique, précisez-le dans votre CV. Juste pourra alors le citer."
+    },
+    thomas: {
+      name: "Thomas B.",
+      cv: ["Thomas Bernard · En reconversion vers la logistique", "2018–2025 · Chef de partie, Brasserie du Port (Nantes)", "Gestion des stocks et des commandes fournisseurs, inventaire hebdomadaire", "Encadrement d'une équipe de 3 commis", "Respect des normes d'hygiène HACCP", "2025 · CACES R489 catégories 1A et 3", "Titre professionnel Agent magasinier (en cours)", "Permis B"],
+      offer: "<strong>Chef d'équipe préparation de commandes</strong> · entrepôt, Saint-Herblain. CACES R489 1A et 3, gestion de stock, encadrement, expérience en entrepôt, WMS.",
+      score: 60, range: "fourchette 55 à 64",
+      reqs: [["CACES R489 catégories 1A et 3", "éliminatoire", "ok", "prouvé L6"], ["Gestion de stock", "obligatoire · ×3", "ok", "prouvé L3"], ["Encadrement d'équipe", "obligatoire · ×3", "ok", "prouvé L4"], ["Expérience en entrepôt", "obligatoire · ×3", "no", "absent"], ["Maîtrise d'un WMS", "souhaité · ×1", "no", "absent"]],
+      bullets: [["Gestion des stocks et des commandes fournisseurs, inventaire chaque semaine", [3], ""], ["Encadrement d'une équipe de 3 personnes", [4], "« commis » devient « personnes » : vérifiez que cela vous convient."], ["CACES R489 catégories 1A et 3, obtenu en 2025", [6], ""], ["Titre professionnel Agent magasinier, en cours", [7], ""]],
+      removed: [["3 ans d'expérience en entrepôt", "Demandée par l'offre, absente de votre CV. Non ajoutée."], ["Maîtrise du WMS SAP", "Aucun logiciel de gestion d'entrepôt dans votre CV. Non ajouté."]],
+      tip: "Piste : si vous avez utilisé un logiciel de gestion de stock en cuisine, nommez-le dans votre CV. Juste pourra le rapprocher de l'exigence WMS."
+    }
+  };
+  var current = "ines", timer = null, seq = [], userHover = false;
+  function stopSeq() { seq.forEach(clearTimeout); seq = []; }
+
+  function renderCV() {
+    var d = DATA[current];
+    $("cvName").textContent = d.name;
+    $("cvLines").innerHTML = d.cv.map(function (t, i) {
+      return '<div class="cv-line" data-line="' + (i + 1) + '"><span class="ln">L' + (i + 1) + '</span><span>' + esc(t) + '</span></div>';
+    }).join("");
+    $("offerBox").innerHTML = "Offre d'exemple : " + d.offer;
+  }
+  function highlight(lines) {
+    document.querySelectorAll(".cv-line").forEach(function (el) {
+      el.classList.toggle("on", lines.indexOf(+el.getAttribute("data-line")) !== -1);
+    });
+  }
+  function showResult() {
+    var d = DATA[current], pill = { ok: "pill-ok", mid: "pill-mid", no: "pill-no" };
+    $("range").textContent = d.range;
+    $("reqs").innerHTML = d.reqs.map(function (r) {
+      return '<div class="req"><span>' + esc(r[0]) + '<small>' + esc(r[1]) + '</small></span><span class="pill ' + pill[r[2]] + '">' + esc(r[3]) + '</span></div>';
+    }).join("");
+    $("bullets").innerHTML = d.bullets.map(function (b) {
+      var src = b[1].map(function (n) { return "L" + n; }).join(", ");
+      return '<div class="bullet' + (b[2] ? " review" : "") + '" tabindex="0" data-src="' + b[1].join(",") + '"><span>' + esc(b[0]) + (b[2] ? "<em>" + esc(b[2]) + "</em>" : "") + '</span><span class="src">' + src + '</span></div>';
+    }).join("");
+    $("removed").innerHTML = d.removed.map(function (r) {
+      return '<div><span class="strike">' + esc(r[0]) + '</span><small>' + esc(r[1]) + '</small></div>';
+    }).join("");
+    $("tip").textContent = d.tip;
+    document.querySelectorAll(".bullet").forEach(function (el) {
+      var lines = el.getAttribute("data-src").split(",").map(Number);
+      ["mouseenter", "focus", "click"].forEach(function (ev) { el.addEventListener(ev, function () { stopSeq(); userHover = true; highlight(lines); }); });
+      ["mouseleave", "blur"].forEach(function (ev) { el.addEventListener(ev, function () { userHover = false; highlight([]); }); });
+    });
+    $("result").setAttribute("data-state", "ready");
+    $("scoreBar").style.width = "0";
+    requestAnimationFrame(function () { requestAnimationFrame(function () { $("scoreBar").style.width = d.score + "%"; }); });
+    animateNumber($("score"), d.score, 0, 1000);
+    /* Sur petit écran, le résultat est sous le CV : on l'amène à l'écran */
+    if (window.innerWidth < 900) { $("result").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }); }
+    /* Les lignes utilisées s'allument une à une, puis s'éteignent, sauf si l'utilisateur survole déjà une ligne */
+    stopSeq();
+    if (!reduce) {
+      var used = []; d.bullets.forEach(function (b) { b[1].forEach(function (n) { if (used.indexOf(n) < 0) used.push(n); }); });
+      used.forEach(function (n, i) { seq.push(setTimeout(function () { if (!userHover) highlight(used.slice(0, i + 1)); }, 250 + i * 220)); });
+      seq.push(setTimeout(function () { if (!userHover) highlight([]); }, 250 + used.length * 220 + 900));
+    }
+  }
+  function runDemo() {
+    clearTimeout(timer); stopSeq(); highlight([]);
+    if (reduce) { showResult(); return; }
+    $("result").setAttribute("data-state", "loading");
+    timer = setTimeout(showResult, 900);
+  }
+  function setProfile(p) {
+    current = p;
+    ["ines", "thomas"].forEach(function (k) { $("p-" + k).setAttribute("aria-pressed", String(k === p)); });
+    renderCV();
+    clearTimeout(timer); stopSeq();
+    $("result").setAttribute("data-state", "idle");
+  }
+
+  /* Boutons d'achat : le paiement n'est pas encore branché, on le dit clairement */
+  var toastTimer = null;
+  document.querySelectorAll(".buy").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var t = $("toast");
+      t.innerHTML = "Le pass " + esc(b.getAttribute("data-pass")) + " arrive très bientôt. En attendant, <a href=\"https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl\" target=\"_blank\" rel=\"noopener\">commencez gratuitement</a> avec 3 analyses offertes.";
+      t.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { t.hidden = true; }, 6000);
+    });
+  });
+  $("p-ines").addEventListener("click", function () { setProfile("ines"); });
+  $("p-thomas").addEventListener("click", function () { setProfile("thomas"); });
+  $("runDemo").addEventListener("click", runDemo);
+  $("runDemo2").addEventListener("click", runDemo);
+
+  $("copyLink").addEventListener("click", function () {
+    var btn = this, url = location.href.split("#")[0];
+    function done(t) { btn.textContent = t; setTimeout(function () { btn.textContent = "Copier le lien"; }, 2200); }
+    try { navigator.clipboard.writeText(url).then(function () { done("Lien copié"); }, function () { done(url); }); }
+    catch (e) { done(url); }
+  });
+
+  renderCV();
+  /* Héros : le score et la barre montent à l'ouverture */
+  $("heroScore").textContent = "0";
+  setTimeout(function () { animateNumber($("heroScore"), 86, 0, 1200); $("heroBar").style.width = "86%"; }, reduce ? 0 : 700);
+})();
+</script>
+
+</body></html>
