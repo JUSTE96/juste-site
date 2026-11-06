@@ -255,3 +255,15 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
   #v-result.jury-only { grid-template-columns: minmax(0, 720px); justify-content: center; }
   #v-result.jury-only .tabs, #v-result.jury-only .tab, #v-result.jury-only .result-foot { grid-column: 1; grid-row: auto; }
 }
+
+/* Repères officiels du métier (ROME, RNCP, BMO) sous le profil recherché */
+.referentiel { padding: 16px; display: grid; gap: 9px; margin-top: 12px; border: 1px solid rgba(127, 127, 127, .25); border-radius: 14px; }
+.referentiel h3 { margin: 0; font-size: 16px; }
+.ref-check { display: grid; gap: 6px; padding: 10px 12px; border-radius: 10px; background: rgba(127, 127, 127, .08); }
+.ref-check p { margin: 0; font-size: 13.5px; }
+.ref-check .pill { justify-self: start; }
+.ref-src { margin: 0; font-size: 11.5px; opacity: .75; }
+.ref-src a { color: inherit; }
+.ref-more summary { cursor: pointer; font-size: 13.5px; font-weight: 600; }
+.ref-more ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 3px; font-size: 13px; }
+.ref-more .chips { margin-top: 6px; }

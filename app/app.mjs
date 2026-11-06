@@ -8,6 +8,7 @@ import { parseIncomingJob, buildShareScript } from "./incoming.mjs";
 import { alignScore } from "./shared/match-score.mjs";
 import { juryHtml, buildQuestions, questionsHtml, collectAnswers, answersAsCvText, withTodos, stripTodos } from "./shared/jury-view.mjs";
 import { countPlaceholders } from "./shared/jury-rules.mjs";
+import { renderReferentiel } from "./shared/referentiel-view.mjs";
 import { cvSearchTerms, rankOffers } from "./shared/job-fit.mjs";
 
 const SETTINGS = window.LARPEUR_APP || {};
@@ -409,7 +410,7 @@ function renderResult(d, job) {
   $("tab-cible").innerHTML = `<div class="card persona"><h3>${esc(pc.titre || "Profil attendu")}</h3><p class="muted">${esc(pc.resume || "")}</p>
     ${pc.competences_cles?.length ? `<div class="chips">${pc.competences_cles.map((c) => `<span>${esc(c)}</span>`).join("")}</div>` : ""}
     ${pc.experiences_types?.length ? `<ul>${pc.experiences_types.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}
-    <p class="muted small">Exemple synthétique généré par IA pour comprendre les attentes de l'offre.</p></div>`;
+    <p class="muted small">Exemple synthétique généré par IA pour comprendre les attentes de l'offre.</p></div>` + renderReferentiel(d.referentiel);
 
   renderMatch(d);
   if (d.cv_adapte) { setCvPending(false); renderCv(d.cv_adapte, d.guard || {}); } else setCvPending(true);
