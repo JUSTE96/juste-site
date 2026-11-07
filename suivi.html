@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Suivi des candidatures – Juste</title>
+<meta name="description" content="Un tableau de bord de vos candidatures, gratuit et sans compte : tout reste dans votre navigateur.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Hanken+Grotesk:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="pages.css">
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="logo" href="index.html" aria-label="Juste, accueil"><span class="logo-mark" aria-hidden="true"><span></span></span>Juste</a>
+  <nav class="nav-links" aria-label="Pages"><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html" aria-current="page">Suivi</a><a class="hide-sm" href="index.html#prix">Prix</a></nav>
+</div></header>
+<main><div class="wrap">
+  <p class="eyebrow">Suivi des candidatures</p>
+  <h1>Toutes vos candidatures, <span class="hl">sans compte</span>.</h1>
+  <p class="lede">Notez chaque offre, son statut et la date de relance. Rien n'est envoyé : la liste est enregistrée dans ce navigateur, sur cet appareil. Exportez-la en CSV quand vous voulez.</p>
+
+  <section class="card" aria-labelledby="ajout">
+    <h2 id="ajout" style="font-size:1.3rem">Ajouter une candidature</h2>
+    <form class="form" id="form" autocomplete="off">
+      <label>Poste <input name="poste" required placeholder="Préparateur de commandes"></label>
+      <label>Entreprise <input name="entreprise" required placeholder="Entrepôt Exemple"></label>
+      <label>Lieu <input name="lieu" placeholder="Lyon"></label>
+      <label>Envoyée le <input name="date" type="date"></label>
+      <label>Statut <select name="statut">
+        <option value="brouillon">À envoyer</option><option value="envoyee" selected>Envoyée</option><option value="relance">À relancer</option><option value="entretien">Entretien</option><option value="offre">Proposition reçue</option><option value="refus">Refus</option>
+      </select></label>
+      <label>Lien de l'offre <input name="lien" type="url" placeholder="https://…"></label>
+      <label class="full">Notes <input name="notes" placeholder="Contact, salaire annoncé, points à préparer…"></label>
+      <div class="full row-actions"><button class="btn btn-primary btn-sm" type="submit" id="submit">Ajouter</button><button class="btn btn-ghost btn-sm" type="button" id="cancel" hidden>Annuler</button></div>
+    </form>
+  </section>
+
+  <div class="stats" id="stats" aria-live="polite"></div>
+
+  <section class="card" aria-labelledby="liste">
+    <div class="row-actions" style="justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <h2 id="liste" style="font-size:1.3rem;margin:0">Candidatures</h2>
+      <div class="row-actions"><select id="filtre" aria-label="Filtrer par statut" style="width:auto"><option value="">Tous les statuts</option><option value="brouillon">À envoyer</option><option value="envoyee">Envoyées</option><option value="relance">À relancer</option><option value="entretien">Entretiens</option><option value="offre">Propositions</option><option value="refus">Refus</option></select><button type="button" id="export">Exporter en CSV</button><button type="button" id="wipe">Tout effacer</button></div>
+    </div>
+    <div style="overflow-x:auto"><table id="table"><thead><tr><th>Poste</th><th>Entreprise</th><th>Envoyée</th><th>Statut</th><th>Notes</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+    <p class="empty" id="empty">Aucune candidature pour l'instant. Ajoutez la première ci-dessus.</p>
+  </section>
+
+  <p class="small muted" style="margin-top:1.5rem">Conseil : relancez une candidature restée sans réponse après 7 à 10 jours. Les lignes « Envoyée » depuis plus de 10 jours passent en jaune pour vous le rappeler.</p>
+  <div class="cta">
+    <h2>Avant d'envoyer, vérifiez le CV.</h2>
+    <p class="muted">Juste lit l'offre, mesure la compatibilité exigence par exigence et adapte votre CV sans rien inventer.</p>
+    <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter Juste à Chrome</a>
+  </div>
+</div></main>
+<footer><div class="wrap">
+  <a href="index.html">Accueil</a><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a><a href="mailto:contact@justecv.fr">contact@justecv.fr</a>
+</div><div class="wrap"><p class="src">Les candidatures sont stockées dans le navigateur (localStorage) et ne quittent jamais votre appareil. Effacer les données du site les supprime.</p></div></footer>
+<script>
+(function () {
+  var KEY = "juste.suivi.v1";
+  var LABELS = { brouillon: "À envoyer", envoyee: "Envoyée", relance: "À relancer", entretien: "Entretien", offre: "Proposition", refus: "Refus" };
+  var $ = function (id) { return document.getElementById(id); };
+  var form = $("form"), rows = $("rows"), editing = null;
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
+  function save(list) { try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) { alert("Impossible d'enregistrer : le stockage du navigateur est bloqué ou plein."); } }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function fmtDate(d) { if (!d) return ""; var p = d.split("-"); return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : d; }
+  function days(d) { if (!d) return 0; return Math.floor((Date.now() - new Date(d + "T00:00:00").getTime()) / 864e5); }
+  function render() {
+    var list = load(), f = $("filtre").value, shown = f ? list.filter(function (c) { return c.statut === f; }) : list;
+    rows.innerHTML = shown.map(function (c) {
+      var old = c.statut === "envoyee" && days(c.date) > 10;
+      var poste = c.lien ? '<a href="' + esc(c.lien) + '" target="_blank" rel="noopener">' + esc(c.poste) + "</a>" : esc(c.poste);
+      return "<tr data-id=\"" + c.id + "\"><td><strong>" + poste + "</strong>" + (c.lieu ? '<br><span class="small muted">' + esc(c.lieu) + "</span>" : "") + "</td><td>" + esc(c.entreprise) + "</td><td>" + esc(fmtDate(c.date)) + (c.date ? '<br><span class="small muted">il y a ' + days(c.date) + " j</span>" : "") + '</td><td><span class="statut statut-' + (old ? "relance" : esc(c.statut)) + '">' + (old ? "À relancer" : LABELS[c.statut] || c.statut) + '</span></td><td class="small">' + esc(c.notes) + '</td><td class="row-actions"><button type="button" data-act="edit">Modifier</button><button type="button" data-act="del">Supprimer</button></td></tr>';
+    }).join("");
+    $("empty").hidden = shown.length > 0; $("table").hidden = shown.length === 0;
+    var n = function (s) { return list.filter(function (c) { return c.statut === s; }).length; };
+    $("stats").innerHTML = "<span><strong>" + list.length + "</strong> candidatures</span><span><strong>" + n("entretien") + "</strong> entretiens</span><span><strong>" + list.filter(function (c) { return c.statut === "relance" || (c.statut === "envoyee" && days(c.date) > 10); }).length + "</strong> à relancer</span><span><strong>" + n("offre") + "</strong> propositions</span>";
+  }
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var fd = new FormData(form), list = load(), c = {};
+    ["poste", "entreprise", "lieu", "date", "statut", "lien", "notes"].forEach(function (k) { c[k] = (fd.get(k) || "").toString().trim(); });
+    if (editing) { var i = list.findIndex(function (x) { return x.id === editing; }); if (i > -1) { c.id = editing; list[i] = c; } }
+    else { c.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); list.unshift(c); }
+    save(list); editing = null; form.reset(); $("submit").textContent = "Ajouter"; $("cancel").hidden = true; render();
+  });
+  $("cancel").addEventListener("click", function () { editing = null; form.reset(); $("submit").textContent = "Ajouter"; $("cancel").hidden = true; });
+  rows.addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-act]"); if (!b) return;
+    var id = b.closest("tr").getAttribute("data-id"), list = load(), c = list.find(function (x) { return x.id === id; });
+    if (b.dataset.act === "del") { if (confirm("Supprimer cette candidature ?")) { save(list.filter(function (x) { return x.id !== id; })); render(); } return; }
+    editing = id; Object.keys(c).forEach(function (k) { if (form.elements[k]) form.elements[k].value = c[k]; });
+    $("submit").textContent = "Enregistrer"; $("cancel").hidden = false; form.scrollIntoView({ behavior: "smooth", block: "start" }); form.elements.poste.focus();
+  });
+  $("filtre").addEventListener("change", render);
+  $("export").addEventListener("click", function () {
+    var list = load(), cols = ["poste", "entreprise", "lieu", "date", "statut", "lien", "notes"];
+    var csv = "﻿" + cols.join(";") + "\n" + list.map(function (c) { return cols.map(function (k) { return '"' + String(c[k] || "").replace(/"/g, '""') + '"'; }).join(";"); }).join("\n");
+    var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" })); a.download = "candidatures-juste.csv"; a.click(); URL.revokeObjectURL(a.href);
+  });
+  $("wipe").addEventListener("click", function () { if (load().length && confirm("Effacer toutes les candidatures de ce navigateur ? Cette action est définitive.")) { save([]); render(); } });
+  var today = new Date(); form.elements.date.value = today.toISOString().slice(0, 10);
+  render();
+})();
+</script>
+</body>
+</html>
