@@ -242,6 +242,11 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
   main { padding: 0; width: 100%; }
   #tab-cv { display: block !important; }
   .cv-paper { border: 0; box-shadow: none; padding: 0; font-size: 11pt; }
+  /* nocturne.css force l'affichage des onglets (!important) : sélecteurs plus précis pour qu'ils restent hors du PDF.
+     Seule la feuille du CV part à l'impression : ni questions, ni bandeau, ni fonds de carte. */
+  html body .tabs, html body #qa-box, html body #cv-todo, html body .cv-actions, html body .letter { display: none !important; }
+  html, html body, html body main, html body #v-result, html body #tab-cv { background: #fff !important; box-shadow: none !important; border: 0 !important; padding: 0 !important; margin: 0 !important; backdrop-filter: none !important; }
+  html body #cv-paper { background: #fff !important; color: #111 !important; margin: 0 !important; }
 }
 
 .tabs button[hidden], .score-card[hidden] { display: none !important; }
