@@ -238,7 +238,7 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
 @media print {
   @page { margin: 14mm; }
   body { background: #fff; }
-  .top, .score-card, .match, .tabs, .cv-actions, .result-foot, #tab-forts, #tab-ecarts, #tab-cible, .toast { display: none !important; }
+  .top, .score-card, .match, .tabs, .cv-actions, .letter, .result-foot, #tab-forts, #tab-ecarts, #tab-cible, .toast { display: none !important; }
   main { padding: 0; width: 100%; }
   #tab-cv { display: block !important; }
   .cv-paper { border: 0; box-shadow: none; padding: 0; font-size: 11pt; }
@@ -267,3 +267,7 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
 .ref-more summary { cursor: pointer; font-size: 13.5px; font-weight: 600; }
 .ref-more ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 3px; font-size: 13px; }
 .ref-more .chips { margin-top: 6px; }
+
+/* ---------- lettre de motivation ---------- */
+.letter { margin-top: 12px; }
+.letter-text { white-space: pre-wrap; font: inherit; font-size: 14px; line-height: 1.55; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin: 0; user-select: text; }

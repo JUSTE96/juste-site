@@ -183,6 +183,17 @@
           <button id="copy-cv" class="btn btn-ghost btn-block">Copier le texte</button>
           <p class="muted small center">Relisez avant d'envoyer : la proposition est assistée par IA.</p>
         </div>
+        <section id="letter" class="card letter" hidden>
+          <h2>Lettre de motivation</h2>
+          <p class="muted small">Quatre paragraphes, uniquement à partir de votre CV et de cette analyse. Compte comme une analyse de votre quota.</p>
+          <button id="write-letter" class="btn btn-ghost btn-block">Rédiger la lettre</button>
+          <p id="letter-status" class="muted small" role="status" aria-live="polite" hidden></p>
+          <pre id="letter-text" class="letter-text" hidden></pre>
+          <div id="letter-actions" class="cv-actions" hidden>
+            <button id="copy-letter" class="btn btn-primary btn-block">Copier la lettre</button>
+            <p class="muted small center">Relisez avant d'envoyer : complétez les crochets [À COMPLÉTER] et supprimez ce que vous ne diriez pas à l'oral.</p>
+          </div>
+        </section>
       </div>
       <div class="result-foot">
         <p id="result-quota" class="muted small center"></p>

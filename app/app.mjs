@@ -372,7 +372,7 @@ function renderResult(d, job) {
   $("v-result").classList.toggle("jury-only", juryOnly);
   document.querySelectorAll('.tabs button[data-tab="forts"], .tabs button[data-tab="ecarts"], .tabs button[data-tab="cible"]').forEach((b) => { b.hidden = juryOnly; });
   document.querySelector(".score-card").hidden = juryOnly;
-  renderJury(d); renderQuestions(d);
+  renderJury(d); renderQuestions(d); renderLetter(d, juryOnly);
   if (juryOnly) {
     $("match").hidden = true;
     if (d.cv_adapte) { groundSourceSections(d.cv_adapte, state.profile?.cv || ""); setCvPending(false); renderCv(d.cv_adapte, d.guard || {}); } else setCvPending(true);
@@ -605,6 +605,38 @@ async function copy(text, button, label) {
   toast(label || "Copié");
 }
 $("copy-cv").addEventListener("click", () => copy($("cv-paper").innerText, $("copy-cv"), "CV copié"));
+
+/* ---------- lettre de motivation : quatre paragraphes, à partir de l'analyse affichée ---------- */
+let letterBusy = false;
+function renderLetter(d, hidden = false) {
+  $("letter").hidden = hidden;
+  const text = d?.lettre?.texte || "";
+  $("letter-text").hidden = !text; $("letter-text").textContent = text;
+  $("letter-actions").hidden = !text;
+  $("write-letter").textContent = text ? "Rédiger à nouveau" : "Rédiger la lettre";
+  $("write-letter").disabled = letterBusy;
+  $("letter-status").hidden = true;
+}
+async function writeLetter() {
+  const d = state.result, job = state.job;
+  if (!d || !job || job.juryOnly || letterBusy) return;
+  letterBusy = true; $("write-letter").disabled = true;
+  $("letter-status").hidden = false; $("letter-status").textContent = "Rédaction en cours… Quelques secondes.";
+  try {
+    const p = state.profile;
+    const res = await api("/api/letter", { cv: pseudonymize(p.cv, p), job: { title: job.title, company: job.company, location: job.location, text: job.text, host: job.host }, analysis: { points_forts: d.points_forts || [], ecarts: d.ecarts || [] } });
+    if (state.result !== d) return;
+    d.lettre = { texte: res.texte, at: Date.now() };
+    state.me = { remaining: res.remaining, premium: res.premium, resetAt: res.resetAt }; renderQuota();
+    saveLast(d); renderLetter(d);
+  } catch (e) {
+    if (state.result !== d) return;
+    if (e.status === 429 && e.data?.code === "quota_exhausted") { state.me = e.data; renderQuota(); }
+    $("letter-status").textContent = e.status ? (e.data?.error || "La lettre n'a pas pu être rédigée. Réessayez.") : (e.message || "Serveur injoignable.");
+  } finally { letterBusy = false; $("write-letter").disabled = false; }
+}
+$("write-letter").addEventListener("click", writeLetter);
+$("copy-letter").addEventListener("click", () => copy($("letter-text").textContent, $("copy-letter"), "Lettre copiée"));
 
 /* ---------- bouton Partager : script du raccourci et favori ---------- */
 let extractSource = null;
