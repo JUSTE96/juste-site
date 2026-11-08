@@ -1,7 +1,19 @@
-<!doctype html><html lang="fr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Juste</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Juste lit l'offre d'emploi, mesure votre compatibilité et adapte votre vrai CV en citant chaque ligne qu'il utilise. Rien n'est inventé.">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Juste – votre vrai CV, adapté à chaque offre, sans rien inventer</title>
+<meta name="description" content="Juste lit l'offre d'emploi, mesure votre compatibilité et adapte votre vrai CV en citant chaque ligne qu'il utilise. Rien n'est inventé. Extension Chrome gratuite.">
+<link rel="canonical" href="https://justecv.fr/">
+<meta name="theme-color" content="#0d1813">
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="app/icon-180.png">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Juste"><meta property="og:locale" content="fr_FR"><meta property="og:url" content="https://justecv.fr/">
+<meta property="og:title" content="Juste – votre vrai CV, adapté à chaque offre"><meta property="og:description" content="Extension Chrome gratuite : compatibilité exigence par exigence, chaque atout prouvé par une ligne de votre CV. Rien n'est inventé.">
+<meta property="og:image" content="https://justecv.fr/assets/og-juste.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Juste : votre vrai CV, adapté à chaque offre, sans rien inventer">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Juste", "url": "https://justecv.fr/", "applicationCategory": "BusinessApplication", "operatingSystem": "Chrome", "inLanguage": "fr", "description": "Extension Chrome qui lit l'offre d'emploi, mesure la compatibilité avec votre CV exigence par exigence et adapte votre CV sans rien inventer.", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR", "description": "3 analyses gratuites par semaine"}, "installUrl": "https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl", "publisher": {"@type": "Organization", "name": "Juste", "url": "https://justecv.fr/", "email": "contact@justecv.fr"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Juste", "url": "https://justecv.fr/", "inLanguage": "fr"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,650;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
@@ -99,8 +111,17 @@ p { margin: 0; }
 .nav-links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: var(--mark); transform: scaleX(0); transform-origin: 0 50%; transition: transform .35s var(--ease); }
 .nav-links a:hover { color: var(--fg); }
 .nav-links a:hover::after { transform: scaleX(1); }
+.nav-links a.active { color: var(--fg); }
+.nav-links a.active::after { transform: scaleX(1); }
 .nav .btn { padding: .7rem 1.05rem; font-size: .92rem; }
-@media (max-width: 860px) { .nav-links { display: none; } .nav .btn { margin-left: auto; } }
+.nav-menu { display: none; margin-left: auto; position: relative; }
+.nav-menu summary { list-style: none; cursor: pointer; width: 44px; height: 44px; position: relative; border-radius: 10px; border: 1px solid var(--line); }
+.nav-menu summary::-webkit-details-marker { display: none; }
+.nav-menu summary span { position: absolute; left: 12px; width: 18px; height: 2px; background: var(--fg); border-radius: 2px; transition: transform .25s ease, opacity .25s ease, top .25s ease; } .nav-menu summary span:nth-child(1) { top: 14px; } .nav-menu summary span:nth-child(2) { top: 20px; } .nav-menu summary span:nth-child(3) { top: 26px; }
+.nav-menu[open] summary span:nth-child(1) { top: 20px; transform: rotate(45deg); } .nav-menu[open] summary span:nth-child(2) { opacity: 0; } .nav-menu[open] summary span:nth-child(3) { top: 20px; transform: rotate(-45deg); }
+.nav-menu nav { position: absolute; right: 0; top: calc(100% + .6rem); min-width: 15rem; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: .5rem; display: grid; box-shadow: 0 20px 50px -20px rgba(0,0,0,.8); }
+.nav-menu nav a { padding: .75rem .9rem; border-radius: 8px; text-decoration: none; color: var(--fg); font-weight: 600; } .nav-menu nav a:hover { background: var(--surface-2); }
+@media (max-width: 860px) { .nav-links, .nav-cta { display: none; } .nav-menu { display: block; } }
 
 /* Héros */
 .hero { padding-block: clamp(3rem, 7vw, 6rem) clamp(4rem, 8vw, 6.5rem); overflow: hidden; }
@@ -321,28 +342,70 @@ footer a:hover { color: var(--fg); }
 .sources { font-size: .8rem; color: var(--faint); margin-top: 1.4rem; max-width: 60rem; }
 .sources a { color: var(--faint); }
 
+/* Pictogrammes (assets/icones.svg) */
+.ico { width: 1.6rem; height: 1.6rem; color: var(--sapin); flex: none; }
+.feature .ico, .step .ico { margin-bottom: .1rem; }
+
+/* Visite guidée : captures réelles du produit */
+.tour { display: grid; grid-template-columns: 18rem minmax(0, 1fr); gap: 1.2rem; align-items: start; }
+.tour-tabs { display: grid; gap: .5rem; }
+.tour-tab { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: .9rem 1rem; color: var(--muted); cursor: pointer; font: inherit; display: grid; gap: .3rem; transition: border-color .25s ease, background .25s ease; }
+.tour-tab b { color: var(--fg); font-weight: 600; display: flex; align-items: center; gap: .55rem; } .tour-tab b .ico { width: 1.25rem; height: 1.25rem; }
+.tour-tab small { font-size: .9rem; line-height: 1.45; }
+.tour-tab[aria-selected="true"] { border-color: var(--mark); background: var(--surface-2); }
+.tour-view { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: var(--surface); box-shadow: 0 30px 80px -30px rgba(0,0,0,.7); aspect-ratio: 1280 / 800; }
+.tour-view img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .4s ease; }
+.tour-view img.on { opacity: 1; }
+@media (max-width: 900px) { .tour { grid-template-columns: 1fr; } .tour-tabs { grid-template-columns: repeat(2, 1fr); } .tour-view { order: -1; } }
+@media (max-width: 520px) { .tour-tabs { grid-template-columns: 1fr; } }
+
+/* Trois mises en page PDF */
+.layouts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+.layout-card { margin: 0; display: grid; gap: .7rem; }
+.layout-card .shot { border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #fff; aspect-ratio: 1200 / 1000; }
+.layout-card img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; transition: transform .7s var(--ease); }
+.layout-card:hover img { transform: translateY(-6%); }
+.layout-card figcaption b { display: block; font-weight: 600; } .layout-card figcaption span { color: var(--muted); font-size: .94rem; }
+@media (max-width: 820px) { .layouts { grid-template-columns: 1fr; } .layout-card .shot { aspect-ratio: 1200 / 640; } }
+
+/* Pour aller plus loin */
+.more-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+.more-card { display: grid; gap: .6rem; align-content: start; padding: 1.4rem; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); text-decoration: none; color: inherit; transition: border-color .3s ease, transform .5s var(--ease); }
+.more-card:hover { border-color: var(--sapin); transform: translateY(-3px); }
+.more-card p { color: var(--muted); font-size: .97rem; } .more-card .go { color: var(--sapin); font-weight: 600; font-size: .95rem; }
+@media (max-width: 820px) { .more-grid { grid-template-columns: 1fr; } }
+
+/* Pied de page en colonnes */
+footer .cols { width: 100%; display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 2rem; padding-bottom: 2rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
+footer .cols h4 { margin: 0 0 .7rem; font: 600 .78rem/1 var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
+footer .cols ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
+footer .cols p { color: var(--muted); max-width: 28rem; margin-top: .8rem; }
+@media (max-width: 820px) { footer .cols { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { footer .cols { grid-template-columns: 1fr; } }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .step::after, .draw::after { transform: scaleX(1); }
 }
 </style>
-
+</head>
+<body>
 <div class="progress" aria-hidden="true"></div>
 
 <header class="nav" id="nav">
   <div class="wrap">
     <a class="logo" href="#top" aria-label="Juste, accueil"><span class="logo-mark" aria-hidden="true"><span></span></span>Juste</a>
     <nav class="nav-links" aria-label="Sections">
-      <a href="#fonctionnement">Fonctionnement</a>
       <a href="#demo">Démo</a>
+      <a href="#fonctionnement">Fonctionnement</a>
       <a href="#prix">Prix</a>
-      <a href="#faq">FAQ</a>
       <a href="metiers.html">Métiers</a>
       <a href="guides.html">Guides</a>
       <a href="suivi.html">Suivi</a>
     </nav>
-    <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a>
+    <a class="btn btn-primary nav-cta" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a>
+    <details class="nav-menu"><summary aria-label="Menu"><span></span><span></span><span></span></summary><nav aria-label="Pages (mobile)"><a href="#demo">Démo</a><a href="#fonctionnement">Fonctionnement</a><a href="#prix">Prix</a><a href="#faq">FAQ</a><a href="metiers.html">Repères par métier</a><a href="guides.html">Guides</a><a href="suivi.html">Suivi des candidatures</a><a href="app/">Appli web (téléphone)</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a></nav></details>
   </div>
 </header>
 
@@ -358,7 +421,7 @@ footer a:hover { color: var(--fg); }
           <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome, c'est gratuit</a>
           <a class="btn btn-ghost" href="#demo">Voir la démo</a>
         </div>
-        <p class="mobile-note">Sur téléphone, l'extension ne s'installe pas. Essayez la démo ici, puis ouvrez cette page sur votre ordinateur.</p>
+        <p class="mobile-note">Sur téléphone, l'extension ne s'installe pas : <a href="app/">ouvrez l'appli web</a>, même analyse, même CV, rien à installer.</p>
         <div class="reassure"><span>CV stocké dans votre navigateur</span><span>Chaque atout prouvé par une ligne</span><span>Sans abonnement caché</span></div>
       </div>
 
@@ -469,10 +532,36 @@ footer a:hover { color: var(--fg); }
         <h2>Trois étapes, moins d'une minute.</h2>
       </div>
       <div class="steps stagger">
-        <div class="step"><h3>Ajoutez votre CV une fois</h3><p>PDF, Word, texte ou image. Il reste enregistré dans votre navigateur, découpé en lignes numérotées.</p></div>
-        <div class="step"><h3>Ouvrez une offre d'emploi</h3><p>Cliquez sur l'icône Juste. Le panneau latéral lit l'annonce sur les principaux sites d'emploi, ou le texte que vous collez.</p></div>
-        <div class="step"><h3>Relisez, ajustez, exportez</h3><p>Vérifiez chaque modification, précisez ce qui est vrai, puis exportez en PDF parmi trois mises en page.</p></div>
+        <div class="step"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#cv"></use></svg><h3>Ajoutez votre CV une fois</h3><p>PDF, Word, texte ou image. Il reste enregistré dans votre navigateur, découpé en lignes numérotées.</p></div>
+        <div class="step"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#panneau"></use></svg><h3>Ouvrez une offre d'emploi</h3><p>Cliquez sur l'icône Juste. Le panneau latéral lit l'annonce sur les principaux sites d'emploi, ou le texte que vous collez.</p></div>
+        <div class="step"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#export"></use></svg><h3>Relisez, ajustez, exportez</h3><p>Vérifiez chaque modification, précisez ce qui est vrai, puis exportez en PDF parmi trois mises en page.</p></div>
       </div>
+    </div>
+  </section>
+
+  <!-- Visite guidée -->
+  <section id="visite">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Visite guidée</p>
+        <h2>Juste, à côté de l'offre que vous lisez.</h2>
+        <p class="lede">Le panneau s'ouvre sur la page de l'annonce. Voici les quatre écrans que vous verrez, avec un CV et une offre de démonstration.</p>
+      </div>
+      <div class="tour reveal">
+        <div class="tour-tabs" role="tablist" aria-label="Écrans de l'extension">
+          <button type="button" class="tour-tab" role="tab" aria-selected="true"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#offre"></use></svg><b>L'offre est lue sur la page</b><small>Juste détecte l'annonce ouverte et montre ce qu'il a compris avant de lancer l'analyse.</small></button>
+          <button type="button" class="tour-tab" role="tab" aria-selected="false"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#score"></use></svg><b>Compatibilité, exigence par exigence</b><small>Un score expliqué : ce qui est dans votre CV, en partie, ou manquant, avec le poids de chaque exigence.</small></button>
+          <button type="button" class="tour-tab" role="tab" aria-selected="false"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#jury"></use></svg><b>L'avis du jury</b><small>Sept lecteurs simulés notent votre CV, du logiciel de tri au sceptique, et disent ce qui les ferait changer d'avis.</small></button>
+          <button type="button" class="tour-tab" role="tab" aria-selected="false"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#pdf"></use></svg><b>Votre CV adapté, à relire</b><small>Chaque ligne vient de votre CV. Ce qui manque reste « à compléter », jamais inventé. Export PDF en trois présentations.</small></button>
+        </div>
+        <div class="tour-view spot">
+          <img class="on" src="assets/produit/ecran-01.png" width="1280" height="800" alt="Le panneau Juste ouvert à côté d'une offre d'assistant logistique : l'offre détectée sur la page et le bouton Analyser cette offre." loading="lazy">
+          <img src="assets/produit/ecran-03.png" width="1280" height="800" alt="Écran de compatibilité : 75 %, quatre points communs prouvés par le CV, deux compétences manquantes signalées." loading="lazy">
+          <img src="assets/produit/ecran-04.png" width="1280" height="800" alt="Écran du jury : sept lecteurs notent le CV, du logiciel de tri au sceptique, avec les erreurs classées de la plus grave à la moins grave." loading="lazy">
+          <img src="assets/produit/ecran-05.png" width="1280" height="800" alt="Écran du CV adapté : le texte reformulé à partir du CV d'origine, avec le choix entre trois présentations avant l'export PDF." loading="lazy">
+        </div>
+      </div>
+      <p class="demo-note">Captures de l'extension sur un site d'emploi fictif, avec un CV de démonstration. Aucune donnée réelle.</p>
     </div>
   </section>
 
@@ -484,12 +573,12 @@ footer a:hover { color: var(--fg); }
         <h2>Une analyse complète, pas un simple score.</h2>
       </div>
       <div class="features stagger">
-        <div class="feature spot"><span class="k">score</span><h3>Compatibilité décomposée</h3><p>Une fourchette, exigence par exigence, avec ce qui compte le plus pour le poste. Jamais un « 94 % garanti ».</p></div>
-        <div class="feature spot"><span class="k">atouts</span><h3>Atouts prouvés</h3><p>Chaque point fort renvoie à la ligne exacte de votre CV qui le justifie.</p></div>
-        <div class="feature spot"><span class="k">pistes</span><h3>Pistes concrètes</h3><p>Ce qui manque, et ce que vous pouvez préciser si c'est vrai.</p></div>
-        <div class="feature spot"><span class="k">profil</span><h3>Profil recherché</h3><p>Ce que le recruteur attend vraiment, résumé à partir de l'annonce.</p></div>
-        <div class="feature spot"><span class="k">jury</span><h3>L'avis du jury</h3><p>Le logiciel de tri et le recruteur notent votre CV et disent ce qui les ferait changer d'avis.</p></div>
-        <div class="feature spot"><span class="k">pdf</span><h3>CV reformulé</h3><p>Une version pour l'offre, modifiable, exportable en PDF dans trois mises en page.</p></div>
+        <div class="feature spot"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#score"></use></svg><span class="k">score</span><h3>Compatibilité décomposée</h3><p>Une fourchette, exigence par exigence, avec ce qui compte le plus pour le poste. Jamais un « 94 % garanti ».</p></div>
+        <div class="feature spot"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#preuve"></use></svg><span class="k">atouts</span><h3>Atouts prouvés</h3><p>Chaque point fort renvoie à la ligne exacte de votre CV qui le justifie.</p></div>
+        <div class="feature spot"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#fleche"></use></svg><span class="k">pistes</span><h3>Pistes concrètes</h3><p>Ce qui manque, et ce que vous pouvez préciser si c'est vrai.</p></div>
+        <div class="feature spot"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#personne"></use></svg><span class="k">profil</span><h3>Profil recherché</h3><p>Ce que le recruteur attend vraiment, résumé à partir de l'annonce.</p></div>
+        <div class="feature spot"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#jury"></use></svg><span class="k">jury</span><h3>L'avis du jury</h3><p>Sept lecteurs simulés, du logiciel de tri au recruteur sceptique, notent votre CV et disent ce qui les ferait changer d'avis.</p></div>
+        <div class="feature spot"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#pdf"></use></svg><span class="k">pdf</span><h3>CV reformulé</h3><p>Une version pour l'offre, modifiable, exportable en PDF dans trois mises en page.</p></div>
       </div>
     </div>
   </section>
@@ -528,13 +617,29 @@ footer a:hover { color: var(--fg); }
     <div class="wrap">
       <div class="section-head reveal">
         <p class="eyebrow">Le jury</p>
-        <h2>Deux lecteurs, deux avis, une marche à suivre.</h2>
-        <p class="lede">Juste simule le logiciel qui classe les candidatures et le recruteur qui les lit. Chacun dit ce qui le ferait changer d'avis.</p>
+        <h2>Sept lecteurs, un verdict, une marche à suivre.</h2>
+        <p class="lede">Juste simule le logiciel de tri, le recruteur, le manager du poste, un autre candidat, le patron, l'expert métier et le sceptique. Chacun note votre CV et dit ce qui le ferait changer d'avis. Extrait avec deux d'entre eux :</p>
       </div>
       <div class="jury stagger">
         <div class="msg"><span class="who who-ats" aria-hidden="true">ATS</span><div class="bubble"><b>Logiciel de tri · 78 / 100</b>Les mots-clés prospection, CRM et portefeuille clients sont présents. Le secteur SaaS n'apparaît nulle part.</div></div>
         <div class="msg"><span class="who who-rh" aria-hidden="true">RH</span><div class="bubble"><b>Recruteur · 82 / 100</b>Les chiffres sont concrets et crédibles. Ce qui me ferait changer d'avis : un exemple de vente à une entreprise du numérique.</div></div>
         <div class="msg"><span class="who who-ats" aria-hidden="true">→</span><div class="bubble"><b>Ce que vous pouvez faire</b>Si vous avez déjà vendu à une entreprise du numérique, ajoutez-le à votre CV. Sinon, Juste ne l'écrira pas à votre place.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mises en page -->
+  <section>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Export PDF</p>
+        <h2>Trois présentations, le même texte vérifié.</h2>
+        <p class="lede">Choisissez la mise en page, relisez chaque ligne, exportez. Le PDF reste du texte, lisible par les logiciels de tri comme par les recruteurs.</p>
+      </div>
+      <div class="layouts stagger">
+        <figure class="layout-card"><div class="shot"><img src="assets/produit/cv-essentiel.webp" width="1200" height="1424" alt="CV de démonstration, présentation Essentiel : une colonne, rubriques franches, dates alignées à droite." loading="lazy"></div><figcaption><b>Essentiel</b><span>La clarté, simplement. Une colonne, des rubriques nettes.</span></figcaption></figure>
+        <figure class="layout-card"><div class="shot"><img src="assets/produit/cv-signature.webp" width="1200" height="1424" alt="CV de démonstration, présentation Signature : titre en caractères à empattements, filet vert sapin, rubriques en capitales espacées." loading="lazy"></div><figcaption><b>Signature</b><span>Une présence éditoriale, sobre et reconnaissable.</span></figcaption></figure>
+        <figure class="layout-card"><div class="shot"><img src="assets/produit/cv-perspective.webp" width="1200" height="1424" alt="CV de démonstration, présentation Perspective : deux colonnes, compétences et langues à part." loading="lazy"></div><figcaption><b>Perspective</b><span>Deux colonnes en équilibre, compétences en regard du parcours.</span></figcaption></figure>
       </div>
     </div>
   </section>
@@ -589,6 +694,22 @@ footer a:hover { color: var(--fg); }
   </section>
 
   <!-- FAQ -->
+  <!-- Pour aller plus loin -->
+  <section id="ressources">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Gratuit, sans compte</p>
+        <h2>Des repères, pas des modèles à remplir.</h2>
+        <p class="lede">Trois outils qui n'ont besoin ni de l'extension ni d'une inscription.</p>
+      </div>
+      <div class="more-grid stagger">
+        <a class="more-card spot" href="metiers.html"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#loupe"></use></svg><h3>Repères par métier</h3><p>94 métiers : les savoir-faire, savoirs et certifications que décrit le référentiel public ROME, et comment les écrire dans votre CV.</p><span class="go">Voir les métiers →</span></a>
+        <a class="more-card spot" href="guides.html"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#stylo"></use></svg><h3>Guides</h3><p>Logiciels de tri, mots-clés sans tricher, CACES et certifications, reconversion, lettre de motivation : cinq guides courts et sourcés.</p><span class="go">Lire les guides →</span></a>
+        <a class="more-card spot" href="suivi.html"><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#liste"></use></svg><h3>Suivi des candidatures</h3><p>Un tableau de bord gratuit : offres, statuts, relances, export CSV. Tout reste dans votre navigateur.</p><span class="go">Ouvrir le suivi →</span></a>
+      </div>
+    </div>
+  </section>
+
   <section id="faq">
     <div class="wrap">
       <div class="section-head reveal">
@@ -598,7 +719,7 @@ footer a:hover { color: var(--fg); }
       <div class="faq stagger">
         <details><summary>Est-ce que Juste peut mentir à ma place ?</summary><p>Non. Chaque phrase réécrite doit s'appuyer sur une ligne de votre CV. Un outil, un chiffre, un diplôme ou une expérience absents sont retirés et signalés. Les reformulations plus fortes sont surlignées pour que vous les relisiez.</p></details>
         <details><summary>Mon CV est-il envoyé quelque part ?</summary><p>Il est stocké dans votre navigateur. Quand vous lancez une analyse, le texte du CV et de l'offre est envoyé à OpenAI pour produire le résultat, puis il n'est utilisé à aucune autre fin. Le détail est dans notre politique de confidentialité.</p></details>
-        <details><summary>Est-ce que ça marche sur téléphone ?</summary><p>L'extension fonctionne sur Chrome pour ordinateur. Une version pour iPhone et iPad est en préparation.</p></details>
+        <details><summary>Est-ce que ça marche sur téléphone ?</summary><p>L'extension s'installe sur Chrome pour ordinateur. Sur téléphone, utilisez <a href="app/">l'appli web justecv.fr/app</a> : vous collez l'offre, l'analyse est la même et votre CV reste dans le navigateur.</p></details>
         <details><summary>Quelle différence avec ChatGPT ?</summary><p>ChatGPT réécrit sans vérifier. Juste lit l'offre directement sur la page, décompose la compatibilité exigence par exigence, cite la ligne source de chaque atout et refuse d'ajouter ce que vous n'avez pas fait.</p></details>
         <details><summary>Puis-je être remboursé ?</summary><p>Les passes ne se renouvellent pas. Pour toute demande de remboursement, écrivez-nous : nous répondons sous 48 heures ouvrées.</p></details>
         <details><summary>Sur quels sites l'offre est-elle détectée ?</summary><p>Sur les principaux sites d'emploi français. Sur un autre site, cliquez sur l'icône pour lire la page ouverte, ou collez le texte de l'offre dans le panneau.</p></details>
@@ -619,16 +740,12 @@ footer a:hover { color: var(--fg); }
 
 <footer>
   <div class="wrap">
-    <a class="logo" href="#top"><span class="logo-mark" aria-hidden="true"><span></span></span>Juste</a>
-    <nav aria-label="Informations légales">
-      <a href="metiers.html">Repères par métier</a>
-      <a href="guides.html">Guides</a>
-      <a href="suivi.html">Suivi des candidatures</a>
-      <a href="mentions-legales.html">Mentions légales</a>
-      <a href="cgv.html">CGV</a>
-      <a href="confidentialite.html">Confidentialité</a>
-      <a href="mailto:contact@justecv.fr">Contact : contact@justecv.fr</a>
-    </nav>
+    <div class="cols">
+      <div><a class="logo" href="#top"><span class="logo-mark" aria-hidden="true"><span></span></span>Juste</a><p>Votre vrai CV, adapté à chaque offre, sans rien inventer. Extension Chrome et appli web, faites en France.</p></div>
+      <div><h4>Produit</h4><ul><li><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a></li><li><a href="app/">Appli web (téléphone)</a></li><li><a href="#demo">Démo</a></li><li><a href="#prix">Prix</a></li><li><a href="#faq">Questions fréquentes</a></li></ul></div>
+      <div><h4>Ressources</h4><ul><li><a href="metiers.html">Repères par métier</a></li><li><a href="guides.html">Guides</a></li><li><a href="suivi.html">Suivi des candidatures</a></li><li><a href="guides.html#lettre">Lettre de motivation</a></li></ul></div>
+      <div><h4>Juste</h4><ul><li><a href="mailto:contact@justecv.fr">contact@justecv.fr</a></li><li><a href="mentions-legales.html">Mentions légales</a></li><li><a href="cgv.html">CGV</a></li><li><a href="confidentialite.html">Confidentialité</a></li></ul></div>
+    </div>
   </div>
   <div class="wrap">
     <p class="sources">Sources des chiffres : <a href="https://itbrief.co.uk/story/study-reveals-ats-rarely-auto-rejects-cvs-debunks-75-myth" target="_blank" rel="noopener">étude Enhancv sur les ATS (2025)</a> · rapport Huntr sur les candidatures, T1 2026 · <a href="https://arxiv.org/html/2608.26171" target="_blank" rel="noopener">H. Takano, « Mitigating Fabrication in Multi-Stage LLM Pipelines for Hiring », arXiv 2608.26171</a>. Juste utilise une IA : relisez toujours votre CV avant de l'envoyer.</p>
@@ -658,6 +775,19 @@ footer a:hover { color: var(--fg); }
     }, { rootMargin: "0px 0px -10% 0px", threshold: .1 });
     document.querySelectorAll(".reveal, .stagger").forEach(function (el) { io.observe(el); });
   }
+
+  /* Repère la section visible dans la nav (souligné) */
+  var spyLinks = document.querySelectorAll(".nav-links a[href^='#']");
+  var spySections = ["demo", "fonctionnement", "prix"].map(function (id) { return document.getElementById(id); }).filter(Boolean);
+  var spyQueued = false;
+  function markSection() {
+    spyQueued = false;
+    var line = window.innerHeight * 0.45, current = null;
+    spySections.forEach(function (s) { var r = s.getBoundingClientRect(); if (r.top <= line && r.bottom > line) current = s.id; });
+    spyLinks.forEach(function (a) { a.classList.toggle("active", current !== null && a.getAttribute("href") === "#" + current); });
+  }
+  window.addEventListener("scroll", function () { if (!spyQueued) { spyQueued = true; requestAnimationFrame(markSection); } }, { passive: true });
+  markSection();
 
   /* Projecteur qui suit le curseur sur les cartes */
   document.addEventListener("pointermove", function (e) {
@@ -801,11 +931,20 @@ footer a:hover { color: var(--fg); }
     catch (e) { done(url); }
   });
 
+  /* Visite guidée : un onglet, une capture */
+  var tabs = document.querySelectorAll(".tour-tab"), views = document.querySelectorAll(".tour-view img");
+  tabs.forEach(function (t, i) {
+    t.addEventListener("click", function () {
+      tabs.forEach(function (x, j) { x.setAttribute("aria-selected", String(i === j)); });
+      views.forEach(function (v, j) { v.classList.toggle("on", i === j); });
+    });
+  });
+
   renderCV();
   /* Héros : le score et la barre montent à l'ouverture */
   $("heroScore").textContent = "0";
   setTimeout(function () { animateNumber($("heroScore"), 86, 0, 1200); $("heroBar").style.width = "86%"; }, reduce ? 0 : 700);
 })();
 </script>
-
-</body></html>
+</body>
+</html>

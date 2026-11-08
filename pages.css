@@ -53,3 +53,37 @@ footer { border-top: 1px solid var(--line); padding-block: 2rem; color: var(--fa
 :focus-visible { outline: 2px solid var(--mark); outline-offset: 3px; border-radius: 6px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 @media print { .nav, footer, .cta, .toc { display: none; } body { background: #fff; color: #000; } .card { border-color: #ccc; } }
+
+/* Navigation partagée : liens sur grand écran, menu repliable sur téléphone */
+.nav-cta { margin-left: .5rem; }
+.nav-menu { display: none; margin-left: auto; position: relative; }
+.nav-menu summary { list-style: none; cursor: pointer; width: 44px; height: 44px; position: relative; border-radius: 10px; border: 1px solid var(--line); }
+.nav-menu summary::-webkit-details-marker { display: none; }
+.nav-menu summary span { position: absolute; left: 12px; width: 18px; height: 2px; background: var(--fg); border-radius: 2px; transition: transform .25s ease, opacity .25s ease, top .25s ease; } .nav-menu summary span:nth-child(1) { top: 14px; } .nav-menu summary span:nth-child(2) { top: 20px; } .nav-menu summary span:nth-child(3) { top: 26px; }
+.nav-menu[open] summary span:nth-child(1) { top: 20px; transform: rotate(45deg); } .nav-menu[open] summary span:nth-child(2) { opacity: 0; } .nav-menu[open] summary span:nth-child(3) { top: 20px; transform: rotate(-45deg); }
+.nav-menu nav { position: absolute; right: 0; top: calc(100% + .6rem); min-width: 14rem; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: .5rem; display: grid; box-shadow: 0 20px 50px -20px rgba(0,0,0,.8); }
+.nav-menu nav a { padding: .7rem .9rem; border-radius: 8px; text-decoration: none; color: var(--fg); font-weight: 600; } .nav-menu nav a:hover { background: var(--surface-2); }
+@media (max-width: 760px) { .nav-links, .nav-cta { display: none; } .nav-menu { display: block; } }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.ico { width: 1.25em; height: 1.25em; vertical-align: -.25em; margin-right: .45em; color: var(--sapin); flex: none; }
+
+/* Pages métier */
+.crumbs { font-size: .88rem; color: var(--faint); margin-bottom: 1.2rem; } .crumbs a { color: var(--muted); text-decoration: none; } .crumbs a:hover { color: var(--fg); }
+.badges { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: .2rem 0 1rem; } .badges a.pill { text-decoration: none; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 19rem; gap: 1.2rem; align-items: start; margin-top: 1.5rem; }
+.layout .main { display: grid; gap: 1.2rem; min-width: 0; } .layout .side { display: grid; gap: 1.2rem; position: sticky; top: 5rem; }
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .layout .side { position: static; } }
+.card h2 { font-size: 1.4rem; margin-bottom: .5rem; } .card h3 { margin-top: 1.1rem; }
+.chips span.core { border-color: var(--mark); } .chips span.core::before { content: "★ "; color: var(--mark); }
+.conseils { padding-left: 1.3em; display: grid; gap: .6rem; } .conseils li { padding-left: .2em; } .conseils li::marker { color: var(--sapin); font-weight: 600; }
+ul.plain { list-style: none; padding: 0; display: grid; gap: .6rem; } ul.cols2 { columns: 2; column-gap: 2rem; padding-left: 1.2em; } @media (max-width: 600px) { ul.cols2 { columns: 1; } }
+.verif p { margin: 0; }
+.search { position: relative; margin: 1.5rem 0 1rem; display: flex; align-items: center; gap: 1rem; } .search input { font-size: 1.05rem; padding: .85rem 1rem .85rem 2.8rem; background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a7b9ae' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6'/%3E%3Cpath d='m16 16 4 4'/%3E%3C/svg%3E") no-repeat .9rem center / 1.2rem; }
+.search #qn { white-space: nowrap; }
+.famille { margin: 2.5rem 0; scroll-margin-top: 5rem; } .famille h2 { display: flex; align-items: center; gap: .3rem; flex-wrap: wrap; margin-bottom: 1rem; } .famille h2 .muted { font-family: var(--body); font-weight: 400; margin-left: .4rem; }
+.mgrid { display: grid; gap: .9rem; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); }
+.mcard { display: grid; gap: .45rem; align-content: start; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1.1rem 1.2rem; text-decoration: none; color: inherit; transition: border-color .25s ease, transform .35s ease; }
+.mcard:hover { border-color: var(--sapin); transform: translateY(-2px); } .mcard strong { font: 500 1.15rem/1.25 var(--display); } .mcard .chips { margin: .3rem 0 0; } .mcard .chips span { font-size: .8rem; padding: .2rem .55rem; } .mcard .more { color: var(--sapin); font-size: .9rem; margin-top: .2rem; }
+.mcard[hidden] { display: none; }
+.nav-menu, .nav-menu summary { border-top: 0; padding: 0; } .nav-menu summary::after { content: none; }
+.toc a .ico, .eyebrow .ico { width: 1.1em; height: 1.1em; margin-right: .35em; vertical-align: -.2em; }

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /atelier-cv.html
+Disallow: /atelier-3d.html
+Disallow: /merci.html
+
+Sitemap: https://justecv.fr/sitemap.xml
