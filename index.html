@@ -766,6 +766,14 @@ footer .cols p { color: var(--muted); max-width: 28rem; margin-top: .8rem; }
   function onScroll() { nav.classList.toggle("scrolled", window.scrollY > 8); }
   window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
 
+  /* Menu mobile : se ferme après un choix, avec Échap ou en touchant ailleurs */
+  var menu = document.querySelector(".nav-menu");
+  if (menu) {
+    menu.addEventListener("click", function (e) { if (e.target.closest("nav a")) menu.open = false; });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && menu.open) { menu.open = false; menu.querySelector("summary").focus(); } });
+    document.addEventListener("click", function (e) { if (menu.open && !menu.contains(e.target)) menu.open = false; });
+  }
+
   /* Secours pour les navigateurs sans animation-timeline (Firefox) */
   var hasView = window.CSS && CSS.supports && CSS.supports("animation-timeline: view()");
   if (!hasView && !reduce && "IntersectionObserver" in window) {

@@ -535,10 +535,12 @@
 (function () {
   var q = document.getElementById("q"), n = document.getElementById("qn"), vide = document.getElementById("vide");
   var cartes = [].slice.call(document.querySelectorAll(".mcard")), familles = [].slice.call(document.querySelectorAll(".famille"));
-  function fold(s) { return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); }
+  function fold(s) { return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+  var index = cartes.map(function (c) { return " " + fold(c.getAttribute("data-s") + " " + c.textContent) + " "; });
   function filtre() {
-    var v = fold(q.value.trim()), total = 0;
-    cartes.forEach(function (c) { var ok = !v || c.getAttribute("data-s").indexOf(v) > -1; c.hidden = !ok; if (ok) total++; });
+    var mots = fold(q.value).split(" ").filter(Boolean), total = 0;
+    cartes.forEach(function (c, i) { var ok = mots.every(function (m) { return index[i].indexOf(m) > -1; }); c.hidden = !ok; if (ok) total++; });
+    var v = mots.length;
     familles.forEach(function (f) { f.hidden = !f.querySelector(".mcard:not([hidden])"); });
     n.textContent = v ? total + " métier" + (total > 1 ? "s" : "") : "";
     vide.hidden = total > 0;
