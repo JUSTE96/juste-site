@@ -3,36 +3,173 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Vidéo : le trailer Juste en 30 secondes</title>
-<meta name="description" content="Le trailer de 30 secondes de Juste : de vraies scènes, le vrai site, sans rien inventer.">
+<title>Le trailer Juste en 30 secondes</title>
+<meta name="description" content="Le trailer de Juste : une candidate, une offre, son CV. Les écrans sont ceux du vrai site.">
 <link rel="canonical" href="https://justecv.fr/video.html">
+<meta property="og:title" content="Le trailer Juste en 30 secondes">
+<meta property="og:description" content="Une candidate, une offre, son CV. Les écrans sont ceux du vrai site.">
+<meta property="og:image" content="https://justecv.fr/assets/trailer/01-cafe.jpg">
+<meta property="og:type" content="video.other">
+<meta property="og:video" content="https://justecv.fr/assets/trailer-30s.mp4">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Hanken+Grotesk:wght@400;600&display=swap">
 <link rel="stylesheet" href="/pages.css">
+<link rel="preload" as="image" href="/assets/trailer/01-cafe.jpg">
+<style>
+/* Récit au défilement : le fond change d'image à chaque étape, le texte passe par-dessus. */
+.story { position: relative; }
+.stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: #000; }
+.stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.08); transition: opacity .9s ease, transform 7s cubic-bezier(.2,.7,.2,1); will-change: opacity, transform; }
+.stage img.on { opacity: 1; transform: scale(1); }
+.stage::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top, rgba(6,12,9,.88) 0%, rgba(6,12,9,.35) 42%, rgba(6,12,9,.1) 62%, rgba(6,12,9,.45) 100%); }
+.progress-dots { position: absolute; right: max(16px, 2.2vw); top: 50%; transform: translateY(-50%); display: grid; gap: 10px; z-index: 2; }
+.progress-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.35); transition: background .3s, transform .3s; }
+.progress-dots i.on { background: var(--mark); transform: scale(1.5); }
+.steps { position: relative; margin-top: -100vh; margin-top: -100svh; z-index: 1; }
+.step { min-height: 100vh; min-height: 100svh; display: flex; align-items: flex-end; padding: 0 max(20px, 6vw) 13vh; }
+.step .txt { max-width: 40rem; color: #fff; text-shadow: 0 2px 24px rgba(0,0,0,.45); opacity: .25; transform: translateY(22px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+.step.on .txt { opacity: 1; transform: none; }
+.step .num { font: 600 .78rem/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--mark); margin: 0 0 .9rem; }
+.step h1, .step h2 { font-family: var(--display); font-weight: 650; letter-spacing: -.01em; line-height: 1.05; margin: 0 0 .8rem; text-wrap: balance; }
+.step h1 { font-size: clamp(2.4rem, 6vw, 4.6rem); }
+.step h2 { font-size: clamp(1.9rem, 4.6vw, 3.4rem); }
+.step p { font-size: clamp(1.02rem, 1.5vw, 1.2rem); line-height: 1.55; color: rgba(255,255,255,.86); margin: 0; }
+.step .row { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 1.6rem; }
+.play { display: inline-flex; align-items: center; gap: .7rem; }
+.play svg { width: 1.1em; height: 1.1em; }
+.hint { margin-top: 2.2rem; font-size: .9rem; color: rgba(255,255,255,.7); display: flex; align-items: center; gap: .5rem; }
+.hint span { display: inline-block; width: 1px; height: 28px; background: rgba(255,255,255,.6); animation: hint 1.8s ease-in-out infinite; transform-origin: top; }
+@keyframes hint { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(0); transform-origin: bottom; } }
+.after { padding: 5rem 0 4rem; background: var(--bg); }
+.after video { width: 100%; height: auto; display: block; border-radius: 14px; background: #000; }
+.after .note { color: var(--muted); font-size: .92rem; margin-top: 1rem; }
+/* Lecteur plein écran */
+dialog.lecteur { width: min(1200px, 94vw); padding: 0; border: 0; background: #000; border-radius: 14px; overflow: hidden; box-shadow: 0 40px 120px rgba(0,0,0,.7); }
+dialog.lecteur::backdrop { background: rgba(4,8,6,.9); }
+dialog.lecteur video { display: block; width: 100%; height: auto; }
+dialog.lecteur .fermer { position: absolute; top: 10px; right: 10px; z-index: 2; width: 42px; height: 42px; border-radius: 50%; border: 0; background: rgba(0,0,0,.6); color: #fff; font-size: 22px; line-height: 42px; cursor: pointer; }
+@media (prefers-reduced-motion: reduce) {
+  .stage img { transition: opacity .2s linear; transform: none !important; }
+  .step .txt { transition: none; opacity: 1; transform: none; }
+  .hint span { animation: none; }
+}
+</style>
 </head>
 <body>
 <header class="nav"><div class="wrap">
   <a class="logo" href="/" aria-label="Juste, accueil"><span class="logo-mark" aria-hidden="true"><span></span></span>Juste</a>
-  <nav class="nav-links" aria-label="Pages"><a href="/metiers.html">Métiers</a><a href="/guides.html">Guides</a><a href="/suivi.html">Suivi</a><a href="/#prix">Prix</a></nav>
+  <nav class="nav-links" aria-label="Pages"><a href="/video.html" aria-current="page">Vidéo</a><a href="/metiers.html">Métiers</a><a href="/guides.html">Guides</a><a href="/suivi.html">Suivi</a><a href="/#prix">Prix</a></nav>
+  <a class="btn btn-primary btn-sm nav-cta" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a>
+  <details class="nav-menu"><summary aria-label="Menu"><span></span><span></span><span></span></summary><nav aria-label="Pages (mobile)"><a href="/">Accueil</a><a href="/video.html" aria-current="page">Vidéo</a><a href="/metiers.html">Métiers</a><a href="/guides.html">Guides</a><a href="/suivi.html">Suivi</a><a href="/#prix">Prix</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a></nav></details>
 </div></header>
-<main><div class="wrap narrow">
-  <p class="eyebrow">Vidéo</p>
-  <h1>Le trailer, <span class="hl">en 30 secondes</span>.</h1>
-  <p class="lede">Une candidate, une offre, son CV. Les écrans sont ceux du vrai site, enregistrés tels quels : on voit ce que Juste fait.</p>
-  <figure style="margin:2rem 0 0">
-    <video controls playsinline preload="metadata" width="100%" style="display:block;width:100%;height:auto;border-radius:14px;background:#000" aria-describedby="video-desc">
-      <source src="/assets/trailer-30s.mp4" type="video/mp4">
-      Votre navigateur ne lit pas cette vidéo. <a href="/assets/trailer-30s.mp4">Télécharger le trailer (MP4)</a>.
-    </video>
-    <figcaption id="video-desc" class="muted small" style="margin-top:.75rem">30 secondes, avec son. Voix et musique originales.</figcaption>
-  </figure>
-  <p class="muted small" style="margin-top:2rem">Les personnes sont générées par IA ; les écrans et les exemples de CV sont fictifs.</p>
-  <div class="chips" style="margin-top:2rem"><a class="btn btn-primary" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome, c'est gratuit</a> <a class="btn btn-ghost" href="/">Retour à l'accueil</a></div>
-</div></main>
+
+<main>
+<section class="story" aria-label="Le trailer, image par image">
+  <div class="stage" aria-hidden="true">
+    <img class="on" src="/assets/trailer/01-cafe.jpg" alt="" style="object-position:30% 50%" decoding="async">
+    <img src="/assets/trailer/02-doute.jpg" alt="" style="object-position:35% 40%" decoding="async">
+    <img src="/assets/trailer/03-offre.jpg" alt="" style="object-position:62% 50%" decoding="async">
+    <img src="/assets/trailer/04-analyse.jpg" alt="" style="object-position:55% 50%" decoding="async">
+    <img src="/assets/trailer/05-atouts.jpg" alt="" style="object-position:55% 50%" decoding="async">
+    <img src="/assets/trailer/06-bibliotheque.jpg" alt="" style="object-position:45% 50%" decoding="async">
+    <img src="/assets/trailer/07-main.jpg" alt="" style="object-position:55% 55%" decoding="async">
+    <img src="/assets/trailer/08-pdf.jpg" alt="" style="object-position:50% 30%" decoding="async">
+    <img src="/assets/trailer/09-soulagement.jpg" alt="" style="object-position:35% 50%" decoding="async">
+    <div class="progress-dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+
+  <div class="steps">
+    <article class="step on">
+      <div class="txt">
+        <p class="num">Le trailer · 30 secondes</p>
+        <h1>Une offre qui vous parle. <span class="hl">Et maintenant&nbsp;?</span></h1>
+        <p>Une candidate, un café, son CV. Faites défiler pour suivre l'histoire, ou regardez le trailer en entier.</p>
+        <div class="row"><button type="button" class="btn btn-primary play" data-play><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>Voir le trailer</button></div>
+        <div class="hint"><span aria-hidden="true"></span>Faites défiler</div>
+      </div>
+    </article>
+    <article class="step"><div class="txt"><p class="num">01 · Le doute</p><h2>« Comment montrer que mon parcours correspond&nbsp;? »</h2><p>Elle a l'expérience. Elle ne sait pas quoi mettre en avant.</p></div></article>
+    <article class="step"><div class="txt"><p class="num">02 · Importer</p><h2>Son CV, puis l'offre.</h2><p>Elle colle l'annonce dans Juste. Son CV reste sur son appareil.</p></div></article>
+    <article class="step"><div class="txt"><p class="num">03 · Comprendre</p><h2>Ce que l'offre attend, point par point.</h2><p>Juste relie son expérience aux attentes de l'offre, exigence par exigence.</p></div></article>
+    <article class="step"><div class="txt"><p class="num">04 · Faire le lien</p><h2>Ses vrais atouts, <span class="hl">ligne par ligne</span>.</h2><p>Chaque atout est relié à une phrase réelle de son CV.</p></div></article>
+    <article class="step"><div class="txt"><p class="num">05 · Partout</p><h2>Au café, à la bibliothèque, chez soi.</h2><p>Juste fonctionne dans le navigateur, là où vous cherchez.</p></div></article>
+    <article class="step"><div class="txt"><p class="num">06 · Vous décidez</p><h2>« Rien n'est inventé. Et je garde la main. »</h2><p>Elle complète seulement ce qui est vrai. Ce qui manque n'est jamais ajouté à sa place.</p></div></article>
+    <article class="step"><div class="txt"><p class="num">07 · Prête</p><h2>Le CV adapté, en PDF.</h2><p>Relu, enregistré, prêt à envoyer.</p></div></article>
+    <article class="step">
+      <div class="txt">
+        <p class="num">Juste</p>
+        <h2>Le bon CV, <span class="hl">pour la bonne offre</span>.</h2>
+        <p>Votre vrai CV, adapté à chaque offre. Sans rien inventer.</p>
+        <div class="row">
+          <button type="button" class="btn btn-primary play" data-play><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>Voir le trailer</button>
+          <a class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.5)" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="after" id="trailer"><div class="wrap narrow">
+  <p class="eyebrow">Le trailer en entier</p>
+  <video controls playsinline preload="metadata" poster="/assets/trailer/01-cafe.jpg">
+    <source src="/assets/trailer-30s.mp4" type="video/mp4">
+    <a href="/assets/trailer-30s.mp4">Télécharger le trailer (MP4)</a>
+  </video>
+  <p class="note">30 secondes, avec son. Les personnes sont générées par IA ; les écrans sont ceux du vrai site, avec un CV et une offre fictifs.</p>
+</div></section>
+</main>
+
+<dialog class="lecteur" id="lecteur" aria-label="Trailer Juste">
+  <button type="button" class="fermer" aria-label="Fermer" data-close>×</button>
+  <video controls playsinline preload="none" poster="/assets/trailer/01-cafe.jpg"><source src="/assets/trailer-30s.mp4" type="video/mp4"></video>
+</dialog>
+
 <footer><div class="wrap">
-  <a href="/">Accueil</a><a href="/mentions-legales.html">Mentions légales</a><a href="/confidentialite.html">Confidentialité</a><a href="mailto:contact@justecv.fr">contact@justecv.fr</a>
+  <a href="/">Accueil</a><a href="/metiers.html">Métiers</a><a href="/guides.html">Guides</a><a href="/suivi.html">Suivi des candidatures</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgv.html">CGV</a><a href="/confidentialite.html">Confidentialité</a><a href="mailto:contact@justecv.fr">contact@justecv.fr</a>
 </div></footer>
+
+<script>
+(function () {
+  var imgs = document.querySelectorAll(".stage img"), dots = document.querySelectorAll(".progress-dots i"), steps = document.querySelectorAll(".step");
+  function show(i) {
+    imgs.forEach(function (im, k) { im.classList.toggle("on", k === i); });
+    dots.forEach(function (d, k) { d.classList.toggle("on", k === i); });
+    steps.forEach(function (s, k) { s.classList.toggle("on", k === i); });
+  }
+  /* L'étape active est celle qui passe au milieu de l'écran */
+  var actif = -1;
+  function suivre() {
+    var milieu = window.innerHeight / 2, i = 0;
+    for (var k = 0; k < steps.length; k++) { if (steps[k].getBoundingClientRect().top <= milieu) i = k; }
+    if (i !== actif) { actif = i; show(i); }
+  }
+  window.addEventListener("scroll", suivre, { passive: true });
+  window.addEventListener("resize", suivre);
+  suivre();
+
+  /* Lecteur plein écran */
+  var dlg = document.getElementById("lecteur"), vid = dlg.querySelector("video");
+  function ouvrir() {
+    if (typeof dlg.showModal !== "function") { location.hash = "trailer"; return; }
+    dlg.showModal(); vid.currentTime = 0; var p = vid.play(); if (p && p.catch) p.catch(function () {});
+  }
+  document.querySelectorAll("[data-play]").forEach(function (b) { b.addEventListener("click", ouvrir); });
+  function fermer() { vid.pause(); if (dlg.open) dlg.close(); }
+  dlg.querySelector("[data-close]").addEventListener("click", fermer);
+  dlg.addEventListener("cancel", function () { vid.pause(); });
+  dlg.addEventListener("close", function () { vid.pause(); });
+  dlg.addEventListener("click", function (e) { if (e.target === dlg) fermer(); });
+
+  /* Menu mobile : se ferme après un choix ou avec Échap */
+  var menu = document.querySelector(".nav-menu");
+  if (menu) {
+    menu.addEventListener("click", function (e) { if (e.target.closest("nav a")) menu.open = false; });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && menu.open) menu.open = false; });
+  }
+})();
+</script>
 </body>
 </html>
