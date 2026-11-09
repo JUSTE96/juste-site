@@ -405,6 +405,15 @@ footer .cols p { color: var(--muted); max-width: 28rem; margin-top: .8rem; }
 .btn-light:hover { background: rgba(255,255,255,.22); }
 .cine-link { color: #fff; font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.7); padding-bottom: 3px; }
 .cine-link:hover { border-bottom-color: var(--mark); }
+.cine-links .cine-link { margin-left: .4rem; }
+.cine-note { margin: 1rem 0 0; font-size: .92rem; color: rgba(255,255,255,.82); } .cine-note a { color: #fff; text-underline-offset: 3px; }
+.cine-note, .only-touch { display: none !important; } @media (hover: none) and (pointer: coarse) { .cine-note { display: block !important; } .only-touch { display: inline-flex !important; } .only-desk { display: none !important; } }
+.cine-cv .cine-txt { max-width: 40rem; }
+.cine-cv .cine-title { font-size: clamp(2.1rem, 4.6vw, 4rem); }
+/* Second bloc : présentation produit, plus posée que l'ouverture */
+.hero h1 { font-size: clamp(2.3rem, 4.6vw, 3.7rem); line-height: 1.04; }
+.hero .reassure { gap: .5rem 1.4rem; }
+.hero .mobile-note { display: none; }
 @media (prefers-reduced-motion: reduce) { .cine video { display: none; } .cine { background-size: cover; background-position: center; } }
 </style>
 </head>
@@ -434,7 +443,8 @@ footer .cols p { color: var(--muted); max-width: 28rem; margin-top: .8rem; }
     <div class="cine-txt">
       <p class="cine-eyebrow">Juste · extension Chrome gratuite</p>
       <p class="cine-title">Une offre qui vous parle.<br>Votre vrai parcours pour y répondre.</p>
-      <div class="cine-links"><a class="btn btn-primary" href="#decouvrir">Découvrir Juste</a></div>
+      <div class="cine-links"><a class="btn btn-primary only-touch" href="app/">Essayer sur mon téléphone</a><a class="btn btn-primary only-desk" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome, c'est gratuit</a><a class="cine-link" href="#decouvrir">Voir comment ça marche</a></div>
+      <p class="cine-note">Sans installation, gratuit. Sur ordinateur, Juste existe aussi en extension Chrome.</p>
     </div>
   </section>
   <section class="hero" id="decouvrir">

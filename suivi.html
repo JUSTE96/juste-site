@@ -23,8 +23,8 @@
   <h1>Toutes vos candidatures, <span class="hl">sans compte</span>.</h1>
   <p class="lede">Notez chaque offre, son statut et la date de relance. Rien n'est envoyé : la liste est enregistrée dans ce navigateur, sur cet appareil. Exportez-la en CSV quand vous voulez.</p>
 
-  <section class="card" aria-labelledby="ajout">
-    <h2 id="ajout" style="font-size:1.3rem">Ajouter une candidature</h2>
+  <section class="card suivi-form" aria-labelledby="ajout">
+    <div class="card-head"><h2 id="ajout">Ajouter une candidature</h2><p class="small muted">Seuls le poste et l'entreprise sont obligatoires.</p></div>
     <form class="form" id="form" autocomplete="off">
       <label>Poste <input name="poste" required placeholder="Préparateur de commandes"></label>
       <label>Entreprise <input name="entreprise" required placeholder="Entrepôt Exemple"></label>
@@ -35,22 +35,22 @@
       </select></label>
       <label>Lien de l'offre <input name="lien" type="url" placeholder="https://…"></label>
       <label class="full">Notes <input name="notes" placeholder="Contact, salaire annoncé, points à préparer…"></label>
-      <div class="full row-actions"><button class="btn btn-primary btn-sm" type="submit" id="submit">Ajouter</button><button class="btn btn-ghost btn-sm" type="button" id="cancel" hidden>Annuler</button></div>
+      <div class="full form-actions"><button class="btn btn-primary" type="submit" id="submit">Ajouter la candidature</button><button class="btn btn-ghost" type="button" id="cancel" hidden>Annuler</button></div>
     </form>
   </section>
 
   <div class="stats" id="stats" aria-live="polite"></div>
 
-  <section class="card" aria-labelledby="liste">
-    <div class="row-actions" style="justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <h2 id="liste" style="font-size:1.3rem;margin:0">Candidatures</h2>
-      <div class="row-actions"><select id="filtre" aria-label="Filtrer par statut" style="width:auto"><option value="">Tous les statuts</option><option value="brouillon">À envoyer</option><option value="envoyee">Envoyées</option><option value="relance">À relancer</option><option value="entretien">Entretiens</option><option value="offre">Propositions</option><option value="refus">Refus</option></select><button type="button" id="export">Exporter en CSV</button><button type="button" id="wipe">Tout effacer</button></div>
+  <section class="card suivi-liste" aria-labelledby="liste">
+    <div class="liste-head">
+      <h2 id="liste">Candidatures</h2>
+      <div class="liste-tools"><select id="filtre" aria-label="Filtrer par statut"><option value="">Tous les statuts</option><option value="brouillon">À envoyer</option><option value="envoyee">Envoyées</option><option value="relance">À relancer</option><option value="entretien">Entretiens</option><option value="offre">Propositions</option><option value="refus">Refus</option></select><button type="button" class="btn btn-ghost btn-sm" id="export">Exporter en CSV</button><button type="button" class="btn btn-quiet btn-sm" id="wipe">Tout effacer</button></div>
     </div>
-    <div style="overflow-x:auto"><table id="table"><thead><tr><th>Poste</th><th>Entreprise</th><th>Envoyée</th><th>Statut</th><th>Notes</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
-    <p class="empty" id="empty">Aucune candidature pour l'instant. Ajoutez la première ci-dessus.</p>
+    <div class="table-scroll"><table id="table"><thead><tr><th>Poste</th><th>Entreprise</th><th>Envoyée</th><th>Statut</th><th>Notes</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+    <div class="empty" id="empty"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><p><strong>Aucune candidature pour l'instant.</strong><br>Ajoutez la première avec le formulaire ci-dessus.</p></div>
   </section>
 
-  <p class="small muted" style="margin-top:1.5rem">Conseil : relancez une candidature restée sans réponse après 7 à 10 jours. Les lignes « Envoyée » depuis plus de 10 jours passent en jaune pour vous le rappeler.</p>
+  <p class="tip-line"><span class="pill pill-amber">Conseil</span>  relancez une candidature restée sans réponse après 7 à 10 jours. Les lignes « Envoyée » depuis plus de 10 jours passent en jaune pour vous le rappeler.</p>
   <div class="cta">
     <h2>Avant d'envoyer, vérifiez le CV.</h2>
     <p class="muted">Juste lit l'offre, mesure la compatibilité exigence par exigence et adapte votre CV sans rien inventer.</p>
@@ -76,11 +76,13 @@
     rows.innerHTML = shown.map(function (c) {
       var old = c.statut === "envoyee" && days(c.date) > 10;
       var poste = c.lien ? '<a href="' + esc(c.lien) + '" target="_blank" rel="noopener">' + esc(c.poste) + "</a>" : esc(c.poste);
-      return "<tr data-id=\"" + c.id + "\"><td><strong>" + poste + "</strong>" + (c.lieu ? '<br><span class="small muted">' + esc(c.lieu) + "</span>" : "") + "</td><td>" + esc(c.entreprise) + "</td><td>" + esc(fmtDate(c.date)) + (c.date ? '<br><span class="small muted">il y a ' + days(c.date) + " j</span>" : "") + '</td><td><span class="statut statut-' + (old ? "relance" : esc(c.statut)) + '">' + (old ? "À relancer" : LABELS[c.statut] || c.statut) + '</span></td><td class="small">' + esc(c.notes) + '</td><td class="row-actions"><button type="button" data-act="edit">Modifier</button><button type="button" data-act="del">Supprimer</button></td></tr>';
+      return "<tr data-id=\"" + c.id + "\"><td><strong>" + poste + "</strong>" + (c.lieu ? '<br><span class="small muted">' + esc(c.lieu) + "</span>" : "") + "</td><td>" + esc(c.entreprise) + "</td><td>" + esc(fmtDate(c.date)) + (c.date ? '<br><span class="small muted">il y a ' + days(c.date) + " j</span>" : "") + '</td><td><span class="statut statut-' + (old ? "relance" : esc(c.statut)) + '">' + (old ? "À relancer" : LABELS[c.statut] || c.statut) + '</span></td><td class="small">' + esc(c.notes) + '</td><td class="row-actions actions-cell"><button type="button" data-act="edit">Modifier</button><button type="button" data-act="del">Supprimer</button></td></tr>';
     }).join("");
     $("empty").hidden = shown.length > 0; $("table").hidden = shown.length === 0;
     var n = function (s) { return list.filter(function (c) { return c.statut === s; }).length; };
-    $("stats").innerHTML = "<span><strong>" + list.length + "</strong> candidatures</span><span><strong>" + n("entretien") + "</strong> entretiens</span><span><strong>" + list.filter(function (c) { return c.statut === "relance" || (c.statut === "envoyee" && days(c.date) > 10); }).length + "</strong> à relancer</span><span><strong>" + n("offre") + "</strong> propositions</span>";
+    var relance = list.filter(function (c) { return c.statut === "relance" || (c.statut === "envoyee" && days(c.date) > 10); }).length;
+    var tile = function (v, l, cls) { return '<div class="stat' + (cls ? " " + cls : "") + '"><strong>' + v + "</strong><span>" + l + "</span></div>"; };
+    $("stats").innerHTML = tile(list.length, list.length > 1 ? "candidatures" : "candidature") + tile(n("entretien"), n("entretien") > 1 ? "entretiens" : "entretien", n("entretien") ? "is-good" : "") + tile(relance, "à relancer", relance ? "is-warn" : "") + tile(n("offre"), n("offre") > 1 ? "propositions" : "proposition", n("offre") ? "is-good" : "");
   }
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -88,15 +90,15 @@
     ["poste", "entreprise", "lieu", "date", "statut", "lien", "notes"].forEach(function (k) { c[k] = (fd.get(k) || "").toString().trim(); });
     if (editing) { var i = list.findIndex(function (x) { return x.id === editing; }); if (i > -1) { c.id = editing; list[i] = c; } }
     else { c.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); list.unshift(c); }
-    save(list); editing = null; form.reset(); $("submit").textContent = "Ajouter"; $("cancel").hidden = true; render();
+    save(list); editing = null; form.reset(); $("submit").textContent = "Ajouter la candidature"; $("cancel").hidden = true; render();
   });
-  $("cancel").addEventListener("click", function () { editing = null; form.reset(); $("submit").textContent = "Ajouter"; $("cancel").hidden = true; });
+  $("cancel").addEventListener("click", function () { editing = null; form.reset(); $("submit").textContent = "Ajouter la candidature"; $("cancel").hidden = true; });
   rows.addEventListener("click", function (e) {
     var b = e.target.closest("button[data-act]"); if (!b) return;
     var id = b.closest("tr").getAttribute("data-id"), list = load(), c = list.find(function (x) { return x.id === id; });
     if (b.dataset.act === "del") { if (confirm("Supprimer cette candidature ?")) { save(list.filter(function (x) { return x.id !== id; })); render(); } return; }
     editing = id; Object.keys(c).forEach(function (k) { if (form.elements[k]) form.elements[k].value = c[k]; });
-    $("submit").textContent = "Enregistrer"; $("cancel").hidden = false; form.scrollIntoView({ behavior: "smooth", block: "start" }); form.elements.poste.focus();
+    $("submit").textContent = "Enregistrer les modifications"; $("cancel").hidden = false; form.scrollIntoView({ behavior: "smooth", block: "start" }); form.elements.poste.focus();
   });
   $("filtre").addEventListener("change", render);
   $("export").addEventListener("click", function () {
