@@ -24,13 +24,13 @@
 .stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.08); transition: opacity .9s ease, transform 7s cubic-bezier(.2,.7,.2,1); will-change: opacity, transform; }
 .stage img.on { opacity: 1; transform: scale(1); }
 .stage::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(to top, rgba(6,12,9,.88) 0%, rgba(6,12,9,.35) 42%, rgba(6,12,9,.1) 62%, rgba(6,12,9,.45) 100%); }
+  background: linear-gradient(to top, rgba(0,0,0,.52) 0%, rgba(0,0,0,.18) 34%, rgba(0,0,0,0) 55%); }
 .progress-dots { position: absolute; right: max(16px, 2.2vw); top: 50%; transform: translateY(-50%); display: grid; gap: 10px; z-index: 2; }
 .progress-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.35); transition: background .3s, transform .3s; }
 .progress-dots i.on { background: var(--mark); transform: scale(1.5); }
 .steps { position: relative; margin-top: -100vh; margin-top: -100svh; z-index: 1; }
 .step { min-height: 100vh; min-height: 100svh; display: flex; align-items: flex-end; padding: 0 max(20px, 6vw) 13vh; }
-.step .txt { max-width: 40rem; color: #fff; text-shadow: 0 2px 24px rgba(0,0,0,.45); opacity: .25; transform: translateY(22px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+.step .txt { max-width: 40rem; color: #fff; text-shadow: 0 2px 24px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.35); opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
 .step.on .txt { opacity: 1; transform: none; }
 .step .num { font: 600 .78rem/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--mark); margin: 0 0 .9rem; }
 .step h1, .step h2 { font-family: var(--display); font-weight: 650; letter-spacing: -.01em; line-height: 1.05; margin: 0 0 .8rem; text-wrap: balance; }

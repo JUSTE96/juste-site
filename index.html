@@ -388,6 +388,22 @@ footer .cols p { color: var(--muted); max-width: 28rem; margin-top: .8rem; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .step::after, .draw::after { transform: scaleX(1); }
 }
+/* Vidéos plein écran, façon film : image naturelle, seul un léger dégradé en bas porte le texte */
+.cine { position: relative; padding: 0 !important; height: calc(100vh - 64px); height: calc(100svh - 64px); min-height: 480px; overflow: hidden; background: #0b1410; color: #fff; isolation: isolate; }
+.cine-band { height: 86vh; height: 86svh; }
+.cine video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+.cine::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 55%; z-index: -1; pointer-events: none; background: radial-gradient(75% 85% at 0% 100%, rgba(0,0,0,.42), rgba(0,0,0,0) 72%), linear-gradient(to top, rgba(0,0,0,.4), rgba(0,0,0,0)); }
+.cine-txt { position: absolute; left: max(20px, 6vw); right: max(20px, 6vw); bottom: clamp(44px, 9vh, 110px); max-width: 46rem; }
+.cine-eyebrow { font: 600 .78rem/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.88); margin: 0 0 1rem; }
+.cine-title { font-family: var(--display); font-weight: 650; font-size: clamp(2.2rem, 5.6vw, 4.6rem); line-height: 1.03; letter-spacing: -.01em; margin: 0 0 1.4rem; text-wrap: balance; text-shadow: 0 2px 28px rgba(0,0,0,.45), 0 1px 3px rgba(0,0,0,.3); }
+.cine-band .cine-title { font-size: clamp(2rem, 4.6vw, 3.6rem); margin-bottom: .9rem; }
+.cine-sub { font-size: clamp(1rem, 1.4vw, 1.15rem); color: rgba(255,255,255,.9); margin: 0 0 1.2rem; max-width: 34rem; }
+.cine-links { display: flex; flex-wrap: wrap; gap: .8rem; align-items: center; }
+.btn-light { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.6); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.btn-light:hover { background: rgba(255,255,255,.22); }
+.cine-link { color: #fff; font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.7); padding-bottom: 3px; }
+.cine-link:hover { border-bottom-color: var(--mark); }
+@media (prefers-reduced-motion: reduce) { .cine video { display: none; } .cine { background-size: cover; background-position: center; } }
 </style>
 </head>
 <body>
@@ -412,7 +428,15 @@ footer .cols p { color: var(--muted); max-width: 28rem; margin-top: .8rem; }
 
 <main id="top">
   <!-- Héros -->
-  <section class="hero">
+  <section class="cine " style="background-image:url(assets/cine/ouverture.jpg)" aria-label="Juste en vidéo">
+    <video class="cine-video" autoplay muted loop playsinline preload="auto" poster="assets/cine/ouverture.jpg" style="object-position:32% 50%" aria-hidden="true"><source src="assets/cine/ouverture.mp4" type="video/mp4"></video>
+    <div class="cine-txt">
+      <p class="cine-eyebrow">Juste · extension Chrome gratuite</p>
+      <p class="cine-title">Une offre qui vous parle.<br>Votre vrai parcours pour y répondre.</p>
+      <div class="cine-links"><a class="btn btn-primary" href="video.html">▶&nbsp; Voir le trailer</a><a class="btn btn-light" href="#decouvrir">Découvrir Juste</a></div>
+    </div>
+  </section>
+  <section class="hero" id="decouvrir">
     <div class="wrap">
       <div class="hero-copy">
         <p class="eyebrow">Extension Chrome gratuite</p>
@@ -526,6 +550,14 @@ footer .cols p { color: var(--muted); max-width: 28rem; margin-top: .8rem; }
   </section>
 
   <!-- Comment ça marche -->
+  <section class="cine cine-band" style="background-image:url(assets/cine/lien.jpg)" aria-label="Juste à côté de l'offre">
+    <video class="cine-video" muted loop playsinline preload="none" poster="assets/cine/lien.jpg" style="object-position:62% 50%" aria-hidden="true"><source src="assets/cine/lien.mp4" type="video/mp4"></video>
+    <div class="cine-txt">
+      <p class="cine-title">Ouvrez une offre.<br>Juste fait le lien.</p>
+      <p class="cine-sub">Chaque exigence de l'annonce, reliée à une ligne réelle de votre CV.</p>
+      <div class="cine-links"><a class="cine-link" href="#fonctionnement">Voir comment ça marche</a></div>
+    </div>
+  </section>
   <section id="fonctionnement">
     <div class="wrap">
       <div class="section-head reveal">
@@ -646,6 +678,14 @@ footer .cols p { color: var(--muted); max-width: 28rem; margin-top: .8rem; }
   </section>
 
   <!-- Confidentialité -->
+  <section class="cine cine-band" style="background-image:url(assets/cine/partout.jpg)" aria-label="Juste, partout">
+    <video class="cine-video" muted loop playsinline preload="none" poster="assets/cine/partout.jpg" style="object-position:42% 50%" aria-hidden="true"><source src="assets/cine/partout.mp4" type="video/mp4"></video>
+    <div class="cine-txt">
+      <p class="cine-title">Au café, à la bibliothèque, chez vous.</p>
+      <p class="cine-sub">Dans Chrome sur ordinateur, dans l'appli web sur téléphone.</p>
+      <div class="cine-links"><a class="cine-link" href="app/">Ouvrir l'appli web</a></div>
+    </div>
+  </section>
   <section>
     <div class="wrap">
       <div class="section-head reveal">
@@ -729,6 +769,13 @@ footer .cols p { color: var(--muted); max-width: 28rem; margin-top: .8rem; }
   </section>
 
   <!-- CTA final -->
+  <section class="cine cine-band" style="background-image:url(assets/cine/fin.jpg)" aria-label="Le bon CV, pour la bonne offre">
+    <video class="cine-video" muted loop playsinline preload="none" poster="assets/cine/fin.jpg" style="object-position:34% 50%" aria-hidden="true"><source src="assets/cine/fin.mp4" type="video/mp4"></video>
+    <div class="cine-txt">
+      <p class="cine-title">Le bon CV,<br>pour la bonne offre.</p>
+      <div class="cine-links"><a class="cine-link" href="video.html">Voir le trailer</a></div>
+    </div>
+  </section>
   <section class="final band">
     <div class="wrap reveal">
       <h2>Votre prochaine candidature mérite <span class="hl">votre vrai CV</span>.</h2>
@@ -949,6 +996,16 @@ footer .cols p { color: var(--muted); max-width: 28rem; margin-top: .8rem; }
     });
   });
 
+
+  /* Vidéos d'ambiance : lues seulement quand elles sont à l'écran, jamais si l'utilisateur limite les animations */
+  var cines = document.querySelectorAll(".cine-video");
+  if (reduce) { cines.forEach(function (v) { v.removeAttribute("autoplay"); v.pause(); }); }
+  else if ("IntersectionObserver" in window) {
+    var vio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { var p = e.target.play(); if (p && p.catch) p.catch(function () {}); } else { e.target.pause(); } });
+    }, { threshold: 0.15 });
+    cines.forEach(function (v) { vio.observe(v); });
+  }
   renderCV();
   /* Héros : le score et la barre montent à l'ouverture */
   $("heroScore").textContent = "0";
