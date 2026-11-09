@@ -1,0 +1,9 @@
+/* Juste — logo officiel (icône « j » + nom en Archivo large), commun à toutes les pages du site.
+   Remplace l'ancienne marque dessinée en CSS (carré vert et trait jaune). Chargée en dernier. */
+@font-face {
+  font-family: "Archivo Display"; font-style: normal; font-display: swap; font-weight: 100 900; font-stretch: 62% 125%;
+  src: url("fonts/archivo-latin-wdth-wght-normal.woff2") format("woff2");
+}
+.logo { display: inline-flex !important; align-items: center !important; gap: .5rem !important; font-family: "Archivo Display", "Schibsted Grotesk", system-ui, sans-serif !important; font-weight: 800 !important; font-stretch: 125%; font-size: 1.3rem !important; letter-spacing: -.035em !important; text-transform: lowercase; line-height: 1 !important; color: #fff; }
+.logo-mark { width: 30px !important; height: 30px !important; flex: none; border-radius: 0 !important; background: url("favicon.svg") center / contain no-repeat !important; box-shadow: none !important; }
+.logo-mark span { display: none !important; }
