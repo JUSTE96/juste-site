@@ -1,0 +1,21 @@
+/* Juste — finitions propres à l'appli web (chargée en dernier, après shared/nocturne.css). */
+
+/* Pas de nom en filigrane derrière les titres : il chevauchait le texte. */
+.hero::before, .hero-empty::before, .ob-hero::before { content: none !important; }
+
+/* Titre d'ouverture plus aéré */
+.hero h1 { font-size: clamp(26px, 6.6vw, 34px); line-height: 1.12; margin: 14px 0 8px; max-width: 16ch; }
+.hero p { font-size: 15px; line-height: 1.55; color: var(--texte-2); max-width: 38ch; }
+
+/* Sur grand écran, l'en-tête s'aligne sur la colonne de contenu */
+@media (min-width: 700px) {
+  .top { padding-left: max(16px, calc((100vw - 640px) / 2 + 16px)) !important; padding-right: max(16px, calc((100vw - 640px) / 2 + 16px)) !important; }
+  main { padding-top: 32px; }
+}
+
+/* Cartes : un peu plus d'air entre les blocs */
+#v-setup > .card + .card { margin-top: 14px; }
+.card-head h2 { font-size: 18px; }
+
+/* Barre d'enregistrement : même largeur que les cartes */
+.sticky-bar { margin-left: 0 !important; margin-right: 0 !important; border-radius: 20px 20px 0 0; }
