@@ -393,6 +393,8 @@ footer .cols p { color: var(--muted); max-width: 28rem; margin-top: .8rem; }
 .cine-band { height: 86vh; height: 86svh; }
 .cine video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
 .cine::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 55%; z-index: -1; pointer-events: none; background: radial-gradient(75% 85% at 0% 100%, rgba(0,0,0,.42), rgba(0,0,0,0) 72%), linear-gradient(to top, rgba(0,0,0,.4), rgba(0,0,0,0)); }
+.cine-cv::after { height: 100%; background: linear-gradient(90deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.34) 40%, rgba(0,0,0,0) 68%), linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,0) 55%); }
+@media (max-width: 700px) { .cine-cv::after { background: linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.4) 45%, rgba(0,0,0,0) 75%); } }
 .cine-txt { position: absolute; left: max(20px, 6vw); right: max(20px, 6vw); bottom: clamp(44px, 9vh, 110px); max-width: 46rem; }
 .cine-eyebrow { font: 600 .78rem/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.88); margin: 0 0 1rem; }
 .cine-title { font-family: var(--display); font-weight: 650; font-size: clamp(2.2rem, 5.6vw, 4.6rem); line-height: 1.03; letter-spacing: -.01em; margin: 0 0 1.4rem; text-wrap: balance; text-shadow: 0 2px 28px rgba(0,0,0,.45), 0 1px 3px rgba(0,0,0,.3); }
@@ -428,8 +430,8 @@ footer .cols p { color: var(--muted); max-width: 28rem; margin-top: .8rem; }
 
 <main id="top">
   <!-- Héros -->
-  <section class="cine " style="background-image:url(assets/cine/ouverture.jpg)" aria-label="Juste en vidéo">
-    <video class="cine-video" autoplay muted loop playsinline preload="auto" poster="assets/cine/ouverture.jpg" style="object-position:32% 50%" aria-hidden="true"><source src="assets/cine/ouverture.mp4" type="video/mp4"></video>
+  <section class="cine cine-cv" style="background-image:url(assets/cine/le-cv.jpg)" aria-label="Juste en vidéo">
+    <video class="cine-video" autoplay muted loop playsinline preload="auto" poster="assets/cine/le-cv.jpg" style="object-position:50% 50%" aria-hidden="true"><source src="assets/cine/le-cv-540.mp4" type="video/mp4" media="(max-width: 700px)"><source src="assets/cine/le-cv.mp4" type="video/mp4"></video>
     <div class="cine-txt">
       <p class="cine-eyebrow">Juste · extension Chrome gratuite</p>
       <p class="cine-title">Une offre qui vous parle.<br>Votre vrai parcours pour y répondre.</p>
