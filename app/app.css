@@ -276,3 +276,25 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
 /* ---------- lettre de motivation ---------- */
 .letter { margin-top: 12px; }
 .letter-text { white-space: pre-wrap; font: inherit; font-size: 14px; line-height: 1.55; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin: 0; user-select: text; }
+
+/* L'offre en clair (repères sur le sérieux de l'offre, calculés sur l'appareil) */
+.offer-flag { margin-top: 6px; padding: 4px 10px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--honey) 45%, transparent); background: var(--honey-soft); color: var(--ink); font: inherit; font-size: 12.5px; font-weight: 650; cursor: pointer; }
+.offer-flag::before { content: "! "; color: var(--honey); }
+.offer-flag[data-level="prudence"] { border-color: color-mix(in srgb, var(--rose) 45%, transparent); background: var(--rose-soft); }
+.offer-flag[data-level="prudence"]::before { color: var(--rose); }
+.offer-check { margin-bottom: 12px; border-left: 3px solid var(--primary); }
+.offer-check[data-level="verifier"] { border-left-color: var(--honey); }
+.offer-check[data-level="prudence"] { border-left-color: var(--rose); }
+.offer-check-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 12px; }
+.offer-check-head h3 { margin: 0; font-size: 16px; }
+.offer-level { font-size: 12.5px; font-weight: 650; color: var(--primary); }
+.offer-check[data-level="verifier"] .offer-level { color: var(--honey); }
+.offer-check[data-level="prudence"] .offer-level { color: var(--rose); }
+.offer-signals { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.sig { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; }
+.sig b { font-size: 14px; }
+.sig p { margin: 2px 0 0; font-size: 13.5px; color: var(--muted); }
+.sig-ico { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800; background: var(--tint); color: var(--primary); }
+.sig-attention .sig-ico { background: var(--honey-soft); color: var(--honey); }
+.sig-alerte .sig-ico { background: var(--rose-soft); color: var(--rose); }
+.sig-info .sig-ico { background: var(--tint-2, var(--tint)); color: var(--muted); font-style: italic; font-family: Georgia, serif; }

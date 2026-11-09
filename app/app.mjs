@@ -10,6 +10,7 @@ import { juryHtml, buildQuestions, questionsHtml, collectAnswers, answersAsCvTex
 import { countPlaceholders } from "./shared/jury-rules.mjs";
 import { renderReferentiel } from "./shared/referentiel-view.mjs";
 import { cvSearchTerms, rankOffers } from "./shared/job-fit.mjs";
+import { offerSignals, offerSignalsHtml } from "./shared/offer-signals.mjs";
 
 const SETTINGS = window.LARPEUR_APP || {};
 const API = (SETTINGS.apiBase || "http://localhost:3000").replace(/\/$/, "");
@@ -388,6 +389,8 @@ function renderResult(d, job) {
   $("score-label").textContent = scoreLabel(s); $("score-label").style.color = scoreColor(s);
   document.querySelector(".score-card").style.setProperty("--score", String(s));
   $("result-job").innerHTML = [job?.title, job?.company].filter(Boolean).map(esc).join(", ") + (job?.url ? `<br><a href="${esc(job.url)}" target="_blank" rel="noopener">Ouvrir l'offre</a>` : "");
+  const signals = offerSignals(job?.text || "", { company: job?.company, location: job?.location });
+  if (signals.level !== "clair") $("result-job").insertAdjacentHTML("beforeend", `<br><button type="button" class="offer-flag" data-level="${signals.level}" data-open-tab="cible">${signals.level === "prudence" ? "Prudence avec cette offre : voir pourquoi" : "Des points à vérifier dans l'offre"}</button>`);
   $("resume").textContent = d.resume_match || "";
 
   const forts = $("tab-forts"); forts.innerHTML = "";
@@ -407,7 +410,7 @@ function renderResult(d, job) {
   $("count-ecarts").textContent = String(d.ecarts?.length || 0);
 
   const pc = d.profil_cible || {};
-  $("tab-cible").innerHTML = `<div class="card persona"><h3>${esc(pc.titre || "Profil attendu")}</h3><p class="muted">${esc(pc.resume || "")}</p>
+  $("tab-cible").innerHTML = offerSignalsHtml(signals) + `<div class="card persona"><h3>${esc(pc.titre || "Profil attendu")}</h3><p class="muted">${esc(pc.resume || "")}</p>
     ${pc.competences_cles?.length ? `<div class="chips">${pc.competences_cles.map((c) => `<span>${esc(c)}</span>`).join("")}</div>` : ""}
     ${pc.experiences_types?.length ? `<ul>${pc.experiences_types.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>` : ""}
     <p class="muted small">Exemple synthétique généré par IA pour comprendre les attentes de l'offre.</p></div>` + renderReferentiel(d.referentiel);
@@ -584,6 +587,12 @@ document.querySelector(".tabs").addEventListener("click", (event) => {
   activateTab(b.dataset.tab);
   const nav = document.querySelector(".tabs");
   if (nav.getBoundingClientRect().top < 60) nav.scrollIntoView({ block: "start", behavior: reduced() ? "instant" : "smooth" });
+});
+
+$("result-job").addEventListener("click", (event) => {
+  if (!event.target.closest("[data-open-tab]")) return;
+  activateTab("cible");
+  document.querySelector(".tabs").scrollIntoView({ block: "start", behavior: reduced() ? "instant" : "smooth" });
 });
 
 /* ---------- CV : PDF et copie ---------- */
