@@ -702,30 +702,30 @@ footer .cols p { color: var(--muted); max-width: 28rem; margin-top: .8rem; }
     <div class="wrap">
       <div class="section-head reveal">
         <p class="eyebrow">Prix</p>
-        <h2>Payez le temps de votre recherche, pas plus.</h2>
-        <p class="lede">Une recherche d'emploi a une fin. Nos passes aussi : ils s'arrêtent seuls.</p>
+        <h2>Gratuit pour commencer, Premium quand la recherche s'intensifie.</h2>
+        <p class="lede">Un abonnement résiliable en ligne à tout moment, ou un pass de 3 mois payé une seule fois, sans renouvellement.</p>
       </div>
       <div class="prices stagger">
         <div class="price spot">
           <h3>Gratuit</h3>
           <p class="amount">0 €</p>
-          <ul><li>3 analyses complètes</li><li>Score, atouts, pistes et jury</li><li>Export PDF</li></ul>
+          <ul><li>3 analyses par semaine</li><li>Score, atouts, pistes et CV adapté</li><li>Avis du logiciel de tri et du recruteur</li><li>Export PDF</li></ul>
           <a class="btn btn-ghost" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Commencer</a>
         </div>
         <div class="price featured spot">
-          <h3>Pass 30 jours</h3>
-          <p class="amount">9,90 € <small>TTC</small></p>
-          <ul><li>Analyses illimitées dans la limite d'un usage normal</li><li>Trois mises en page PDF</li><li>Pas de renouvellement automatique</li></ul>
-          <button type="button" class="btn btn-primary buy" data-pass="30 jours">Choisir le pass 30 jours</button>
+          <h3>Premium</h3>
+          <p class="amount">7,99 € <small>TTC / mois</small></p>
+          <ul><li>Jusqu'à 50 analyses par mois</li><li>Modèle d'IA plus avancé</li><li>Jury complet de 7 lecteurs</li><li>Résiliable en ligne à tout moment</li></ul>
+          <button type="button" class="btn btn-primary buy" data-offre="Premium">Choisir Premium</button>
         </div>
         <div class="price spot">
-          <h3>Pass 7 jours</h3>
-          <p class="amount">4,99 € <small>TTC</small></p>
-          <ul><li>Jusqu'à 40 analyses</li><li>Idéal pour une candidature urgente</li><li>Pas de renouvellement automatique</li></ul>
-          <button type="button" class="btn btn-ghost buy" data-pass="7 jours">Choisir le pass 7 jours</button>
+          <h3>Pass recherche</h3>
+          <p class="amount">19,99 € <small>TTC pour 3 mois</small></p>
+          <ul><li>Tout Premium pendant 3 mois</li><li>Paiement unique</li><li>Pas de renouvellement automatique</li></ul>
+          <button type="button" class="btn btn-ghost buy" data-offre="Le Pass recherche">Choisir le pass</button>
         </div>
       </div>
-      <p class="no-renew reveal"><span class="hl">Aucun renouvellement automatique.</span> Vous payez une fois, le pass s'arrête à la date prévue.</p>
+      <p class="no-renew reveal"><span class="hl">Bêta gratuite en cours.</span> Premium et le Pass recherche ouvriront à la fin de la bêta ; d'ici là, Juste reste gratuit.</p>
       <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
     </div>
   </section>
@@ -758,7 +758,7 @@ footer .cols p { color: var(--muted); max-width: 28rem; margin-top: .8rem; }
         <details><summary>Mon CV est-il envoyé quelque part ?</summary><p>Il est stocké dans votre navigateur. Quand vous lancez une analyse, le texte du CV et de l'offre est envoyé à OpenAI pour produire le résultat, puis il n'est utilisé à aucune autre fin. Le détail est dans notre politique de confidentialité.</p></details>
         <details><summary>Est-ce que ça marche sur téléphone ?</summary><p>L'extension s'installe sur Chrome pour ordinateur. Sur téléphone, utilisez <a href="app/">l'appli web justecv.fr/app</a> : vous collez l'offre, l'analyse est la même et votre CV reste dans le navigateur.</p></details>
         <details><summary>Quelle différence avec ChatGPT ?</summary><p>ChatGPT réécrit sans vérifier. Juste lit l'offre directement sur la page, décompose la compatibilité exigence par exigence, cite la ligne source de chaque atout et refuse d'ajouter ce que vous n'avez pas fait.</p></details>
-        <details><summary>Puis-je être remboursé ?</summary><p>Les passes ne se renouvellent pas. Pour toute demande de remboursement, écrivez-nous : nous répondons sous 48 heures ouvrées.</p></details>
+        <details><summary>Puis-je être remboursé ?</summary><p>Premium se résilie en ligne à tout moment, depuis l'extension : l'accès reste ouvert jusqu'à la fin du mois payé. Le Pass recherche ne se renouvelle pas. Pour toute demande de remboursement, écrivez-nous : nous répondons sous 48 heures ouvrées.</p></details>
         <details><summary>Sur quels sites l'offre est-elle détectée ?</summary><p>Sur les principaux sites d'emploi français. Sur un autre site, cliquez sur l'icône pour lire la page ouverte, ou collez le texte de l'offre dans le panneau.</p></details>
       </div>
     </div>
@@ -958,7 +958,7 @@ footer .cols p { color: var(--muted); max-width: 28rem; margin-top: .8rem; }
   document.querySelectorAll(".buy").forEach(function (b) {
     b.addEventListener("click", function () {
       var t = $("toast");
-      t.innerHTML = "Le pass " + esc(b.getAttribute("data-pass")) + " arrive très bientôt. En attendant, <a href=\"https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl\" target=\"_blank\" rel=\"noopener\">commencez gratuitement</a> avec 3 analyses offertes.";
+      t.innerHTML = esc(b.getAttribute("data-offre")) + " ouvrira à la fin de la bêta. En attendant, <a href=\"https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl\" target=\"_blank\" rel=\"noopener\">commencez gratuitement</a> : 3 analyses par semaine.";
       t.hidden = false;
       clearTimeout(toastTimer);
       toastTimer = setTimeout(function () { t.hidden = true; }, 6000);
