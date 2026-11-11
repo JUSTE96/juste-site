@@ -77,6 +77,28 @@ a { color: inherit; }
 @keyframes cue { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
 @media (max-width: 700px) { .scroll-cue { display: none; } }
 
+
+/* Entrée : la marque seule, puis le premier plan */
+.intro { position: fixed; z-index: 50; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; gap: 1.1rem; pointer-events: none; font: 800 clamp(2.6rem, 8vw, 5.5rem)/1 var(--wide); font-stretch: 125%; letter-spacing: -.04em; animation: intro 2.3s var(--ease) both; }
+.intro img { width: clamp(52px, 8vw, 88px); height: auto; } .intro em { font-style: normal; color: var(--mark); }
+.intro > * { animation: intro-in 1s var(--ease) both; } .intro span { animation-delay: .15s; }
+@keyframes intro { 0%, 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+@keyframes intro-in { from { opacity: 0; transform: translateY(14px); } }
+@media (prefers-reduced-motion: reduce) { .intro { display: none; } }
+
+/* Zone de dépôt du CV : le geste attendu dès l'ouverture */
+.dropcv { position: relative; display: flex; align-items: center; gap: 1.1rem; max-width: 34rem; margin-top: 1.8rem; padding: 1.15rem 1.4rem; border-radius: 20px; border: 1.5px dashed var(--mark); background: rgba(10,10,6,.55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); cursor: pointer; transition: background .3s, transform .3s var(--ease), border-color .3s; }
+.dropcv::before { content: ""; position: absolute; inset: -1.5px; border-radius: inherit; border: 1.5px solid var(--mark); opacity: 0; animation: ring 2.6s ease-out 2.4s infinite; pointer-events: none; }
+@keyframes ring { 0% { opacity: .7; transform: scale(1); } 70%, 100% { opacity: 0; transform: scale(1.045, 1.22); } }
+.dropcv:hover, .dropcv.over { background: rgba(242,223,75,.16); transform: translateY(-2px); border-style: solid; }
+.dropcv input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.dropcv:focus-within { outline: 2px solid var(--mark); outline-offset: 4px; }
+.dropcv-ico { flex: none; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: var(--mark); color: #1b1a08; }
+.dropcv-txt { display: grid; gap: .2rem; } .dropcv-txt strong { font: 600 1.15rem/1.2 var(--body); } .dropcv-txt span { color: var(--dim); font-size: .92rem; line-height: 1.4; }
+.dropcv.busy .dropcv-ico { animation: spin 1s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .dropcv::before { animation: none; } }
+#ouverture .links { margin-top: 1.3rem; }
+
 /* Essai en direct : l'appli web tourne dans la page */
 .shot.try::after { background: rgba(0,0,0,.88); }
 .try-grid { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: clamp(2rem, 6vw, 6rem); padding: 96px var(--pad) 48px; max-width: 86rem; margin: 0 auto; }
@@ -124,6 +146,8 @@ a { color: inherit; }
 </head>
 <body>
 
+<div class="intro" aria-hidden="true"><img src="favicon.svg" alt="" width="72" height="72"><span>juste<em>cv</em></span></div>
+
 <header class="bar">
   <a class="logo" href="#ouverture" aria-label="Juste, haut de page"><img src="favicon.svg" alt="" width="30" height="30">Juste</a>
   <button class="index-btn" id="openIndex" aria-haspopup="dialog" aria-controls="index">Index <i aria-hidden="true"></i></button>
@@ -139,10 +163,14 @@ a { color: inherit; }
     <div class="txt">
       <p class="kicker"><b>Juste</b> Extension Chrome · bêta gratuite</p>
       <h1 class="title">Votre vrai CV.<br>Adapté à chaque offre.</h1>
+      <label class="dropcv" id="dropcv">
+        <input type="file" id="cvfile" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain">
+        <span class="dropcv-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span>
+        <span class="dropcv-txt"><strong>Déposez votre CV ici</strong><span>Voyez s'il correspond au poste que vous visez. PDF ou Word, gratuit, sans compte.</span></span>
+      </label>
       <div class="links">
-        <a class="btn only-desk" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a>
-        <a class="btn only-touch" href="app/">Essayer sur mon téléphone</a>
-        <a class="more" href="#essayer">Essayer en direct</a>
+        <a class="more only-desk" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a>
+        <a class="more" href="#papier">Découvrir</a>
       </div>
     </div>
     <span class="scroll-cue" aria-hidden="true">Défiler</span>
@@ -251,6 +279,38 @@ a { color: inherit; }
       });
     }, { threshold: .55 });
     shots.forEach(function (s) { io.observe(s); });
+  }
+
+
+  /* Dépôt du CV : sur ordinateur, le fichier part dans l'essai en direct ; sur téléphone, on ouvre l'appli */
+  var drop = document.getElementById("dropcv"), input = document.getElementById("cvfile");
+  var frame = document.querySelector("#essayer iframe");
+  function frameUsable() { return frame && getComputedStyle(frame.parentNode).display !== "none"; }
+  function give(file) {
+    if (!file) return;
+    if (!frameUsable()) { location.href = "app/"; return; }
+    drop.classList.add("busy");
+    if (!frame.src) frame.src = frame.getAttribute("data-src");
+    document.getElementById("essayer").scrollIntoView();
+    var tries = 0;
+    (function push() {
+      var doc = null; try { doc = frame.contentDocument; } catch (e) {}
+      var target = doc && doc.readyState === "complete" && doc.getElementById("file");
+      if (!target) { if (tries++ < 60) return setTimeout(push, 250); drop.classList.remove("busy"); window.open("app/", "_blank"); return; }
+      try {
+        var prof = doc.getElementById("go-profile"); if (prof && !prof.hidden) prof.click();
+        var dt = new frame.contentWindow.DataTransfer(); dt.items.add(file); target.files = dt.files;
+        target.dispatchEvent(new frame.contentWindow.Event("change", { bubbles: true }));
+      } catch (e) { window.open("app/", "_blank"); }
+      drop.classList.remove("busy");
+    })();
+  }
+  if (matchMedia("(hover: none) and (pointer: coarse)").matches || !frameUsable()) {
+    drop.addEventListener("click", function (e) { e.preventDefault(); location.href = "app/"; });
+  } else {
+    input.addEventListener("change", function () { give(input.files[0]); input.value = ""; });
+    ["dragenter", "dragover"].forEach(function (t) { window.addEventListener(t, function (e) { if (e.dataTransfer && [].indexOf.call(e.dataTransfer.types, "Files") > -1) { e.preventDefault(); drop.classList.add("over"); } }); });
+    ["dragleave", "drop"].forEach(function (t) { window.addEventListener(t, function (e) { if (t === "drop") { e.preventDefault(); if (e.dataTransfer.files[0]) give(e.dataTransfer.files[0]); } if (t === "drop" || !e.relatedTarget) drop.classList.remove("over"); }); });
   }
 
   /* Index plein écran */
