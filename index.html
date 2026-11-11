@@ -77,6 +77,16 @@ a { color: inherit; }
 @keyframes cue { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
 @media (max-width: 700px) { .scroll-cue { display: none; } }
 
+/* Essai en direct : l'appli web tourne dans la page */
+.shot.try::after { background: rgba(0,0,0,.88); }
+.try-grid { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: clamp(2rem, 6vw, 6rem); padding: 96px var(--pad) 48px; max-width: 86rem; margin: 0 auto; }
+.try-copy { max-width: 34rem; } .try-copy > * { transition: opacity 1s var(--ease), transform 1s var(--ease); } .shot.wait .try-copy > * { opacity: 0; transform: translateY(22px); }
+.try-list { list-style: none; margin: 1.4rem 0 0; padding: 0; display: grid; gap: .5rem; color: var(--dim); font-size: .98rem; }
+.try-list li { padding-left: 1.5rem; position: relative; } .try-list li::before { content: ""; position: absolute; left: 0; top: .62em; width: .7rem; height: 1px; background: var(--mark); }
+.try-device { width: min(400px, 34vw); height: min(720px, calc(100svh - 150px)); border-radius: 28px; border: 1px solid var(--line); background: #070b09; overflow: hidden; box-shadow: 0 40px 120px -30px rgba(0,0,0,.9), 0 0 0 8px rgba(255,255,255,.03); }
+.try-device iframe { width: 100%; height: 100%; border: 0; display: block; background: #070b09; }
+@media (hover: none) and (pointer: coarse), (max-width: 860px) { .try-grid { grid-template-columns: 1fr; align-items: end; padding-bottom: max(clamp(56px, 11vh, 120px), env(safe-area-inset-bottom)); } .try-device { display: none; } .try .only-touch { display: inline-flex; } .try .more.only-desk { display: none; } }
+
 /* Dernier plan : prix et liens */
 .end .txt { max-width: 60rem; }
 .offers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 2rem 0 0; border-top: 1px solid var(--line); }
@@ -120,7 +130,7 @@ a { color: inherit; }
 </header>
 
 <nav class="rail" aria-label="Sections">
-  <a href="#ouverture" aria-label="Ouverture"></a><a href="#papier" aria-label="Votre CV"></a><a href="#preuve" aria-label="La preuve"></a><a href="#offre" aria-label="À côté de l'offre"></a><a href="#commencer" aria-label="Commencer"></a>
+  <a href="#ouverture" aria-label="Ouverture"></a><a href="#essayer" aria-label="Essayer en direct"></a><a href="#papier" aria-label="Votre CV"></a><a href="#preuve" aria-label="La preuve"></a><a href="#offre" aria-label="À côté de l'offre"></a><a href="#commencer" aria-label="Commencer"></a>
 </nav>
 
 <main>
@@ -132,10 +142,23 @@ a { color: inherit; }
       <div class="links">
         <a class="btn only-desk" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a>
         <a class="btn only-touch" href="app/">Essayer sur mon téléphone</a>
-        <a class="more" href="#papier">Découvrir</a>
+        <a class="more" href="#essayer">Essayer en direct</a>
       </div>
     </div>
     <span class="scroll-cue" aria-hidden="true">Défiler</span>
+  </section>
+
+  <section class="shot light try" id="essayer" style="background-image:url(assets/cine/rm-ecran.jpg)">
+    <div class="try-grid">
+      <div class="try-copy">
+        <p class="kicker"><b>En direct</b> Essayez maintenant</p>
+        <h2 class="title">Testez avec<br>votre vrai CV.</h2>
+        <p class="sub">Ajoutez votre CV et une offre. Juste vous dit quelles compétences mettre en avant, ce qui manque, puis réécrit votre CV pour ce poste, sans rien inventer.</p>
+        <ul class="try-list"><li>3 analyses gratuites par semaine</li><li>Sans compte, sans carte bancaire</li><li>Votre CV reste sur votre appareil</li></ul>
+        <div class="links"><a class="btn only-touch" href="app/">Lancer l'essai</a><a class="more only-desk" href="app/" target="_blank" rel="noopener">Ouvrir en grand</a></div>
+      </div>
+      <div class="try-device only-desk" aria-label="Essai de Juste en direct"><iframe title="Essai de Juste en direct" data-src="app/" loading="lazy"></iframe></div>
+    </div>
   </section>
 
   <section class="shot" id="papier" style="background-image:url(assets/cine/rm-papier.jpg)">
@@ -221,6 +244,7 @@ a { color: inherit; }
       es.forEach(function (e) {
         var v = e.target.querySelector("video");
         if (e.isIntersecting) {
+          var fr = e.target.querySelector("iframe[data-src]"); if (fr && !fr.src && getComputedStyle(fr.parentNode).display !== "none") fr.src = fr.getAttribute("data-src");
           e.target.classList.remove("wait"); play(v);
           dots.forEach(function (d) { d.classList.toggle("on", d.hash === "#" + e.target.id); });
         } else if (v && v.src) { v.pause(); }
