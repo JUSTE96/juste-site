@@ -179,7 +179,7 @@ async function readFile(file) {
     } finally { await doc.destroy(); }
   }
   if (name.endsWith(".docx")) {
-    if (!window.mammoth) throw new Error("Lecteur Word indisponible. Rechargez la page.");
+    if (!window.mammoth) await new Promise((ok, non) => { const sc = document.createElement("script"); sc.src = "vendor/mammoth.browser.min.js"; sc.onload = ok; sc.onerror = () => non(new Error("Lecteur Word indisponible. Vérifiez votre connexion, puis réessayez.")); document.head.append(sc); });
     return (await window.mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() })).value;
   }
   if (name.endsWith(".txt") || name.endsWith(".md") || file.type.startsWith("text/")) return await file.text();

@@ -4,7 +4,7 @@
   let passage = false;
   try { passage = sessionStorage.getItem("juste.passage") === "1"; sessionStorage.removeItem("juste.passage"); } catch {}
   const fin = () => { lever && lever.remove(); body.classList.add("entre"); };
-  if (!lever || matchMedia("(prefers-reduced-motion: reduce)").matches) return fin();
+  if (!lever || !passage || matchMedia("(prefers-reduced-motion: reduce)").matches) return fin();
   body.classList.add(passage ? "arrivee-longue" : "arrivee-courte");
   requestAnimationFrame(() => requestAnimationFrame(() => body.classList.add("joue")));
   const tenue = passage ? 2000 : 520;

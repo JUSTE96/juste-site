@@ -12,9 +12,8 @@
 body { background: radial-gradient(40% 30% at 0% 0%, #ffe1d6, transparent 70%), radial-gradient(35% 30% at 100% 100%, #dcebff, transparent 70%), #fffaf4; }
 h1, h2, .brand span { font-family: "Lora", Georgia, serif; font-weight: 500; letter-spacing: -.01em; }
 .brand img { display: none; }
-.brand span::after { content: "CV"; color: #d4421f; margin-left: .04em; }
+.brand b { color: #ff9a7e; font-weight: inherit; margin-left: .04em; }
 button, .btn, [role="button"] { border-radius: 999px; }
-header .brand span::after, .topbar .brand span::after { color: #ff9a7e; }
 
 /* transitions natives entre les pages du site */
 @view-transition { navigation: auto; }

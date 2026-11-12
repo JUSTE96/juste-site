@@ -28,3 +28,8 @@ body:not(.entre) main .view:not([hidden]) > * { animation: secours 0s 3.2s forwa
 html[data-theme="light"] { color-scheme: light; }
 html[data-theme="light"] .btn-primary { color: #fff; }
 html[data-theme="light"] .score-num { background: none; }
+/* Arrivée directe (sans passer par le site) : pas de rideau, le contenu s'affiche tout de suite */
+.direct .lever { display: none; }
+.direct body main .view:not([hidden]) > * { opacity: 1; transform: none; animation: none; transition: none; }
+/* le pied reste sous l'écran tant que la vue se charge : pas de saut de mise en page */
+main { min-height: 100dvh; }
