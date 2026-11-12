@@ -50,7 +50,6 @@ document.addEventListener("click", (event) => {
   if (target === "jobs") { if (!profileReady()) return openSetup(); openJobs(go.dataset.mode || jobs.mode); }
 });
 $("go-profile").addEventListener("click", () => openSetup());
-document.addEventListener("click", (event) => { if (event.target.closest('[data-open="setup"]')) { event.preventDefault(); openSetup(); } });
 
 function toast(text) {
   const t = $("toast"); t.textContent = text; t.hidden = false;

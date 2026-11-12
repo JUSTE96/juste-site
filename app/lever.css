@@ -1,0 +1,26 @@
+/* Arrivée dans l'appli : rideau crème, titre qui monte, puis lever vers le haut. */
+.lever { position: fixed; inset: 0; z-index: 100; background: #fffaf4; display: grid; place-content: center; justify-items: center; gap: 22px; text-align: center; padding: 24px; clip-path: inset(0 0 0 0); }
+.lever::before { content: ""; position: absolute; inset: 0; background: radial-gradient(50% 45% at 50% 50%, rgba(255, 107, 74, .16), transparent 70%); opacity: 0; transition: opacity 1.2s; }
+.lever-marque { font: 500 clamp(30px, 4vw, 44px)/1 "Lora", Georgia, serif; color: #1c2040; position: relative; }
+.lever-marque b { color: #ff6b4a; font-weight: 500; }
+.lever-titre { margin: 0; font: 400 clamp(52px, 9vw, 128px)/.98 "Lora", Georgia, serif; letter-spacing: -.025em; color: #1c2040; position: relative; display: none; }
+.lever-ligne { display: block; overflow: hidden; padding-bottom: .08em; }
+.lever-ligne > span { display: block; transform: translateY(110%); transition: transform 1.1s .35s cubic-bezier(.16, 1, .3, 1); }
+.lever-ligne + .lever-ligne > span { transition-delay: .44s; font-style: italic; color: #d4421f; }
+.lever-trait { display: none; width: min(420px, 70vw); height: 1px; background: linear-gradient(90deg, transparent, #ff6b4a, transparent); transform: scaleX(0); transition: transform 1.1s .5s cubic-bezier(.16, 1, .3, 1); position: relative; }
+body.arrivee-longue .lever-titre, body.arrivee-longue .lever-trait { display: block; }
+body.arrivee-longue .lever-marque { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); transition: top 1s cubic-bezier(.76, 0, .24, 1), transform 1s cubic-bezier(.76, 0, .24, 1), font-size 1s cubic-bezier(.76, 0, .24, 1); }
+body.arrivee-longue.joue .lever-marque { top: 34px; transform: translate(-50%, 0); font-size: 22px; }
+body.joue .lever::before { opacity: 1; }
+body.joue .lever-ligne > span { transform: none; }
+body.joue .lever-trait { transform: none; }
+body.leve .lever { clip-path: inset(0 0 100% 0); transition: clip-path 1s cubic-bezier(.76, 0, .24, 1); }
+body:not(.entre) main .view:not([hidden]) > * { opacity: 0; transform: translateY(22px); }
+body.entre main .view:not([hidden]) > * { transition: opacity .9s cubic-bezier(.16, 1, .3, 1), transform 1.1s cubic-bezier(.16, 1, .3, 1); }
+body.entre main .view:not([hidden]) > *:nth-child(2) { transition-delay: .07s; }
+body.entre main .view:not([hidden]) > *:nth-child(3) { transition-delay: .14s; }
+body.entre main .view:not([hidden]) > *:nth-child(n+4) { transition-delay: .21s; }
+body:not(.entre) main .view:not([hidden]) > * { animation: secours 0s 3.2s forwards; }
+@keyframes secours { to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .lever { display: none !important; } main .view > * { opacity: 1 !important; transform: none !important; } }
+@media print { .lever { display: none !important; } }

@@ -3,9 +3,9 @@
   const css = `.passage{position:fixed;inset:0;z-index:2147483000;pointer-events:none}
 .passage i{position:absolute;inset:0;clip-path:circle(0 at var(--x) var(--y));transition:clip-path .9s cubic-bezier(.76,0,.24,1)}
 .passage i:first-child{background:#ff6b4a}
-.passage i:nth-child(2){background:#141936;transition-delay:.16s}
+.passage i:nth-child(2){background:#fffaf4;transition-delay:.16s}
 .passage.go i{clip-path:circle(var(--r) at var(--x) var(--y))}
-.passage span{position:absolute;left:50%;top:50%;transform:translate(-50%,-40%);font:500 clamp(30px,4vw,44px)/1 Lora,Georgia,serif;color:#f7f1e8;opacity:0;transition:opacity .5s .62s,transform .9s .62s cubic-bezier(.16,1,.3,1)}
+.passage span{position:absolute;left:50%;top:50%;transform:translate(-50%,-40%);font:500 clamp(30px,4vw,44px)/1 Lora,Georgia,serif;color:#1c2040;opacity:0;transition:opacity .5s .62s,transform .9s .62s cubic-bezier(.16,1,.3,1)}
 .passage span b{color:#ff6b4a;font-weight:500}
 .passage.go span{opacity:1;transform:translate(-50%,-50%)}`;
   const versStudio = (u) => u.origin === location.origin && /\/app\/(index\.html)?$/.test(u.pathname);
