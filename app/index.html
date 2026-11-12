@@ -32,7 +32,7 @@
     <i class="lever-trait"></i>
   </div>
   <header class="top">
-    <a class="brand" href="#" data-go="home" aria-label="Juste, accueil"><img src="../assets/logo-mark.svg" alt="" width="30" height="30" /><span>Juste</span></a>
+    <a class="brand" href="#" data-go="home" aria-label="JusteCV, accueil"><img src="../assets/logo-mark.svg" alt="" width="30" height="30" /><span>Juste</span></a>
     <div class="top-actions">
       <span id="quota-pill" class="quota-pill" hidden></span>
       <button id="go-profile" class="icon-btn" aria-label="Mon CV et mon profil" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></button>
@@ -45,7 +45,7 @@
       <div id="setup-pending" class="banner" hidden></div>
       <div class="hero">
         <h1 id="setup-title">Ajoutez votre CV une fois.</h1>
-        <p>Ensuite, depuis une offre Indeed, un geste suffit : <b>Partager</b>, puis <b>Analyser avec Juste</b>.</p>
+        <p>Ensuite, depuis une offre Indeed, un geste suffit : <b>Partager</b>, puis <b>Analyser avec JusteCV</b>.</p>
       </div>
 
       <section class="card">
@@ -101,7 +101,7 @@
         <ol class="share-steps">
           <li><span class="n">1</span><span>Ouvrez l'offre dans <b>Safari</b></span></li>
           <li><span class="n">2</span><span>Touchez <span class="share-ico" aria-label="Partager"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M5 11v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/></svg></span> <b>Partager</b></span></li>
-          <li><span class="n">3</span><span>Choisissez <b>Analyser avec Juste</b></span></li>
+          <li><span class="n">3</span><span>Choisissez <b>Analyser avec JusteCV</b></span></li>
         </ol>
         <p class="muted small">Le résultat s'affiche ici, en quelques secondes. Fonctionne aussi avec Welcome to the Jungle, HelloWork, France Travail, APEC et JobTeaser.</p>
         <button class="btn btn-ghost btn-block" data-go="guide">Installer le bouton Partager</button>
@@ -239,13 +239,13 @@
     <section id="v-guide" class="view" hidden>
       <button class="back" data-go="home"><span aria-hidden="true">←</span> Retour</button>
       <div class="hero compact">
-        <h1>Le bouton « Analyser avec Juste »</h1>
+        <h1>Le bouton « Analyser avec JusteCV »</h1>
         <p>Il apparaît dans le menu Partager de Safari, sur iPhone et iPad.</p>
       </div>
       <a id="shortcut-link" class="btn btn-primary btn-block" hidden>Ajouter le raccourci en un geste</a>
       <ol class="guide">
         <li><b>Autorisez les scripts des raccourcis.</b> Réglages → Apps → Raccourcis → Avancé → activez « Autoriser l'exécution de scripts ». <span class="muted">(Avant iOS 18 : Réglages → Raccourcis → Avancé.)</span></li>
-        <li><b>Créez le raccourci.</b> Ouvrez l'app Raccourcis, touchez <b>+</b>, puis nommez-le « Analyser avec Juste ».</li>
+        <li><b>Créez le raccourci.</b> Ouvrez l'app Raccourcis, touchez <b>+</b>, puis nommez-le « Analyser avec JusteCV ».</li>
         <li><b>Ajoutez l'action « Exécuter JavaScript sur la page web ».</b> Remplacez le code d'exemple par le script ci-dessous.
           <div class="code-box"><button id="copy-script" class="btn btn-ghost btn-sm">Copier le script</button><pre id="script-preview" class="code"></pre></div>
         </li>
@@ -254,11 +254,11 @@
       </ol>
       <div class="card tip">
         <h2>Pour l'utiliser</h2>
-        <p>Sur une offre ouverte dans Safari : <b>Partager</b> → <b>Analyser avec Juste</b>. La première fois, iOS demande d'autoriser l'accès au site : choisissez « Toujours autoriser ».</p>
+        <p>Sur une offre ouverte dans Safari : <b>Partager</b> → <b>Analyser avec JusteCV</b>. La première fois, iOS demande d'autoriser l'accès au site : choisissez « Toujours autoriser ».</p>
       </div>
       <details class="card more">
         <summary>Sur Android ou un autre navigateur : un favori</summary>
-        <p class="muted small">Créez un favori nommé « Analyser avec Juste » et remplacez son adresse par ce code. Sur une offre, ouvrez vos favoris et touchez-le.</p>
+        <p class="muted small">Créez un favori nommé « Analyser avec JusteCV » et remplacez son adresse par ce code. Sur une offre, ouvrez vos favoris et touchez-le.</p>
         <div class="code-box"><button id="copy-bookmarklet" class="btn btn-ghost btn-sm">Copier le code du favori</button></div>
       </details>
     </section>
@@ -279,7 +279,7 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
   <script src="vendor/mammoth.browser.min.js" defer></script>
-  <script type="module" src="app.mjs?v=3"></script>
+  <script type="module" src="app.mjs?v=6"></script>
   <script src="studio.js?v=3"></script>
 </body>
 </html>

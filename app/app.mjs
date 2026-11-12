@@ -1,4 +1,4 @@
-// Juste — appli mobile (iPhone, iPad, Android). Même cœur que l'extension :
+// JusteCV — appli mobile (iPhone, iPad, Android). Même cœur que l'extension :
 // le CV reste sur l'appareil, il est pseudonymisé avant envoi, les preuves sont vérifiées.
 import { pseudonymize } from "./shared/privacy.mjs";
 import { reviewCv, groundSourceSections } from "./shared/cv-review.mjs";
@@ -78,6 +78,7 @@ async function api(path, body, retried = false) {
   } catch { throw Object.assign(new Error("Serveur injoignable. Vérifiez votre connexion."), { status: 0 }); }
   const data = await r.json().catch(() => ({}));
   if (r.status === 401 && !retried) { state.creds = null; store.del("creds"); return api(path, body, true); }
+  if (r.status === 401) data.error = "L'accès à l'analyse n'a pas pu être rétabli. Rechargez la page, puis réessayez.";
   if (!r.ok) throw Object.assign(new Error(data.error || "Erreur serveur"), { status: r.status, data });
   return data;
 }
