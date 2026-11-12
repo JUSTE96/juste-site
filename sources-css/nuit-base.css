@@ -6,10 +6,10 @@ html[data-nuit] {
   /* site (juste.css) */
   --carbone: #141936; --titane: #1f2550; --trait: #2c3364; --acier: #a9aecd; --os: #f7f1e8;
   --corail-texte: #ff8f73; --vert: #7fd6b0; --ambre: #f4b860; --bleu: #9db8ff;
-  --ciel: #223670; --soleil: #4b4122; --menthe: #1c4a45; --peche: #4f2a38; --lilas: #37307a;
+  --ciel: #223670; --soleil: #4b4122; --menthe: #1b3f66; --peche: #4f2a38; --lilas: #37307a;
   /* pages (pages.css) */
   --bg: #141936; --bg-2: #1f2550; --fg: #f7f1e8; --muted: #a9aecd; --faint: #8a90b4; --line: #2c3364;
-  --surface: #1f2550; --surface-2: #262d5e; --sapin: #ff8f73; --sapin-soft: #1c4a45; --red: #ff8f73; --red-soft: #4f2a38;
+  --surface: #1f2550; --surface-2: #262d5e; --sapin: #ff8f73; --sapin-soft: #1b3f66; --red: #ff8f73; --red-soft: #4f2a38;
   background: #141936;
 }
 html[data-nuit] body::before { content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;

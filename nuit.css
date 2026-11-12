@@ -6,10 +6,10 @@ html[data-nuit] {
   /* site (juste.css) */
   --carbone: #141936; --titane: #1f2550; --trait: #2c3364; --acier: #a9aecd; --os: #f7f1e8;
   --corail-texte: #ff8f73; --vert: #7fd6b0; --ambre: #f4b860; --bleu: #9db8ff;
-  --ciel: #223670; --soleil: #4b4122; --menthe: #1c4a45; --peche: #4f2a38; --lilas: #37307a;
+  --ciel: #223670; --soleil: #4b4122; --menthe: #1b3f66; --peche: #4f2a38; --lilas: #37307a;
   /* pages (pages.css) */
   --bg: #141936; --bg-2: #1f2550; --fg: #f7f1e8; --muted: #a9aecd; --faint: #8a90b4; --line: #2c3364;
-  --surface: #1f2550; --surface-2: #262d5e; --sapin: #ff8f73; --sapin-soft: #1c4a45; --red: #ff8f73; --red-soft: #4f2a38;
+  --surface: #1f2550; --surface-2: #262d5e; --sapin: #ff8f73; --sapin-soft: #1b3f66; --red: #ff8f73; --red-soft: #4f2a38;
   background: #141936;
 }
 html[data-nuit] body::before { content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
@@ -74,7 +74,7 @@ html.bascule, html.bascule body, html.bascule body *:not(#ciel) { transition: ba
 :where(html[data-nuit]) .temps .num{color:var(--corail-texte)}
 :where(html[data-nuit]) .temps li:nth-child(2) .num{color:var(--bleu)}
 :where(html[data-nuit]) .temps li:nth-child(3) .num{color:var(--vert)}
-:where(html[data-nuit]) .temps li:nth-child(4) .num{color:#7a4fd6}
+:where(html[data-nuit]) .temps li:nth-child(4) .num{color:#a9aecd}
 :where(html[data-nuit]) .cadran .minute{stroke:#2c3364}
 :where(html[data-nuit]) .cadran svg{background:radial-gradient(closest-side,#232a5c 0 88%,#0000 89%)}
 :where(html[data-nuit]) .galerie figure{background:#232a5c;box-shadow:0 18px 40px -28px #00000066}
@@ -86,7 +86,7 @@ html.bascule, html.bascule body, html.bascule body *:not(#ciel) { transition: ba
 :where(html[data-nuit]) .galerie figure:nth-child(6n+6) video{background:linear-gradient(160deg, var(--ciel), var(--menthe))}
 :where(html[data-nuit]) .galerie figcaption{color:var(--acier)}
 :where(html[data-nuit]) .galerie figcaption b{color:var(--os)}
-:where(html[data-nuit]) .vitrine,:where(html[data-nuit]) .js .cascade.vu{background:#232a5c}
+:where(html[data-nuit]) .vitrine,:where(html[data-nuit]).js .cascade.vu{background:#232a5c}
 :where(html[data-nuit]) .vitrine>section+section{background:#232a5c}
 :where(html[data-nuit]) .regle{background:var(--os);color:#141936}
 :where(html[data-nuit]) .regle .chapo{color:#c9cde0!important}
@@ -123,9 +123,9 @@ html.bascule, html.bascule body, html.bascule body *:not(#ciel) { transition: ba
 @media (prefers-reduced-transparency:reduce){:where(html[data-nuit]) .btn,:where(html[data-nuit]) .menu-btn,:where(html[data-nuit]) .pause{background:#232a5c!important}}
 @media (prefers-reduced-transparency:reduce){:where(html[data-nuit]) .btn.plein{background:var(--corail)!important}}
 :where(html[data-nuit]) .suite{background:linear-gradient(150deg, var(--lilas), var(--ciel))}
-:where(html[data-nuit]) .suite p{color:#343a58}
+:where(html[data-nuit]) .suite p{color:#a9aecd}
 :where(html[data-nuit]) .reperes{background:var(--menthe)}
-:where(html[data-nuit]) .reperes .aide{color:#2f4a3e}
+:where(html[data-nuit]) .reperes .aide{color:#a9aecd}
 :where(html[data-nuit]) .reperes-liste li{background:rgba(38,45,94,0.75)}
 :where(html[data-nuit]) .reperes-liste span{color:#a9aecd}
 :where(html[data-nuit]) .reperes-liste .vu span{color:var(--vert)}
@@ -173,8 +173,8 @@ html.bascule, html.bascule body, html.bascule body *:not(#ciel) { transition: ba
 @media (width<=860px){:where(html[data-nuit]) .barre-mobile span{color:var(--os)}}
 @media (hover:hover){:where(html[data-nuit]) .galerie figure:hover{box-shadow:0 30px 54px -28px #00000080}}
 :where(html[data-nuit]) .regle .non li span{background:linear-gradient(var(--corail), var(--corail)) no-repeat 0 58% / 100% 2px}
-:where(html[data-nuit]) .js .regle .non li span{background-size:0% 2px}
-:where(html[data-nuit]) .js .regle .deux.vu .non li span{background-size:100% 2px}
+:where(html[data-nuit]).js .regle .non li span{background-size:0% 2px}
+:where(html[data-nuit]).js .regle .deux.vu .non li span{background-size:100% 2px}
 :where(html[data-nuit]) .fil ol{background:linear-gradient(rgba(38,45,94,0.86),rgba(38,45,94,0.68));border:1px solid #f7f1e824;box-shadow:inset 0 1px #f7f1e81a,0 12px 28px -18px #00000080,0 0 0 1px #00000012}
 :where(html[data-nuit]) .fil button{color:var(--acier);background:0 0}
 :where(html[data-nuit]) .fil button i{background:#f7f1e814}
@@ -184,12 +184,12 @@ html.bascule, html.bascule body, html.bascule body *:not(#ciel) { transition: ba
 :where(html[data-nuit]) .depot-zone{border:1.5px dashed #2c3364}
 :where(html[data-nuit]) .depot-zone.survol{background:var(--ciel)}
 :where(html[data-nuit]) .depot-zone textarea{background:0 0}
-@media (prefers-reduced-motion:reduce){:where(html[data-nuit]) .js .regle .non li span{background-size:100% 2px}}
+@media (prefers-reduced-motion:reduce){:where(html[data-nuit]).js .regle .non li span{background-size:100% 2px}}
 @media (prefers-reduced-transparency:reduce){:where(html[data-nuit]) .tete.fond .cadre,:where(html[data-nuit]) .menu,:where(html[data-nuit]) .puce,:where(html[data-nuit]) .barre-mobile,:where(html[data-nuit]) .fil ol{background:#232a5c}}
 @media print{:where(html[data-nuit]) body{background:#232a5c}}
 @media print{:where(html[data-nuit]) .piece,:where(html[data-nuit]) .reperes{box-shadow:none;background:#232a5c}}
 :where(html[data-nuit]) .menu{background:rgba(38,45,94,0.93)}
-:where(html[data-nuit]) .menu nav a{color:#5a607a}
+:where(html[data-nuit]) .menu nav a{color:#a9aecd}
 :where(html[data-nuit]) .tete.fond .cadre{background:linear-gradient(rgba(38,45,94,0.88),rgba(38,45,94,0.76))}
 :where(html[data-nuit]) .heros-media,:where(html[data-nuit]) .galerie figure,:where(html[data-nuit]) .fin-clip{background-position:50%!important;background-repeat:no-repeat!important;background-size:cover!important}
 :where(html[data-nuit]) .menu-plus a{color:var(--os)}
@@ -236,7 +236,7 @@ html.bascule, html.bascule body, html.bascule body *:not(#ciel) { transition: ba
 :where(html[data-nuit]) .chips span.core{background:rgba(255,226,122,.13)}
 :where(html[data-nuit]) .chips span.core::before{color:var(--ambre)}
 :where(html[data-nuit]) .pill{background:var(--surface-2);color:var(--muted)}
-:where(html[data-nuit]) .pill-mint{background:var(--menthe);color:#0f5c36}
+:where(html[data-nuit]) .pill-mint{background:var(--menthe);color:#a9aecd}
 :where(html[data-nuit]) .pill-amber{background:rgba(255,226,122,.13);color:#6f4300}
 :where(html[data-nuit]) .pill-rose{background:var(--red-soft);color:var(--red)}
 :where(html[data-nuit]) .toc a:hover{background:#232a5c}
@@ -244,11 +244,11 @@ html.bascule, html.bascule body, html.bascule body *:not(#ciel) { transition: ba
 :where(html[data-nuit]) .cta{background:linear-gradient(140deg, var(--ciel), #232a5c 70%)}
 :where(html[data-nuit]) details summary::after{color:var(--sapin)}
 :where(html[data-nuit]) .conseils li::marker{color:var(--sapin)}
-:where(html[data-nuit]) .statut-envoyee{background:var(--ciel);color:#1d4fb8}
+:where(html[data-nuit]) .statut-envoyee{background:var(--ciel);color:#a9aecd}
 :where(html[data-nuit]) .statut-relance{background:rgba(255,226,122,.13);color:#6f4300}
-:where(html[data-nuit]) .statut-entretien{background:var(--menthe);color:#0f5c36}
+:where(html[data-nuit]) .statut-entretien{background:var(--menthe);color:#a9aecd}
 :where(html[data-nuit]) .statut-refus{background:var(--red-soft);color:var(--red)}
-:where(html[data-nuit]) .statut-offre{background:#c9efd0;color:#14532d}
+:where(html[data-nuit]) .statut-offre{background:#c9efd0;color:#a9aecd}
 :where(html[data-nuit]) .stat{background:#232a5c}
 :where(html[data-nuit]) .stat.is-warn{background:rgba(255,226,122,.13)}
 :where(html[data-nuit]) .stat.is-warn strong{color:#6f4300}
