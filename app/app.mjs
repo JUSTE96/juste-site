@@ -353,6 +353,7 @@ async function runAnalysis(job) {
     store.set("last", { result: data, job, at: Date.now() });
     dejaNoter(cle, data, job);
     renderResult(data, job); show("result"); renderQuota();
+    if (data.deja) toast("Déjà analysée : résultat retrouvé, sans toucher à votre quota");
     if (pendingCv) { loadAdaptedCv(pendingCv, data); if (!data.jury) loadJury(pendingCv, data); loadSecond(pendingCv, data); }
   } catch (e) {
     if (e.status === 429 && e.data?.code === "quota_exhausted") {
