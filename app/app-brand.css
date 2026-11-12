@@ -71,7 +71,7 @@ input, textarea { border-radius: var(--rayon-s); font-family: var(--font); }
 .score-scale { grid-column: 1 / -1; position: relative; height: 6px; margin: 10px 0 2px; border-radius: 2px; background: var(--papier-2); box-shadow: inset 0 0 0 1px var(--trait); }
 .score-scale i { position: absolute; inset: 0 auto 0 0; width: calc(var(--score, 0) * 1%); background: var(--sapin); border-radius: 2px; transition: width 1s cubic-bezier(.2, .8, .2, 1); }
 .score-scale::after { content: ""; position: absolute; left: 70%; top: -4px; bottom: -4px; width: 2px; background: var(--texte); opacity: .55; }
-@media (prefers-color-scheme: dark) { .score-num { background: linear-gradient(transparent 74%, var(--surligneur) 74%, var(--surligneur) 94%, transparent 94%); } }
+
 
 /* Onglets d'index */
 .tabs { background: var(--fond); border: 0; border-bottom: 1px solid var(--trait-fort); border-radius: 0; box-shadow: none; padding: 0; gap: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
@@ -80,7 +80,7 @@ input, textarea { border-radius: var(--rayon-s); font-family: var(--font); }
 .tabs button.active::after { content: ""; position: absolute; left: 6px; right: 6px; bottom: -1px; height: 3px; background: var(--sapin); border-radius: 2px 2px 0 0; }
 .count, .active .count { border-radius: 4px; background: var(--papier); border: 1px solid var(--trait); color: var(--texte-2); }
 .active .count { color: var(--texte); border-color: var(--trait-fort); }
-@media (prefers-color-scheme: dark) { .tabs button.active { color: var(--texte); } }
+
 
 /* Atouts, pistes, poste */
 .item { border-radius: var(--rayon); border-left-width: 1px; animation: none; }

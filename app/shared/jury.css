@@ -1,8 +1,8 @@
 /* Juste — le jury (7 évaluateurs), les erreurs triées, les questions et les emplacements à compléter.
    Partagé entre l'extension et l'appli mobile ; utilise les jetons --v4-* et --m-* (panel-match.css). */
 :root { --j-out: #b4533f; --j-out-bg: #f8e6e1; }
-:root[data-theme="dark"] { --j-out: #e48a76; --j-out-bg: #3a2420; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme]) { --j-out: #e48a76; --j-out-bg: #3a2420; } }
+
+
 
 .jury { display: grid; gap: 14px; }
 .jury-head { display: flex; align-items: center; gap: 14px; }

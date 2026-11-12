@@ -55,26 +55,8 @@
 }
 
 /* Thème sombre : choisi dans l'extension (data-theme) ou suivi du système (appli mobile). */
-:root[data-theme="dark"] {
-  --fond: #0e1513; --papier: #16201c; --papier-2: #1b2722; --trait: #2a3a33; --trait-fort: #3c5047;
-  --texte: #e7eeea; --texte-2: #9fb2a9; --sapin: #84d0b3; --sapin-fonce: #a3dcc6; --sapin-clair: #1d322a; --entete: #14382c;
-  --surligneur: #e9c84f; --surligneur-doux: #3a3216; --surligneur-trait: #c9a63a; --surligneur-texte: #f4e3a1;
-  --stylo: #ff8796; --stylo-clair: #3b1d24; --stylo-trait: #6e3540;
-  --ombre: none; --ombre-haute: 0 14px 30px -18px rgba(0, 0, 0, .8);
-  --surligneur-plein: #d9b23d; --m-ok-mark: rgba(233, 200, 79, .34); --m-part-mark: rgba(233, 200, 79, .14);
-  color-scheme: dark;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --fond: #0e1513; --papier: #16201c; --papier-2: #1b2722; --trait: #2a3a33; --trait-fort: #3c5047;
-    --texte: #e7eeea; --texte-2: #9fb2a9; --sapin: #84d0b3; --sapin-fonce: #a3dcc6; --sapin-clair: #1d322a; --entete: #14382c;
-    --surligneur: #e9c84f; --surligneur-doux: #3a3216; --surligneur-trait: #c9a63a; --surligneur-texte: #f4e3a1;
-    --stylo: #ff8796; --stylo-clair: #3b1d24; --stylo-trait: #6e3540;
-    --ombre: none; --ombre-haute: 0 14px 30px -18px rgba(0, 0, 0, .8);
-    --surligneur-plein: #d9b23d; --m-ok-mark: rgba(233, 200, 79, .34); --m-part-mark: rgba(233, 200, 79, .14);
-    color-scheme: dark;
-  }
-}
+
+
 
 /* Le surligneur : un trait de marqueur posé sous le texte, pas un bloc de couleur. */
 .surligne, mark.hl-ok, .proof mark {

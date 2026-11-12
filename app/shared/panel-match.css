@@ -13,11 +13,7 @@
   --m-gap-bg: #fbf1dc;
   --m-gap-line: #efd39c;
 }
-:root[data-theme="dark"] {
-  --m-ok-bg: #1f332c; --m-ok-mark: rgba(124, 196, 173, .22);
-  --m-part: #4f8a78; --m-part-bg: #1a2723; --m-part-mark: rgba(124, 196, 173, .1);
-  --m-gap: #e3ad4c; --m-gap-ink: #f0c87e; --m-gap-bg: #33291a; --m-gap-line: #5a4626;
-}
+
 
 .match {
   margin: 14px 0 6px; padding: 16px; background: var(--v4-card); border: 1px solid var(--v4-border);
@@ -68,7 +64,7 @@
 .mchip-gap .mchip-ico { background: var(--v4-card); color: var(--m-gap); border: 1.5px solid var(--m-gap-line); }
 .mchip-gap small { background: color-mix(in srgb, var(--m-gap) 16%, transparent); }
 .mchip[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--v4-card), 0 0 0 4px currentColor; }
-:root[data-theme="dark"] .mchip-ok .mchip-ico { color: #0f1a16; }
+
 
 .match-detail {
   margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--v4-tint-2);
