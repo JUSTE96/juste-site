@@ -84,16 +84,18 @@ body.essai { background: linear-gradient(160deg, #7a8a99, #3c4a55); }
 
 <script>
 const M = {
-  soin: { metier: "Un métier, un écart", accroche: "Aide-soignante : votre CV parle-t-il des <i>« transmissions » ?</i>", offre: "Transmissions écrites et orales à l'équipe soignante", cv: "Aide-soignante en EHPAD, 3 ans : soins d'hygiène et de confort", question: "Faites-vous des transmissions à l'équipe ?", ajout: "transmissions écrites et orales" },
-  macon: { metier: "Un métier, un écart", accroche: "Maçon : votre CV dit-il <i>« lecture de plans » ?</i>", offre: "Lecture de plans et implantation d'ouvrages", cv: "Maçon, 5 ans : pose de blocs, coffrage, ferraillage", question: "Avez-vous déjà lu des plans sur un chantier ?", ajout: "lecture de plans" },
-  cuisine: { metier: "Un métier, un écart", accroche: "Cuisinier : votre CV cite-t-il <i>« HACCP » ?</i>", offre: "Connaissance des règles d'hygiène HACCP", cv: "Cuisinier, 3 ans : préparations chaudes et froides, dressage", question: "Appliquez-vous les règles HACCP au quotidien ?", ajout: "respect des règles HACCP" },
-  logistique: { metier: "Un métier, un écart", accroche: "Préparatrice de commandes : votre CV cite-t-il <i>le « CACES 1 » ?</i>", offre: "CACES 1 exigé", cv: "Préparatrice de commandes, 2 ans : terminal de scan, contrôle des colis", question: "Avez-vous un CACES 1 en cours de validité ?", ajout: "CACES 1" },
+  soin: { accroche: "Aide-soignante : votre CV parle-t-il des <i>« transmissions » ?</i>", offre: "Transmissions écrites et orales à l'équipe soignante", cv: "Aide-soignante en EHPAD, 3 ans : soins d'hygiène et de confort", question: "Faites-vous des transmissions à l'équipe ?", ajout: "transmissions écrites et orales" },
+  macon: { accroche: "Maçon : votre CV dit-il <i>« lecture de plans » ?</i>", offre: "Lecture de plans et implantation d'ouvrages", cv: "Maçon, 5 ans : pose de blocs, coffrage, ferraillage", question: "Avez-vous déjà lu des plans sur un chantier ?", ajout: "lecture de plans" },
+  cuisine: { accroche: "Cuisinier : votre CV cite-t-il <i>« HACCP » ?</i>", offre: "Connaissance des règles d'hygiène HACCP", cv: "Cuisinier, 3 ans : préparations chaudes et froides, dressage", question: "Appliquez-vous les règles HACCP au quotidien ?", ajout: "respect des règles HACCP" },
+  logistique: { accroche: "Préparatrice de commandes : votre CV cite-t-il <i>le « CACES 1 » ?</i>", offre: "CACES 1 exigé", cv: "Préparatrice de commandes, 2 ans : terminal de scan, contrôle des colis", question: "Avez-vous un CACES 1 en cours de validité ?", ajout: "CACES 1" },
 };
+M["soin-h"] = { ...M.soin, accroche: M.soin.accroche.replace("Aide-soignante", "Aide-soignant"), cv: M.soin.cv.replace("Aide-soignante", "Aide-soignant") };
+M["cuisine-f"] = { ...M.cuisine, accroche: M.cuisine.accroche.replace("Cuisinier", "Cuisinière"), cv: M.cuisine.cv.replace("Cuisinier", "Cuisinière") };
 const q = new URLSearchParams(location.search), m = M[q.get("m")] || M.macon;
 if (q.has("essai")) document.body.classList.add("essai");
 const $ = (i) => document.getElementById(i);
-$("metier").textContent = m.metier; $("accroche").innerHTML = m.accroche; $("offre").textContent = m.offre; $("cv1").textContent = m.cv; $("cv2").textContent = m.cv; $("question").textContent = m.question; $("ajout").textContent = m.ajout;
-window.DUREE = 12;
+$("metier").textContent = "Un métier, un écart"; $("accroche").innerHTML = m.accroche; $("offre").textContent = m.offre; $("cv1").textContent = m.cv; $("cv2").textContent = m.cv; $("question").textContent = m.question; $("ajout").textContent = m.ajout;
+window.DUREE = +(q.get("d") || 12);
 window.pret = document.fonts.ready.then(() => { document.getAnimations().forEach((a) => a.pause()); });
 window.seek = (ms) => document.getAnimations().forEach((a) => { a.currentTime = ms; });
 </script>
