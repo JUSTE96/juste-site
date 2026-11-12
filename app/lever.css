@@ -24,3 +24,7 @@ body:not(.entre) main .view:not([hidden]) > * { animation: secours 0s 3.2s forwa
 @keyframes secours { to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .lever { display: none !important; } main .view > * { opacity: 1 !important; transform: none !important; } }
 @media print { .lever { display: none !important; } }
+/* L'appli reste blanche même si l'appareil est en mode sombre */
+html[data-theme="light"] { color-scheme: light; }
+html[data-theme="light"] .btn-primary { color: #fff; }
+html[data-theme="light"] .score-num { background: none; }
