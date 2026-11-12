@@ -103,11 +103,12 @@ function afficherEcart(r) {
 }
 
 /* ---------- passerelle vers l'analyse complète (serveur, jury, CV adapté) ---------- */
-$("complet").addEventListener("click", () => {
+$("complet").addEventListener("click", (e) => {
   const texte = $("offre").value.trim(), cv = $("cv").value.trim();
   try { sessionStorage.setItem("larpeur.cvDraft", JSON.stringify(cv.slice(0, 12000))); } catch {}
   const job = { v: 1, title: profil?.intitule || "", company: "", location: "", url: "", host: "", text: texte.slice(0, 30000) };
-  location.href = "app/#job=" + encodeURIComponent(JSON.stringify(job));
+  const cible = "app/#job=" + encodeURIComponent(JSON.stringify(job));
+  if (window.justePassage) window.justePassage(cible, e, e.currentTarget); else location.href = cible;
 });
 
 /* ---------- repères métier (référentiel public, pas de CV d'autres personnes) ---------- */
