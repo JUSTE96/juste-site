@@ -22,6 +22,7 @@
     d.className = "passage"; d.setAttribute("aria-hidden", "true");
     d.style.cssText = `--x:${x}px;--y:${y}px;--r:${rayon}px`;
     d.innerHTML = "<i></i><i></i><span>Juste<b>CV</b></span>";
+    if (document.documentElement.hasAttribute("data-nuit")) { d.children[1].style.background = "#141936"; d.children[2].style.color = "#f7f1e8"; }
     document.body.append(d);
     requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add("go")));
     setTimeout(() => { location.href = u.href; }, 1150);

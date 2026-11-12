@@ -1,0 +1,39 @@
+/* JusteCV — mode nuit : ciel étoilé, de 20 h à 6 h (heure du visiteur) ou au bouton lune.
+   Fichier fabriqué par outils/generer_nuit.py : modifier sources-css/nuit-base.css et nuit-fin.css, pas nuit.css.
+   Tout est sous html[data-nuit] : le jour, cette feuille ne change rien. */
+html[data-nuit] {
+  color-scheme: dark;
+  /* site (juste.css) */
+  --carbone: #141936; --titane: #1f2550; --trait: #2c3364; --acier: #a9aecd; --os: #f7f1e8;
+  --corail-texte: #ff8f73; --vert: #7fd6b0; --ambre: #f4b860; --bleu: #9db8ff;
+  --ciel: #223670; --soleil: #4b4122; --menthe: #1c4a45; --peche: #4f2a38; --lilas: #37307a;
+  /* pages (pages.css) */
+  --bg: #141936; --bg-2: #1f2550; --fg: #f7f1e8; --muted: #a9aecd; --faint: #8a90b4; --line: #2c3364;
+  --surface: #1f2550; --surface-2: #262d5e; --sapin: #ff8f73; --sapin-soft: #1c4a45; --red: #ff8f73; --red-soft: #4f2a38;
+  background: #141936;
+}
+html[data-nuit] body::before { content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(55% 45% at 85% 0%, rgba(132, 86, 230, .34), transparent 70%),
+    radial-gradient(50% 45% at 0% 100%, rgba(255, 107, 74, .17), transparent 70%),
+    radial-gradient(60% 55% at 25% 30%, rgba(58, 92, 224, .24), transparent 72%),
+    radial-gradient(45% 40% at 70% 75%, rgba(40, 150, 190, .14), transparent 70%),
+    linear-gradient(180deg, #0c1030 0%, #141936 48%, #1b1642 100%); }
+html[data-nuit] body { background: transparent; }
+#ciel { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0; transition: opacity 1.4s; }
+html[data-nuit] #ciel { opacity: 1; }
+
+/* bouton lune / soleil */
+.ciel-btn { position: fixed; z-index: 70; left: max(14px, env(safe-area-inset-left)); bottom: calc(14px + env(safe-area-inset-bottom)); width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+  border: 1px solid #1c204024; background: #ffffffd9; color: #1c2040; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 10px 24px -12px #1c204066; transition: transform .35s cubic-bezier(.16, 1, .3, 1), background .4s, color .4s, border-color .4s; }
+.ciel-btn:hover { transform: translateY(-2px) rotate(-12deg); }
+.ciel-btn:focus-visible { outline: 2px solid #ff6b4a; outline-offset: 3px; }
+.ciel-btn svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.ciel-btn .soleil { display: none; }
+html[data-nuit] .ciel-btn { background: #232a5cd9; color: #ffe27a; border-color: #f7f1e830; box-shadow: 0 10px 28px -12px #000c; }
+html[data-nuit] .ciel-btn .lune { display: none; } html[data-nuit] .ciel-btn .soleil { display: block; }
+.ciel-btn.dans-barre { position: static; width: 40px; height: 40px; box-shadow: none; }
+@media print { .ciel-btn, #ciel { display: none !important; } }
+/* bascule en douceur */
+html.bascule, html.bascule body, html.bascule body *:not(#ciel) { transition: background-color .7s, color .7s, border-color .7s, box-shadow .7s !important; }
+@media (prefers-reduced-motion: reduce) { html.bascule, html.bascule body, html.bascule body * { transition: none !important; } }

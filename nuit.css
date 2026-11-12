@@ -1,0 +1,275 @@
+/* JusteCV — mode nuit : ciel étoilé, de 20 h à 6 h (heure du visiteur) ou au bouton lune.
+   Fichier fabriqué par outils/generer_nuit.py : modifier sources-css/nuit-base.css et nuit-fin.css, pas nuit.css.
+   Tout est sous html[data-nuit] : le jour, cette feuille ne change rien. */
+html[data-nuit] {
+  color-scheme: dark;
+  /* site (juste.css) */
+  --carbone: #141936; --titane: #1f2550; --trait: #2c3364; --acier: #a9aecd; --os: #f7f1e8;
+  --corail-texte: #ff8f73; --vert: #7fd6b0; --ambre: #f4b860; --bleu: #9db8ff;
+  --ciel: #223670; --soleil: #4b4122; --menthe: #1c4a45; --peche: #4f2a38; --lilas: #37307a;
+  /* pages (pages.css) */
+  --bg: #141936; --bg-2: #1f2550; --fg: #f7f1e8; --muted: #a9aecd; --faint: #8a90b4; --line: #2c3364;
+  --surface: #1f2550; --surface-2: #262d5e; --sapin: #ff8f73; --sapin-soft: #1c4a45; --red: #ff8f73; --red-soft: #4f2a38;
+  background: #141936;
+}
+html[data-nuit] body::before { content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(55% 45% at 85% 0%, rgba(132, 86, 230, .34), transparent 70%),
+    radial-gradient(50% 45% at 0% 100%, rgba(255, 107, 74, .17), transparent 70%),
+    radial-gradient(60% 55% at 25% 30%, rgba(58, 92, 224, .24), transparent 72%),
+    radial-gradient(45% 40% at 70% 75%, rgba(40, 150, 190, .14), transparent 70%),
+    linear-gradient(180deg, #0c1030 0%, #141936 48%, #1b1642 100%); }
+html[data-nuit] body { background: transparent; }
+#ciel { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0; transition: opacity 1.4s; }
+html[data-nuit] #ciel { opacity: 1; }
+
+/* bouton lune / soleil */
+.ciel-btn { position: fixed; z-index: 70; left: max(14px, env(safe-area-inset-left)); bottom: calc(14px + env(safe-area-inset-bottom)); width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+  border: 1px solid #1c204024; background: #ffffffd9; color: #1c2040; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 10px 24px -12px #1c204066; transition: transform .35s cubic-bezier(.16, 1, .3, 1), background .4s, color .4s, border-color .4s; }
+.ciel-btn:hover { transform: translateY(-2px) rotate(-12deg); }
+.ciel-btn:focus-visible { outline: 2px solid #ff6b4a; outline-offset: 3px; }
+.ciel-btn svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.ciel-btn .soleil { display: none; }
+html[data-nuit] .ciel-btn { background: #232a5cd9; color: #ffe27a; border-color: #f7f1e830; box-shadow: 0 10px 28px -12px #000c; }
+html[data-nuit] .ciel-btn .lune { display: none; } html[data-nuit] .ciel-btn .soleil { display: block; }
+.ciel-btn.dans-barre { position: static; width: 40px; height: 40px; box-shadow: none; }
+@media print { .ciel-btn, #ciel { display: none !important; } }
+/* bascule en douceur */
+html.bascule, html.bascule body, html.bascule body *:not(#ciel) { transition: background-color .7s, color .7s, border-color .7s, box-shadow .7s !important; }
+@media (prefers-reduced-motion: reduce) { html.bascule, html.bascule body, html.bascule body * { transition: none !important; } }
+
+/* --- tiré de juste.css --- */
+:where(html[data-nuit]) .regle li{border-bottom:1px solid #2c3364}
+:where(html[data-nuit]) .heros-media,:where(html[data-nuit]) .planche-media,:where(html[data-nuit]) .fin-media{background:radial-gradient(60% 50% at 72% 38%,#ff6b4a29,#0000 70%),repeating-linear-gradient(115deg,rgba(38,45,94,0.04) 0 1px,#0000 1px 7px),linear-gradient(160deg,#24272b,#121314 65%)}
+:where(html[data-nuit]) .heros.plein:after{background:linear-gradient(#1213148c 0%,#12131426 35%,#121314eb 100%)}
+:where(html[data-nuit]) .defile-piste span:after{background:var(--corail)}
+:where(html[data-nuit]) .scene-barre{background:var(--trait)}
+:where(html[data-nuit]) .scene-barre span{background:var(--corail)}
+:where(html[data-nuit]) .planche:after,:where(html[data-nuit]) .fin:after{background:linear-gradient(180deg, var(--carbone) 0%, #12131433 30%, #121314e0 100%)}
+:where(html[data-nuit]) .regle-media{background:repeating-linear-gradient(115deg,#0000000d 0 1px,#0000 1px 7px),linear-gradient(160deg,#2c3364,#2c3364)}
+:where(html[data-nuit]) .btn:before{background:var(--os)}
+:where(html[data-nuit]) .btn:hover{background:0 0}
+:where(html[data-nuit]) .btn.plein:hover{background:var(--corail)}
+:where(html[data-nuit]) .galerie video{background:radial-gradient(70% 60% at 60% 35%,#ff6b4a24,#0000 70%),repeating-linear-gradient(115deg,rgba(38,45,94,0.04) 0 1px,#0000 1px 7px),linear-gradient(160deg,#24272b,#16181a)}
+:where(html[data-nuit]) ::selection{background:var(--soleil)}
+:where(html[data-nuit]) .btn:before{background:var(--os)}
+:where(html[data-nuit]) .btn:hover{color:#141936}
+:where(html[data-nuit]) .btn.plein{background:var(--corail);color:#1c0d08}
+:where(html[data-nuit]) .btn.plein:before{background:var(--os)}
+:where(html[data-nuit]) .btn.plein:hover{color:#fff}
+:where(html[data-nuit]) .marque .cv{color:var(--corail-texte)}
+:where(html[data-nuit]) .tete.fond{background:rgba(38,45,94,0.90)}
+:where(html[data-nuit]) .heros.plein{background:radial-gradient(40% 45% at 8% 15%, var(--peche), transparent 70%), radial-gradient(35% 40% at 95% 90%, var(--ciel), transparent 70%), transparent}
+:where(html[data-nuit]) .heros-media{background:linear-gradient(150deg, var(--ciel), var(--peche) 60%, var(--soleil));box-shadow:0 30px 60px -30px #00000059}
+:where(html[data-nuit]) .heros-bas .chapo{color:var(--acier)}
+:where(html[data-nuit]) .heros.plein .pause{color:var(--os);background:rgba(38,45,94,0.85)}
+:where(html[data-nuit]) .ref{color:var(--acier)}
+:where(html[data-nuit]) .heros-texte .ref{background:var(--soleil);color:var(--os)}
+:where(html[data-nuit]) .defile{background:var(--os)}
+:where(html[data-nuit]) .defile-piste span{color:#fff}
+:where(html[data-nuit]) .defile-piste span:after{background:var(--soleil)}
+:where(html[data-nuit]) .fiche{background:var(--ciel)}
+:where(html[data-nuit]) .fiche dl>div{border-color:#f7f1e824!important}
+:where(html[data-nuit]) .fiche dt{color:#a9aecd}
+:where(html[data-nuit]) .temps .num{color:var(--corail-texte)}
+:where(html[data-nuit]) .temps li:nth-child(2) .num{color:var(--bleu)}
+:where(html[data-nuit]) .temps li:nth-child(3) .num{color:var(--vert)}
+:where(html[data-nuit]) .temps li:nth-child(4) .num{color:#7a4fd6}
+:where(html[data-nuit]) .cadran .minute{stroke:#2c3364}
+:where(html[data-nuit]) .cadran svg{background:radial-gradient(closest-side,#232a5c 0 88%,#0000 89%)}
+:where(html[data-nuit]) .galerie figure{background:#232a5c;box-shadow:0 18px 40px -28px #00000066}
+:where(html[data-nuit]) .galerie figure:nth-child(6n+1) video{background:linear-gradient(160deg, var(--ciel), #232a5c)}
+:where(html[data-nuit]) .galerie figure:nth-child(6n+2) video{background:linear-gradient(160deg, var(--peche), #232a5c)}
+:where(html[data-nuit]) .galerie figure:nth-child(6n+3) video{background:linear-gradient(160deg, var(--soleil), #232a5c)}
+:where(html[data-nuit]) .galerie figure:nth-child(6n+4) video{background:linear-gradient(160deg, var(--lilas), #232a5c)}
+:where(html[data-nuit]) .galerie figure:nth-child(6n+5) video{background:linear-gradient(160deg, var(--menthe), #232a5c)}
+:where(html[data-nuit]) .galerie figure:nth-child(6n+6) video{background:linear-gradient(160deg, var(--ciel), var(--menthe))}
+:where(html[data-nuit]) .galerie figcaption{color:var(--acier)}
+:where(html[data-nuit]) .galerie figcaption b{color:var(--os)}
+:where(html[data-nuit]) .vitrine,:where(html[data-nuit]) .js .cascade.vu{background:#232a5c}
+:where(html[data-nuit]) .vitrine>section+section{background:#232a5c}
+:where(html[data-nuit]) .regle{background:var(--os);color:#141936}
+:where(html[data-nuit]) .regle .chapo{color:#c9cde0!important}
+:where(html[data-nuit]) .regle .deux{border-top-color:#f7f1e824}
+:where(html[data-nuit]) .regle li{border-bottom-color:#f7f1e824}
+:where(html[data-nuit]) .regle .non li{color:#aab0c8}
+:where(html[data-nuit]) .prix>div{background:#232a5c}
+:where(html[data-nuit]) .prix>div:nth-child(2){background:var(--peche)}
+:where(html[data-nuit]) .prix>div:nth-child(3){background:var(--ciel)}
+:where(html[data-nuit]) .prix ul{color:#a9aecd}
+:where(html[data-nuit]) .fin{background:radial-gradient(45% 60% at 85% 30%, var(--soleil), transparent 70%), radial-gradient(40% 50% at 10% 90%, var(--menthe), transparent 70%), transparent}
+:where(html[data-nuit]) .pied{background:#232a5c}
+:where(html[data-nuit]) .menu nav a{color:#6a7086}
+:where(html[data-nuit]) .menu nav a:hover{color:var(--os)}
+:where(html[data-nuit]) .menu nav a:focus-visible{color:var(--os)}
+:where(html[data-nuit]) .menu nav small{color:var(--corail-texte)}
+:where(html[data-nuit]) .rideau{background:var(--soleil);color:var(--os)}
+:where(html[data-nuit]) .piece{background:#232a5c}
+:where(html[data-nuit]) textarea{background:#232a5c}
+:where(html[data-nuit]) .pastille{background:var(--ciel)}
+:where(html[data-nuit]) .resultat .num-etape{color:var(--corail-texte)}
+:where(html[data-nuit]) .mesure-jauge{background:var(--trait)}
+:where(html[data-nuit]) .plan li:before{color:var(--corail-texte)}
+:where(html[data-nuit]) .signaux{background:rgba(255,226,122,.13)}
+:where(html[data-nuit]) .btn{color:var(--os);background:linear-gradient(rgba(38,45,94,0.78),rgba(38,45,94,0.42));border:1px solid #f7f1e824;box-shadow:inset 0 1px #f7f1e81a,inset 0 -1px #0000000f,0 8px 24px -10px #00000047,0 0 0 1px #00000014}
+:where(html[data-nuit]) .btn:after{background:linear-gradient(rgba(255,255,255,0.22),rgba(255,255,255,0.00))}
+:where(html[data-nuit]) .btn:hover{color:var(--os);background:linear-gradient(rgba(38,45,94,0.92),rgba(38,45,94,0.60));box-shadow:inset 0 1px #f7f1e81a,0 14px 30px -12px #00000059,0 0 0 1px #0000001a}
+:where(html[data-nuit]) .btn.plein{color:#2a0f06;background:linear-gradient(#ff967af2,#ff6b4ae6 55%,#f25834eb);border-color:#f7f1e824;box-shadow:inset 0 1px #f7f1e81a,inset 0 -2px 6px #a0280a2e,0 12px 28px -10px #ff6b4aa6,0 0 0 1px #c83c1e40}
+:where(html[data-nuit]) .btn.plein:hover{color:#2a0f06;background:linear-gradient(#ffa58cfa,#ff7556f2 55%,#f5603cf2);border-color:#f7f1e824;box-shadow:inset 0 1px #f7f1e81a,0 18px 34px -12px #ff6b4abf,0 0 0 1px #c83c1e4d}
+:where(html[data-nuit]) .btn.plein:after{background:linear-gradient(rgba(255,255,255,0.16),rgba(255,255,255,0.00))}
+:where(html[data-nuit]) .menu-btn{color:var(--os);background:linear-gradient(rgba(38,45,94,0.75),rgba(38,45,94,0.40));border:1px solid #f7f1e824;box-shadow:inset 0 1px #f7f1e81a,0 6px 18px -10px #0000004d,0 0 0 1px #00000014}
+:where(html[data-nuit]) .pause{box-shadow:inset 0 1px #f7f1e81a,0 8px 20px -10px #00000059;background:linear-gradient(rgba(38,45,94,0.80),rgba(38,45,94,0.45))!important;border:1px solid #f7f1e824!important}
+:where(html[data-nuit]) .heros-texte .ref{background:linear-gradient(#ffeea0f2,#ffe27ad9);box-shadow:inset 0 1px #f7f1e81a,0 0 0 1px #aa820026}
+@media (prefers-reduced-transparency:reduce){:where(html[data-nuit]) .btn,:where(html[data-nuit]) .menu-btn,:where(html[data-nuit]) .pause{background:#232a5c!important}}
+@media (prefers-reduced-transparency:reduce){:where(html[data-nuit]) .btn.plein{background:var(--corail)!important}}
+:where(html[data-nuit]) .suite{background:linear-gradient(150deg, var(--lilas), var(--ciel))}
+:where(html[data-nuit]) .suite p{color:#343a58}
+:where(html[data-nuit]) .reperes{background:var(--menthe)}
+:where(html[data-nuit]) .reperes .aide{color:#2f4a3e}
+:where(html[data-nuit]) .reperes-liste li{background:rgba(38,45,94,0.75)}
+:where(html[data-nuit]) .reperes-liste span{color:#a9aecd}
+:where(html[data-nuit]) .reperes-liste .vu span{color:var(--vert)}
+:where(html[data-nuit]) .fin .chapo{color:var(--acier)}
+:where(html[data-nuit]) .fin-clip{background:linear-gradient(150deg, var(--soleil), var(--peche));box-shadow:0 30px 60px -30px #00000059}
+:where(html[data-nuit]) .galerie figure{background:linear-gradient(160deg, var(--ciel), #232a5c)}
+:where(html[data-nuit]) .galerie figure:nth-child(2){background:linear-gradient(160deg, var(--soleil), #232a5c)}
+:where(html[data-nuit]) .galerie figure:nth-child(3){background:linear-gradient(160deg, var(--peche), #232a5c)}
+:where(html[data-nuit]) .galerie figure:nth-child(4){background:linear-gradient(160deg, var(--menthe), #232a5c)}
+:where(html[data-nuit]) .galerie figcaption{background:#232a5c}
+:where(html[data-nuit]) .demo-score strong{color:var(--os)}
+:where(html[data-nuit]) .demo-score span{color:var(--acier)}
+:where(html[data-nuit]) #demo-lignes li>span:first-child{color:var(--os)}
+:where(html[data-nuit]) .choix{background:#f7f1e812}
+:where(html[data-nuit]) .choix button{color:var(--acier);background:0 0}
+:where(html[data-nuit]) .choix button[aria-pressed=true]{color:var(--os);background:#232a5c;box-shadow:0 2px 8px -2px #00000040}
+:where(html[data-nuit]) .reponses span{color:var(--os);background:#232a5c;border:1px solid #2c3364}
+:where(html[data-nuit]) .reponses input:checked+span{color:#141936;background:var(--os)}
+:where(html[data-nuit]) .reponses input[value=presente]:checked+span{background:var(--vert)}
+:where(html[data-nuit]) .reponses input[value=partielle]:checked+span{background:var(--ambre)}
+:where(html[data-nuit]) .reponses input[value=absente]:checked+span{background:var(--corail-texte)}
+:where(html[data-nuit]) .sr:focus{background:var(--os);color:#141936}
+:where(html[data-nuit]) .domaines legend{color:var(--os)}
+:where(html[data-nuit]) .domaines-liste span{color:var(--os);background:#232a5c;border:1px solid #2c3364}
+:where(html[data-nuit]) .domaines-liste input:checked+span{background:var(--os);color:#141936}
+:where(html[data-nuit]) #demo-lignes small{color:var(--acier)}
+:where(html[data-nuit]) .galerie figcaption .lien{color:var(--os)}
+:where(html[data-nuit]) .apropos{background:#232a5c}
+:where(html[data-nuit]) .apropos-clip{background:linear-gradient(150deg, var(--peche), var(--ciel));box-shadow:0 30px 60px -30px #00000059}
+:where(html[data-nuit]) .apropos-clip.petit{border:6px solid #2c3364}
+:where(html[data-nuit]) .mention{color:var(--acier)}
+:where(html[data-nuit]) .apropos-faits dt{color:var(--os)}
+:where(html[data-nuit]) .apropos-faits dd{color:var(--acier)}
+:where(html[data-nuit]) .etiquette{color:var(--os)}
+:where(html[data-nuit]) select{color:var(--os);background:#232a5c;border:1px solid #2c3364}
+@supports (animation-timeline:scroll()){:where(html[data-nuit]) .progression{background:linear-gradient(90deg, var(--corail), #ffb199)}}
+:where(html[data-nuit]) .tete.fond{background:0 0}
+:where(html[data-nuit]) .tete.fond .cadre{background:linear-gradient(rgba(38,45,94,0.82),rgba(38,45,94,0.66));border-color:#f7f1e824;box-shadow:inset 0 1px #f7f1e81a,0 14px 34px -20px #00000080,0 0 0 1px #00000012}
+:where(html[data-nuit]) .tete nav a{color:var(--acier)}
+:where(html[data-nuit]) .tete nav a:hover,:where(html[data-nuit]) .tete nav a[aria-current]{color:var(--os)}
+:where(html[data-nuit]) .menu{background:rgba(38,45,94,0.86)}
+:where(html[data-nuit]) .puce{color:var(--os);background:linear-gradient(rgba(38,45,94,0.74),rgba(38,45,94,0.50));border:1px solid #f7f1e824;box-shadow:inset 0 1px #f7f1e81a,inset 0 -1px #0000000d,0 14px 32px -16px #0000008c}
+:where(html[data-nuit]) .btn:before,:where(html[data-nuit]) .btn.plein:before{background:linear-gradient(105deg,#0000 36%,rgba(255,255,255,0.21) 50%,#0000 64%)}
+@media (width<=860px){:where(html[data-nuit]) .barre-mobile{background:linear-gradient(rgba(38,45,94,0.86),rgba(38,45,94,0.70));border:1px solid #f7f1e824;box-shadow:inset 0 1px #f7f1e81a,0 16px 36px -18px #0000008c,0 0 0 1px #00000014}}
+@media (width<=860px){:where(html[data-nuit]) .barre-mobile span{color:var(--os)}}
+@media (hover:hover){:where(html[data-nuit]) .galerie figure:hover{box-shadow:0 30px 54px -28px #00000080}}
+:where(html[data-nuit]) .regle .non li span{background:linear-gradient(var(--corail), var(--corail)) no-repeat 0 58% / 100% 2px}
+:where(html[data-nuit]) .js .regle .non li span{background-size:0% 2px}
+:where(html[data-nuit]) .js .regle .deux.vu .non li span{background-size:100% 2px}
+:where(html[data-nuit]) .fil ol{background:linear-gradient(rgba(38,45,94,0.86),rgba(38,45,94,0.68));border:1px solid #f7f1e824;box-shadow:inset 0 1px #f7f1e81a,0 12px 28px -18px #00000080,0 0 0 1px #00000012}
+:where(html[data-nuit]) .fil button{color:var(--acier);background:0 0}
+:where(html[data-nuit]) .fil button i{background:#f7f1e814}
+:where(html[data-nuit]) .fil li.fait button i{background:var(--vert);color:#fff}
+:where(html[data-nuit]) .fil button[aria-current=step]{color:var(--os);background:#232a5c;box-shadow:0 2px 8px -2px #00000040}
+:where(html[data-nuit]) .fil button[aria-current=step] i{background:var(--os);color:#141936}
+:where(html[data-nuit]) .depot-zone{border:1.5px dashed #2c3364}
+:where(html[data-nuit]) .depot-zone.survol{background:var(--ciel)}
+:where(html[data-nuit]) .depot-zone textarea{background:0 0}
+@media (prefers-reduced-motion:reduce){:where(html[data-nuit]) .js .regle .non li span{background-size:100% 2px}}
+@media (prefers-reduced-transparency:reduce){:where(html[data-nuit]) .tete.fond .cadre,:where(html[data-nuit]) .menu,:where(html[data-nuit]) .puce,:where(html[data-nuit]) .barre-mobile,:where(html[data-nuit]) .fil ol{background:#232a5c}}
+@media print{:where(html[data-nuit]) body{background:#232a5c}}
+@media print{:where(html[data-nuit]) .piece,:where(html[data-nuit]) .reperes{box-shadow:none;background:#232a5c}}
+:where(html[data-nuit]) .menu{background:rgba(38,45,94,0.93)}
+:where(html[data-nuit]) .menu nav a{color:#5a607a}
+:where(html[data-nuit]) .tete.fond .cadre{background:linear-gradient(rgba(38,45,94,0.88),rgba(38,45,94,0.76))}
+:where(html[data-nuit]) .heros-media,:where(html[data-nuit]) .galerie figure,:where(html[data-nuit]) .fin-clip{background-position:50%!important;background-repeat:no-repeat!important;background-size:cover!important}
+:where(html[data-nuit]) .menu-plus a{color:var(--os)}
+:where(html[data-nuit]) .fin-note{color:var(--acier)}
+/* --- tiré de pages.css --- */
+@media print{:where(html[data-nuit]) body{background:#232a5c}}
+:where(html[data-nuit]) .nav-menu summary span{background:var(--fg)}
+:where(html[data-nuit]) .nav-menu nav{background:var(--surface)}
+:where(html[data-nuit]) .nav-menu nav a:hover{background:var(--surface-2)}
+:where(html[data-nuit]) .search input{background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a7b9ae' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6'/%3E%3Cpath d='m16 16 4 4'/%3E%3C/svg%3E") no-repeat .9rem center / 1.2rem}
+:where(html[data-nuit]) .mcard{background:var(--surface)}
+:where(html[data-nuit]) .suivi-form input,:where(html[data-nuit]) .suivi-form select,:where(html[data-nuit]) .liste-tools select{background:var(--bg-2)}
+:where(html[data-nuit]) select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a7b9ae' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .8rem center;background-size:1rem}
+:where(html[data-nuit]) .btn-quiet{background:transparent}
+:where(html[data-nuit]) .btn-quiet:hover{background:var(--red-soft)}
+:where(html[data-nuit]) .stat{background:var(--bg-2)}
+:where(html[data-nuit]) .stat.is-warn{background:#2a2610}
+:where(html[data-nuit]) tbody tr:hover td{background:color-mix(in srgb, var(--surface-2) 60%, transparent)}
+:where(html[data-nuit]) .mcard .mono{background:var(--bg-2)}
+:where(html[data-nuit]) .mcard .chips span{background:none}
+:where(html[data-nuit]) .mcard .chips span::before{background:var(--sapin-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239fe3c1' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12 4 4 8-8'/%3E%3C/svg%3E") center / .7rem no-repeat}
+:where(html[data-nuit]) .toc a:hover{background:var(--surface-2)}
+:where(html[data-nuit]) body{background:var(--bg)}
+:where(html[data-nuit]) .hl{background:linear-gradient(transparent 62%, var(--mark) 62%, var(--mark) 94%, transparent 94%)}
+:where(html[data-nuit]) .eyebrow{background:var(--mark)}
+:where(html[data-nuit]) .sr-lien{background:var(--fg);color:#141936}
+:where(html[data-nuit]) .nav{background:none}
+:where(html[data-nuit]) .nav .wrap{border:1px solid #f7f1e824;background:linear-gradient(180deg, rgba(38,45,94,.9), rgba(38,45,94,.8));box-shadow:0 14px 34px -22px rgba(0,0,0,.45), inset 0 1px 0 #f7f1e81a}
+:where(html[data-nuit]) .logo .cv{color:var(--sapin)}
+:where(html[data-nuit]) .nav-links a[aria-current]{color:var(--fg)}
+:where(html[data-nuit]) .nav-menu summary{background:#232a5c}
+:where(html[data-nuit]) .nav-menu nav{box-shadow:0 24px 50px -24px rgba(0,0,0,.45)}
+@media (prefers-reduced-transparency: reduce){:where(html[data-nuit]) .nav .wrap{background:var(--bg)}}
+:where(html[data-nuit]) .btn-primary{background:var(--corail);color:#1c0d08;box-shadow:0 10px 22px -12px rgba(255,107,74,.9), inset 0 1px 0 #f7f1e81a}
+:where(html[data-nuit]) .btn-primary:hover{background:#ff7d60}
+:where(html[data-nuit]) .btn-ghost{background:#232a5c;color:var(--fg)}
+:where(html[data-nuit]) .btn-ghost:hover{background:#232a5c}
+:where(html[data-nuit]) .btn-quiet{background:transparent}
+:where(html[data-nuit]) .card,:where(html[data-nuit]) .mcard,:where(html[data-nuit]) .stat{box-shadow:0 18px 40px -32px rgba(0,0,0,.4)}
+:where(html[data-nuit]) .mcard .more{color:var(--sapin)}
+:where(html[data-nuit]) .mcard .mono{background:var(--surface-2)}
+:where(html[data-nuit]) .mcard .chips span::before{background-color:var(--menthe);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2318804d' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E");background-size:78%;background-position:center;background-repeat:no-repeat}
+:where(html[data-nuit]) .chips span{background:var(--surface-2)}
+:where(html[data-nuit]) .chips span.core{background:rgba(255,226,122,.13)}
+:where(html[data-nuit]) .chips span.core::before{color:var(--ambre)}
+:where(html[data-nuit]) .pill{background:var(--surface-2);color:var(--muted)}
+:where(html[data-nuit]) .pill-mint{background:var(--menthe);color:#0f5c36}
+:where(html[data-nuit]) .pill-amber{background:rgba(255,226,122,.13);color:#6f4300}
+:where(html[data-nuit]) .pill-rose{background:var(--red-soft);color:var(--red)}
+:where(html[data-nuit]) .toc a:hover{background:#232a5c}
+:where(html[data-nuit]) .ico{color:var(--sapin)}
+:where(html[data-nuit]) .cta{background:linear-gradient(140deg, var(--ciel), #232a5c 70%)}
+:where(html[data-nuit]) details summary::after{color:var(--sapin)}
+:where(html[data-nuit]) .conseils li::marker{color:var(--sapin)}
+:where(html[data-nuit]) .statut-envoyee{background:var(--ciel);color:#1d4fb8}
+:where(html[data-nuit]) .statut-relance{background:rgba(255,226,122,.13);color:#6f4300}
+:where(html[data-nuit]) .statut-entretien{background:var(--menthe);color:#0f5c36}
+:where(html[data-nuit]) .statut-refus{background:var(--red-soft);color:var(--red)}
+:where(html[data-nuit]) .statut-offre{background:#c9efd0;color:#14532d}
+:where(html[data-nuit]) .stat{background:#232a5c}
+:where(html[data-nuit]) .stat.is-warn{background:rgba(255,226,122,.13)}
+:where(html[data-nuit]) .stat.is-warn strong{color:#6f4300}
+:where(html[data-nuit]) .stat.is-good strong{color:var(--vert)}
+:where(html[data-nuit]) .btn-quiet:hover{color:var(--red);background:var(--red-soft)}
+:where(html[data-nuit]) .empty svg{color:var(--sapin)}
+:where(html[data-nuit]) footer{background:#232a5c;color:var(--muted)}
+:where(html[data-nuit]) footer a:hover{color:var(--fg)}
+:where(html[data-nuit]) .merci .coche{background:var(--menthe);color:var(--vert)}
+@media print{:where(html[data-nuit]) body{background:#232a5c}}
+/* --- retouches à la main, après les règles tirées des feuilles du site --- */
+html[data-nuit] ::selection { background: #ffe27a; color: #141936; }
+html[data-nuit] .heros-texte .ref { color: #3d3000; }
+/* bandes sombres du jour : la nuit elles restent sombres, en verre */
+html[data-nuit] .defile, html[data-nuit] .regle { background: rgba(31, 37, 80, .55); color: #f7f1e8; --carbone: #f7f1e8; }
+html[data-nuit] .defile { border-block: 1px solid #f7f1e81f; }
+html[data-nuit] .regle .non li { color: #8a90b4; text-decoration-color: #ff8f73; }
+html[data-nuit] .regle li { border-bottom-color: #f7f1e81f; }
+/* surlignage des titres : un trait sous les mots, pas une bande derrière */
+html[data-nuit] .hl { background: linear-gradient(transparent 84%, #ffe27a 84%, #ffe27a 94%, transparent 94%); color: inherit; }
+html[data-nuit] body { background: transparent; }
+html[data-nuit] .rideau, html[data-nuit] .menu { background: #141936; }
+@media (max-width: 640px) { .ciel-btn:not(.dans-barre) { width: 40px; height: 40px; left: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); } }
+html[data-nuit] .pill-amber { background: rgba(255, 226, 122, .14); color: #ffe27a; }

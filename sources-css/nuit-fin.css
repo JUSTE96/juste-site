@@ -1,0 +1,14 @@
+/* --- retouches à la main, après les règles tirées des feuilles du site --- */
+html[data-nuit] ::selection { background: #ffe27a; color: #141936; }
+html[data-nuit] .heros-texte .ref { color: #3d3000; }
+/* bandes sombres du jour : la nuit elles restent sombres, en verre */
+html[data-nuit] .defile, html[data-nuit] .regle { background: rgba(31, 37, 80, .55); color: #f7f1e8; --carbone: #f7f1e8; }
+html[data-nuit] .defile { border-block: 1px solid #f7f1e81f; }
+html[data-nuit] .regle .non li { color: #8a90b4; text-decoration-color: #ff8f73; }
+html[data-nuit] .regle li { border-bottom-color: #f7f1e81f; }
+/* surlignage des titres : un trait sous les mots, pas une bande derrière */
+html[data-nuit] .hl { background: linear-gradient(transparent 84%, #ffe27a 84%, #ffe27a 94%, transparent 94%); color: inherit; }
+html[data-nuit] body { background: transparent; }
+html[data-nuit] .rideau, html[data-nuit] .menu { background: #141936; }
+@media (max-width: 640px) { .ciel-btn:not(.dans-barre) { width: 40px; height: 40px; left: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); } }
+html[data-nuit] .pill-amber { background: rgba(255, 226, 122, .14); color: #ffe27a; }
