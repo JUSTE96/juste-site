@@ -3,326 +3,324 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#000000">
-<title>Juste – votre vrai CV, adapté à chaque offre, sans rien inventer</title>
-<meta name="description" content="Juste lit l'offre d'emploi, mesure votre compatibilité et adapte votre vrai CV en citant chaque ligne qu'il utilise. Rien n'est inventé. Extension Chrome gratuite.">
+<title>JusteCV – voyez qui l'offre cherche vraiment</title>
+<meta name="description" content="Soignant, maçon, cuisinier ou assistant : collez une offre d'emploi, JusteCV montre le profil attendu et mesure l'écart avec votre vrai CV. Gratuit, sans compte, sans rien inventer.">
+<meta name="theme-color" content="#fffaf4">
+<link rel="preload" as="image" href="assets/cine/flou-grand-age.jpg" fetchpriority="high">
+<link rel="preconnect" href="https://d8j0ntlcm91z4.cloudfront.net" crossorigin>
 <link rel="canonical" href="https://justecv.fr/">
-<meta property="og:type" content="website"><meta property="og:site_name" content="Juste"><meta property="og:locale" content="fr_FR"><meta property="og:url" content="https://justecv.fr/">
-<meta property="og:title" content="Juste – votre vrai CV, adapté à chaque offre"><meta property="og:description" content="Extension Chrome gratuite : compatibilité exigence par exigence, chaque atout prouvé par une ligne de votre CV. Rien n'est inventé.">
-<meta property="og:image" content="https://justecv.fr/assets/og-juste.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Juste : votre vrai CV, adapté à chaque offre, sans rien inventer">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="JusteCV">
+<meta property="og:url" content="https://justecv.fr/">
+<meta property="og:title" content="JusteCV – voyez qui l'offre cherche vraiment">
+<meta property="og:description" content="Collez une offre d'emploi : JusteCV montre le profil attendu et mesure l'écart avec votre vrai CV. Sans rien inventer.">
+<meta property="og:image" content="https://justecv.fr/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="apple-touch-icon" href="app/icon-180.png">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Juste", "url": "https://justecv.fr/", "applicationCategory": "BusinessApplication", "operatingSystem": "Chrome", "inLanguage": "fr", "description": "Extension Chrome qui lit l'offre d'emploi, mesure la compatibilité avec votre CV exigence par exigence et adapte votre CV sans rien inventer.", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR", "description": "3 analyses gratuites par semaine"}, "installUrl": "https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl", "publisher": {"@type": "Organization", "name": "Juste", "url": "https://justecv.fr/", "email": "contact@justecv.fr"}}</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Juste", "url": "https://justecv.fr/", "inLanguage": "fr"}</script>
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Hanken+Grotesk:wght@400;500;600&display=swap">
-<script>
-/* Les anciens liens vers l'accueil (index.html#prix, #demo, #faq…) mènent à la page complète */
-(function () { var h = location.hash.slice(1); if (h && ["demo","fonctionnement","prix","faq","visite","ressources","decouvrir","top"].indexOf(h) > -1) location.replace("decouvrir.html" + (h === "top" ? "" : "#" + h)); })();
-</script>
-<style>
-@font-face { font-family: "Archivo Display"; font-style: normal; font-display: swap; font-weight: 100 900; font-stretch: 62% 125%; src: url("fonts/archivo-latin-wdth-wght-normal.woff2") format("woff2"); }
-:root { --mark: #f2df4b; --ink: #f4f2ec; --dim: rgba(244,242,236,.72); --line: rgba(244,242,236,.22); --display: "Fraunces", Georgia, serif; --body: "Hanken Grotesk", -apple-system, "Segoe UI", sans-serif; --wide: "Archivo Display", "Hanken Grotesk", sans-serif; --pad: clamp(20px, 5vw, 72px); --ease: cubic-bezier(.2,.7,.2,1); }
-* { box-sizing: border-box; }
-html { background: #000; scroll-snap-type: y mandatory; scroll-behavior: smooth; }
-body { margin: 0; background: #000; color: var(--ink); font: 16px/1.55 var(--body); -webkit-font-smoothing: antialiased; }
-a { color: inherit; }
-:focus-visible { outline: 2px solid var(--mark); outline-offset: 4px; border-radius: 2px; }
-
-/* Barre du haut : logo, repère de section, index */
-.bar { position: fixed; z-index: 30; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: max(18px, env(safe-area-inset-top)) var(--pad) 18px; pointer-events: none; }
-.bar > * { pointer-events: auto; }
-.logo { display: inline-flex; align-items: center; gap: .55rem; text-decoration: none; font: 800 1.25rem/1 var(--wide); font-stretch: 125%; letter-spacing: -.035em; text-transform: lowercase; }
-.logo img { width: 30px; height: 30px; }
-.index-btn { appearance: none; background: none; border: 0; color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: .8rem; padding: .6rem 0; font: 600 .74rem/1 var(--wide); font-stretch: 112%; letter-spacing: .22em; text-transform: uppercase; }
-.index-btn i { display: block; width: 26px; height: 9px; border-top: 1px solid currentColor; border-bottom: 1px solid currentColor; transition: height .3s var(--ease); }
-.index-btn:hover i { height: 5px; }
-
-/* Plans plein écran */
-.shot { position: relative; height: 100vh; height: 100svh; min-height: 520px; scroll-snap-align: start; scroll-snap-stop: always; overflow: hidden; isolation: isolate; background: #050505 center / cover no-repeat; }
-.shot video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; opacity: 0; transition: opacity 1.2s ease; }
-.shot video.on { opacity: 1; }
-.shot::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.28) 38%, rgba(0,0,0,0) 62%), linear-gradient(to bottom, rgba(0,0,0,.45), rgba(0,0,0,0) 22%); }
-.shot.light::after { background: linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,.45) 42%, rgba(0,0,0,.12) 70%), linear-gradient(to bottom, rgba(0,0,0,.5), rgba(0,0,0,0) 24%); }
-.txt { position: absolute; left: var(--pad); right: var(--pad); bottom: max(clamp(56px, 11vh, 120px), env(safe-area-inset-bottom)); max-width: 44rem; }
-.kicker { margin: 0 0 1.1rem; display: flex; align-items: center; gap: .9rem; font: 600 .72rem/1 var(--wide); font-stretch: 112%; letter-spacing: .24em; text-transform: uppercase; color: var(--dim); }
-.kicker b { color: var(--mark); font-weight: 600; }
-.kicker::after { content: ""; flex: 0 0 44px; height: 1px; background: var(--line); }
-.title { margin: 0; font: 400 clamp(2.1rem, 5.2vw, 4.4rem)/1.04 var(--display); letter-spacing: -.015em; text-wrap: balance; }
-.sub { margin: 1.1rem 0 0; max-width: 34rem; color: var(--dim); font-size: clamp(1rem, 1.3vw, 1.12rem); }
-.links { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.8rem; margin-top: 1.8rem; }
-.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 0 1.5rem; border-radius: 999px; background: var(--mark); color: #1b1a08; text-decoration: none; font: 600 .98rem/1 var(--body); transition: transform .3s var(--ease), background .3s; }
-.btn:hover { background: #f7e86f; transform: translateY(-1px); }
-.more { position: relative; text-decoration: none; padding: .5rem 0; font: 600 .74rem/1 var(--wide); font-stretch: 112%; letter-spacing: .2em; text-transform: uppercase; }
-.more::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor; transform-origin: left; transition: transform .45s var(--ease); }
-.more:hover::after { transform: scaleX(.35); }
-.only-touch { display: none; }
-@media (hover: none) and (pointer: coarse) { .only-touch { display: inline-flex; } .only-desk { display: none; } }
-
-/* Entrée du texte : le premier plan est toujours visible, les suivants arrivent au défilement */
-.txt > * { transition: opacity 1s var(--ease), transform 1s var(--ease); }
-.shot.wait .txt > * { opacity: 0; transform: translateY(22px); }
-.txt > :nth-child(2) { transition-delay: .12s; } .txt > :nth-child(3) { transition-delay: .24s; } .txt > :nth-child(4) { transition-delay: .36s; }
-
-/* Repères à droite */
-.rail { position: fixed; z-index: 20; right: calc(var(--pad) - 6px); top: 50%; transform: translateY(-50%); display: grid; gap: 14px; }
-.rail a { display: block; width: 13px; height: 13px; position: relative; }
-.rail a::before { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: var(--ink); opacity: .4; transition: inset .3s var(--ease), opacity .3s, background .3s; }
-.rail a.on::before { inset: 2px; opacity: 1; background: var(--mark); }
-@media (max-width: 700px) { .rail { display: none; } }
-.scroll-cue { position: absolute; right: var(--pad); bottom: max(34px, env(safe-area-inset-bottom)); font: 600 .66rem/1 var(--wide); letter-spacing: .24em; text-transform: uppercase; color: var(--dim); writing-mode: vertical-rl; display: flex; align-items: center; gap: .8rem; }
-.scroll-cue::after { content: ""; width: 1px; height: 46px; background: linear-gradient(var(--ink), transparent); animation: cue 2.4s ease-in-out infinite; transform-origin: top; }
-@keyframes cue { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
-@media (max-width: 700px) { .scroll-cue { display: none; } }
-
-
-/* Entrée : la marque seule, puis le premier plan */
-.intro { position: fixed; z-index: 50; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; gap: 1.1rem; pointer-events: none; font: 800 clamp(2.6rem, 8vw, 5.5rem)/1 var(--wide); font-stretch: 125%; letter-spacing: -.04em; animation: intro 2.3s var(--ease) both; }
-.intro img { width: clamp(52px, 8vw, 88px); height: auto; } .intro em { font-style: normal; color: var(--mark); }
-.intro > * { animation: intro-in 1s var(--ease) both; } .intro span { animation-delay: .15s; }
-@keyframes intro { 0%, 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
-@keyframes intro-in { from { opacity: 0; transform: translateY(14px); } }
-@media (prefers-reduced-motion: reduce) { .intro { display: none; } }
-
-/* Zone de dépôt du CV : le geste attendu dès l'ouverture */
-.dropcv { position: relative; display: flex; align-items: center; gap: 1.1rem; max-width: 34rem; margin-top: 1.8rem; padding: 1.15rem 1.4rem; border-radius: 20px; border: 1.5px dashed var(--mark); background: rgba(10,10,6,.55); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); cursor: pointer; transition: background .3s, transform .3s var(--ease), border-color .3s; }
-.dropcv::before { content: ""; position: absolute; inset: -1.5px; border-radius: inherit; border: 1.5px solid var(--mark); opacity: 0; animation: ring 2.6s ease-out 2.4s infinite; pointer-events: none; }
-@keyframes ring { 0% { opacity: .7; transform: scale(1); } 70%, 100% { opacity: 0; transform: scale(1.045, 1.22); } }
-.dropcv:hover, .dropcv.over { background: rgba(242,223,75,.16); transform: translateY(-2px); border-style: solid; }
-.dropcv input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.dropcv:focus-within { outline: 2px solid var(--mark); outline-offset: 4px; }
-.dropcv-ico { flex: none; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: var(--mark); color: #1b1a08; }
-.dropcv-txt { display: grid; gap: .2rem; } .dropcv-txt strong { font: 600 1.15rem/1.2 var(--body); } .dropcv-txt span { color: var(--dim); font-size: .92rem; line-height: 1.4; }
-.dropcv.busy .dropcv-ico { animation: spin 1s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .dropcv::before { animation: none; } }
-#ouverture .links { margin-top: 1.3rem; }
-
-/* Essai en direct : l'appli web tourne dans la page */
-.shot.try::after { background: rgba(0,0,0,.88); }
-.try-grid { position: absolute; inset: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: clamp(2rem, 6vw, 6rem); padding: 96px var(--pad) 48px; max-width: 86rem; margin: 0 auto; }
-.try-copy { max-width: 34rem; } .try-copy > * { transition: opacity 1s var(--ease), transform 1s var(--ease); } .shot.wait .try-copy > * { opacity: 0; transform: translateY(22px); }
-.try-list { list-style: none; margin: 1.4rem 0 0; padding: 0; display: grid; gap: .5rem; color: var(--dim); font-size: .98rem; }
-.try-list li { padding-left: 1.5rem; position: relative; } .try-list li::before { content: ""; position: absolute; left: 0; top: .62em; width: .7rem; height: 1px; background: var(--mark); }
-.try-device { width: min(400px, 34vw); height: min(720px, calc(100svh - 150px)); border-radius: 28px; border: 1px solid var(--line); background: #070b09; overflow: hidden; box-shadow: 0 40px 120px -30px rgba(0,0,0,.9), 0 0 0 8px rgba(255,255,255,.03); }
-.try-device iframe { width: 100%; height: 100%; border: 0; display: block; background: #070b09; }
-@media (hover: none) and (pointer: coarse), (max-width: 860px) { .try-grid { grid-template-columns: 1fr; align-items: end; padding-bottom: max(clamp(56px, 11vh, 120px), env(safe-area-inset-bottom)); } .try-device { display: none; } .try .only-touch { display: inline-flex; } .try .more.only-desk { display: none; } }
-
-/* Dernier plan : prix et liens */
-.end .txt { max-width: 60rem; }
-.offers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 2rem 0 0; border-top: 1px solid var(--line); }
-.offers div { padding: 1.1rem 1.4rem 0 0; }
-.offers div + div { padding-left: 1.4rem; border-left: 1px solid var(--line); }
-.offers h3 { margin: 0 0 .35rem; font: 600 .7rem/1 var(--wide); font-stretch: 112%; letter-spacing: .22em; text-transform: uppercase; color: var(--dim); }
-.offers p { margin: 0; font: 400 clamp(1.3rem, 2.4vw, 1.9rem)/1.1 var(--display); }
-.offers small { display: block; margin-top: .4rem; font: 400 .86rem/1.4 var(--body); color: var(--dim); }
-@media (max-width: 700px) { .offers { grid-template-columns: 1fr; } .offers div, .offers div + div { padding: .8rem 0; border-left: 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: .2rem 1rem; } .offers small { grid-column: 1 / -1; margin: 0; } .offers h3 { margin: 0; } }
-.foot { position: absolute; left: var(--pad); right: var(--pad); bottom: max(16px, env(safe-area-inset-bottom)); display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; font-size: .78rem; color: var(--dim); }
-.foot a { text-decoration: none; } .foot a:hover { color: var(--ink); }
-.end .txt { bottom: max(clamp(64px, 12vh, 120px), calc(env(safe-area-inset-bottom) + 56px)); }
-
-/* Index plein écran */
-.index { position: fixed; z-index: 40; inset: 0; background: #060606; display: grid; grid-template-columns: 1.1fr .9fr; visibility: hidden; opacity: 0; transition: opacity .5s var(--ease), visibility 0s .5s; }
-.index.open { visibility: visible; opacity: 1; transition: opacity .5s var(--ease); }
-.index nav { padding: clamp(84px, 14vh, 140px) var(--pad) var(--pad); display: grid; align-content: center; gap: .2rem; overflow-y: auto; }
-.index nav a { display: flex; align-items: baseline; gap: 1.2rem; padding: .55rem 0; text-decoration: none; font: 400 clamp(1.7rem, 4vw, 3.2rem)/1.1 var(--display); color: var(--dim); transition: color .3s, transform .5s var(--ease); }
-.index nav a span { font: 600 .68rem/1 var(--wide); letter-spacing: .2em; color: rgba(244,242,236,.4); min-width: 2rem; }
-.index nav a:hover { color: var(--ink); transform: translateX(10px); }
-.index .small { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: .6rem 1.6rem; font-size: .85rem; }
-.index .small a { font: inherit; padding: 0; color: var(--dim); }
-.index .small a:hover { transform: none; }
-.index aside { background: #000 url("assets/cine/rm-ensemble.jpg") center / cover; opacity: .75; }
-.index .close { position: absolute; top: max(18px, env(safe-area-inset-top)); right: var(--pad); }
-@media (max-width: 800px) { .index { grid-template-columns: 1fr; } .index aside { display: none; } }
-
-.index .close { z-index: 2; }
-@media (max-width: 700px) { .kicker { letter-spacing: .14em; font-size: .66rem; gap: .6rem; white-space: nowrap; } .kicker::after { display: none; } }
-@media (max-width: 700px) { .offers h3 { white-space: nowrap; letter-spacing: .16em; } .offers p { font-size: 1.15rem; white-space: nowrap; } }
-@media (max-height: 720px) { .title { font-size: clamp(1.9rem, 4.4vw, 3.2rem); } .end .title { font-size: clamp(1.7rem, 3.6vw, 2.6rem); } .offers { margin-top: 1.2rem; } .offers small { display: none; } .links { margin-top: 1.2rem; } .sub { margin-top: .8rem; } }
-@media (max-width: 700px) { .end .title { font-size: 1.9rem; } .end .kicker { margin-bottom: .8rem; } .offers { margin-top: 1rem; } .end .links { margin-top: 1.1rem; } .foot { font-size: .72rem; gap: .3rem .9rem; } }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; scroll-snap-type: none; } .shot video { display: none; } .scroll-cue::after { animation: none; } }
-</style>
+<link rel="icon" href="favicon-32.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preload" href="fonts/lora-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="juste.css">
+<script>document.documentElement.classList.add("js")</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Pourquoi ne pas simplement générer le CV parfait ?", "acceptedAnswer": {"@type": "Answer", "text": "Parce qu'un CV qui colle à 100 % à l'offre contiendrait des choses que vous n'avez pas faites. Elles ressortent en entretien, et un diplôme inventé est un motif de licenciement. JusteCV vous montre la cible pour que vous l'atteigniez pour de vrai."}}, {"@type": "Question", "name": "Mon CV est-il envoyé quelque part ?", "acceptedAnswer": {"@type": "Answer", "text": "Non. Dans l'atelier gratuit, l'offre et le CV sont lus dans votre navigateur. Rien ne part sur un serveur, et rien n'est conservé quand vous fermez la page."}}, {"@type": "Question", "name": "Comment le score est-il calculé ?", "acceptedAnswer": {"@type": "Answer", "text": "Chaque exigence pèse 3 si elle est obligatoire, 2 si elle est souhaitée, 1 si c'est un atout. Une exigence présente compte entièrement, en partie pour moitié, absente pour rien. Si un critère éliminatoire (diplôme exigé, permis, habilitation) manque, le score ne dépasse pas 49 %."}}, {"@type": "Question", "name": "Et si l'offre est mal écrite ?", "acceptedAnswer": {"@type": "Answer", "text": "JusteCV signale ce qui mérite d'être vérifié : argent demandé au candidat, contact par messagerie privée, promesses de gains anormales. Ce sont des points à vérifier, pas des accusations."}}]}</script>
 </head>
 <body>
+<a class="sr" href="#contenu">Aller au contenu</a>
+<div class="progression" aria-hidden="true"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="verre" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.006 0.009" numOctaves="2" seed="11" result="bruit"/><feGaussianBlur in="bruit" stdDeviation="3" result="doux"/><feDisplacementMap in="SourceGraphic" in2="doux" scale="46" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 
-<div class="intro" aria-hidden="true"><img src="favicon.svg" alt="" width="72" height="72"><span>juste<em>cv</em></span></div>
+<div class="rideau" id="rideau" aria-hidden="true"><span class="rideau-marque">JusteCV</span><span class="rideau-compte" id="rideau-compte">000</span></div>
 
-<header class="bar">
-  <a class="logo" href="#ouverture" aria-label="Juste, haut de page"><img src="favicon.svg" alt="" width="30" height="30">Juste</a>
-  <button class="index-btn" id="openIndex" aria-haspopup="dialog" aria-controls="index">Index <i aria-hidden="true"></i></button>
+<header class="tete" id="tete">
+  <div class="cadre">
+    <a class="marque" href="./" aria-label="JusteCV, accueil"><span>Juste</span><span class="cv">CV</span></a>
+    <a class="btn" href="atelier.html">Essayez vous aussi</a>
+    <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="menu"><span>Menu</span><i aria-hidden="true"></i></button>
+  </div>
 </header>
 
-<nav class="rail" aria-label="Sections">
-  <a href="#ouverture" aria-label="Ouverture"></a><a href="#essayer" aria-label="Essayer en direct"></a><a href="#papier" aria-label="Votre CV"></a><a href="#preuve" aria-label="La preuve"></a><a href="#offre" aria-label="À côté de l'offre"></a><a href="#commencer" aria-label="Commencer"></a>
-</nav>
-
-<main>
-  <section class="shot" id="ouverture" style="background-image:url(assets/cine/rm-ensemble.jpg)">
-    <video muted loop playsinline preload="none" poster="assets/cine/rm-ensemble.jpg" data-src="assets/cine/rm-ensemble" aria-hidden="true"></video>
-    <div class="txt">
-      <p class="kicker"><b>Juste</b> Extension Chrome · bêta gratuite</p>
-      <h1 class="title">Votre vrai CV.<br>Adapté à chaque offre.</h1>
-      <label class="dropcv" id="dropcv">
-        <input type="file" id="cvfile" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain">
-        <span class="dropcv-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span>
-        <span class="dropcv-txt"><strong>Déposez votre CV ici</strong><span>Voyez s'il correspond au poste que vous visez. PDF ou Word, gratuit, sans compte.</span></span>
-      </label>
-      <div class="links">
-        <a class="more only-desk" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a>
-        <a class="more" href="#papier">Découvrir</a>
-      </div>
-    </div>
-    <span class="scroll-cue" aria-hidden="true">Défiler</span>
-  </section>
-
-  <section class="shot light try" id="essayer" style="background-image:url(assets/cine/rm-ecran.jpg)">
-    <div class="try-grid">
-      <div class="try-copy">
-        <p class="kicker"><b>En direct</b> Essayez maintenant</p>
-        <h2 class="title">Testez avec<br>votre vrai CV.</h2>
-        <p class="sub">Ajoutez votre CV et une offre. Juste vous dit quelles compétences mettre en avant, ce qui manque, puis réécrit votre CV pour ce poste, sans rien inventer.</p>
-        <ul class="try-list"><li>3 analyses gratuites par semaine</li><li>Sans compte, sans carte bancaire</li><li>Votre CV reste sur votre appareil</li></ul>
-        <div class="links"><a class="btn only-touch" href="app/">Lancer l'essai</a><a class="more only-desk" href="app/" target="_blank" rel="noopener">Ouvrir en grand</a></div>
-      </div>
-      <div class="try-device only-desk" aria-label="Essai de Juste en direct"><iframe title="Essai de Juste en direct" data-src="app/" loading="lazy"></iframe></div>
-    </div>
-  </section>
-
-  <section class="shot" id="papier" style="background-image:url(assets/cine/rm-papier.jpg)">
-    <video muted loop playsinline preload="none" poster="assets/cine/rm-papier.jpg" data-src="assets/cine/rm-papier" aria-hidden="true"></video>
-    <div class="txt">
-      <p class="kicker"><b>01</b> Le point de départ</p>
-      <h2 class="title">Tout part de votre CV.<br>Rien n'est inventé.</h2>
-      <p class="sub">Juste reformule ce que vous avez réellement fait. Une expérience, un diplôme ou un outil absent de votre CV n'apparaît jamais.</p>
-    </div>
-  </section>
-
-  <section class="shot light" id="preuve" style="background-image:url(assets/cine/rm-surligneur.jpg)">
-    <video muted loop playsinline preload="none" poster="assets/cine/rm-surligneur.jpg" data-src="assets/cine/rm-surligneur" aria-hidden="true"></video>
-    <div class="txt">
-      <p class="kicker"><b>02</b> La preuve</p>
-      <h2 class="title">Chaque atout<br>cite sa ligne.</h2>
-      <p class="sub">Pour chaque point fort retenu, Juste montre la ligne exacte de votre CV qui le justifie. Vous vérifiez en un coup d'œil.</p>
-      <div class="links"><a class="more" href="decouvrir.html#demo">Voir la démo</a></div>
-    </div>
-  </section>
-
-  <section class="shot" id="offre" style="background-image:url(assets/cine/rm-ecran.jpg)">
-    <video muted loop playsinline preload="none" poster="assets/cine/rm-ecran.jpg" data-src="assets/cine/rm-ecran" aria-hidden="true"></video>
-    <div class="txt">
-      <p class="kicker"><b>03</b> À côté de l'offre</p>
-      <h2 class="title">Un score expliqué,<br>exigence par exigence.</h2>
-      <p class="sub">Le panneau s'ouvre sur la page de l'annonce : ce que l'offre demande, ce que votre CV prouve, ce qui manque, et l'avis d'un jury.</p>
-      <div class="links"><a class="more" href="decouvrir.html#fonctionnement">Comment ça marche</a></div>
-    </div>
-  </section>
-
-  <section class="shot light end" id="commencer" style="background-image:url(assets/cine/rm-ensemble.jpg)">
-    <div class="txt">
-      <p class="kicker"><b>04</b> Commencer</p>
-      <h2 class="title">Gratuit pour commencer.</h2>
-      <div class="offers">
-        <div><h3>Gratuit</h3><p>0 €</p><small>3 analyses par semaine</small></div>
-        <div><h3>Premium</h3><p>7,99 € / mois</p><small>Jusqu'à 50 analyses, jury complet. Ouvre à la fin de la bêta.</small></div>
-        <div><h3>Pass recherche</h3><p>19,99 € pour 3 mois</p><small>Paiement unique, sans renouvellement.</small></div>
-      </div>
-      <div class="links">
-        <a class="btn only-desk" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome, c'est gratuit</a>
-        <a class="btn only-touch" href="app/">Essayer sur mon téléphone</a>
-        <a class="more" href="decouvrir.html">Tout découvrir</a>
-      </div>
-    </div>
-    <p class="foot"><span>© Juste 2026</span><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a><a href="mailto:contact@justecv.fr">contact@justecv.fr</a></p>
-  </section>
-</main>
-
-<div class="index" id="index" role="dialog" aria-modal="true" aria-label="Index" hidden>
-  <nav>
-    <a href="decouvrir.html#demo"><span>01</span>Démo</a>
-    <a href="decouvrir.html#fonctionnement"><span>02</span>Fonctionnement</a>
-    <a href="metiers.html"><span>03</span>Repères par métier</a>
-    <a href="guides.html"><span>04</span>Guides</a>
-    <a href="suivi.html"><span>05</span>Suivi des candidatures</a>
-    <a href="decouvrir.html#prix"><span>06</span>Prix</a>
-    <a href="app/"><span>07</span>Appli web</a>
-    <p class="small"><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a><a href="mailto:contact@justecv.fr">Contact</a></p>
+<div class="menu" id="menu" hidden>
+  <nav aria-label="Menu principal">
+    <a href="#metiers"><small>01</small>Les métiers</a>
+    <a href="#mouvement"><small>02</small>La méthode</a>
+    <a href="#vitrine"><small>03</small>Me situer</a>
+    <a href="atelier.html"><small>04</small>L'atelier</a>
+    <a href="#apropos"><small>05</small>À propos</a>
+    <a href="#prix"><small>06</small>Les prix</a>
+    <a href="#faq"><small>07</small>Questions</a>
   </nav>
-  <aside aria-hidden="true"></aside>
-  <button class="index-btn close" id="closeIndex">Fermer <i aria-hidden="true"></i></button>
+  <p class="menu-plus"><a href="metiers.html">Repères par métier</a><a href="guides.html">Guides</a><a href="suivi.html">Suivi des candidatures</a><a href="app/">Analyse complète</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a></p>
+  <p class="menu-pied">contact@justecv.fr</p>
 </div>
 
-<script>
-(function () {
-  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var small = matchMedia("(max-width: 700px)").matches;
-  var shots = [].slice.call(document.querySelectorAll(".shot"));
-  var dots = [].slice.call(document.querySelectorAll(".rail a"));
-  if (!reduce) document.documentElement.classList.add("motion");
-  if (!reduce && "IntersectionObserver" in window) shots.slice(1).forEach(function (x) { x.classList.add("wait"); });
+<main id="contenu">
 
-  /* La vidéo d'un plan ne se charge et ne joue que lorsqu'il est à l'écran */
-  function play(v) {
-    if (!v || reduce) return;
-    if (!v.src) { v.src = v.getAttribute("data-src") + (small ? "-540.mp4" : ".mp4"); v.addEventListener("playing", function () { v.classList.add("on"); }, { once: true }); }
-    var p = v.play(); if (p && p.catch) p.catch(function () {});
-  }
-  if ("IntersectionObserver" in window) {
-    var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) {
-        var v = e.target.querySelector("video");
-        if (e.isIntersecting) {
-          var fr = e.target.querySelector("iframe[data-src]"); if (fr && !fr.src && getComputedStyle(fr.parentNode).display !== "none") fr.src = fr.getAttribute("data-src");
-          e.target.classList.remove("wait"); play(v);
-          dots.forEach(function (d) { d.classList.toggle("on", d.hash === "#" + e.target.id); });
-        } else if (v && v.src) { v.pause(); }
-      });
-    }, { threshold: .55 });
-    shots.forEach(function (s) { io.observe(s); });
-  }
+<section class="heros plein" aria-labelledby="titre-heros">
+  <div class="heros-media" style="background-image:url(assets/cine/flou-grand-age.jpg)">
+    <video id="film" class="clip" muted playsinline preload="metadata" aria-hidden="true" data-clip="grand-age" loop></video>
+    <button class="pause" id="pause-film" type="button" aria-label="Mettre la vidéo en pause" aria-pressed="false" hidden>
+    <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="1" width="2.5" height="10" fill="currentColor"/><rect x="7.5" y="1" width="2.5" height="10" fill="currentColor"/></svg>
+  </button>
+    <div class="puce puce-2" aria-hidden="true"><b>6</b> exigences lues dans l'offre</div>
+    <div class="puce puce-1" aria-hidden="true"><b>68 %</b> du profil déjà couvert</div>
+  </div>
+  <div class="cadre heros-texte">
+    <span class="ref">Lecture d'offre</span>
+    <h1 class="geant" id="titre-heros"><span class="ligne"><span>Voyez qui l'offre</span></span><span class="ligne"><span>cherche vraiment.</span></span></h1>
+    <div class="heros-bas">
+      <p class="chapo">Soignant, maçon, comptable ou cuisinier : JusteCV lit l'annonce, vous montre le profil attendu et mesure l'écart avec votre vrai CV. Sans rien inventer.</p>
+      <div class="actions">
+        <a class="btn plein" href="atelier.html">Mesurer une offre</a>
+        <a class="btn" href="#mouvement">Voir la méthode</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="defile" aria-hidden="true"><div class="defile-piste"><span>Lecture</span><span>Profil cible</span><span>Écart</span><span>Plan</span><span>Rien d'inventé</span><span>Lecture</span><span>Profil cible</span><span>Écart</span><span>Plan</span><span>Rien d'inventé</span></div></div>
+
+<section class="bloc metiers" id="metiers" aria-labelledby="titre-metiers">
+  <div class="cadre">
+    <div class="bloc-tete apparait">
+      <h2 class="moyen" id="titre-metiers">Tous les métiers. Tout le monde.</h2>
+      <p>À l'hôpital, sur un chantier, en cuisine ou dans un entrepôt : chaque offre décrit quelqu'un. JusteCV vous aide à montrer que c'est vous.</p>
+      <p class="suite-metiers"><a class="lien" href="metiers.html">Voir les repères de 94 métiers</a></p>
+    </div>
+  </div>
+  <div class="galerie" id="galerie">
+    <figure style="background-image:url(assets/cine/flou-soin.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="soin" aria-hidden="true"></video><figcaption><b>Soin</b>Infirmier, aide-soignant, brancardier<a class="lien" href="#vitrine" data-domaine="soin">Voir ce qu'une offre demande</a></figcaption></figure>
+    <figure style="background-image:url(assets/cine/flou-batiment.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="batiment" aria-hidden="true"></video><figcaption><b>Bâtiment</b>Maçon, électricien, peintre<a class="lien" href="#vitrine" data-domaine="batiment">Voir ce qu'une offre demande</a></figcaption></figure>
+    <figure style="background-image:url(assets/cine/flou-cuisine.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="cuisine" aria-hidden="true"></video><figcaption><b>Restauration</b>Cuisinier, serveur, boulanger<a class="lien" href="#vitrine" data-domaine="restauration">Voir ce qu'une offre demande</a></figcaption></figure>
+    <figure style="background-image:url(assets/cine/flou-logistique.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="logistique" aria-hidden="true"></video><figcaption><b>Logistique</b>Cariste, préparateur, chauffeur<a class="lien" href="#vitrine" data-domaine="logistique">Voir ce qu'une offre demande</a></figcaption></figure>
+  </div>
+</section>
+
+<section class="fiche" aria-label="Fiche technique">
+  <div class="cadre">
+    <dl>
+      <div><dt>Niveaux d'exigence</dt><dd>3</dd></div>
+      <div><dt>Poids des exigences</dt><dd>3 · 2 · 1</dd></div>
+      <div><dt>Plafond si éliminatoire absent</dt><dd>49 %</dd></div>
+      <div><dt>Lecture de l'offre</dt><dd>Dans votre navigateur</dd></div>
+      <div><dt>Compte nécessaire</dt><dd>Aucun</dd></div>
+      <div><dt>Ligne inventée</dt><dd>0</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="scene" id="mouvement" aria-labelledby="titre-mouvement">
+  <div class="scene-fixe">
+    <div class="cadre scene-grille">
+      <div class="scene-texte">
+        <h2 class="moyen" id="titre-mouvement">Le mouvement, en quatre temps.</h2>
+        <ol class="temps" id="temps">
+          <li data-pas="0"><span class="num">01</span><h3 class="petit-titre">Lecture</h3><p>Vous collez l'annonce. JusteCV sépare les missions des attentes et repère ce qui est exigé, souhaité ou simplement apprécié.</p></li>
+          <li data-pas="1"><span class="num">02</span><h3 class="petit-titre">Profil cible</h3><p>Diplôme, années d'expérience, outils, langues, habilitations, savoir-être : le candidat que l'offre décrit, ligne par ligne.</p></li>
+          <li data-pas="2"><span class="num">03</span><h3 class="petit-titre">Écart</h3><p>Votre vrai CV est comparé au profil cible. Chaque exigence est présente, en partie ou absente, avec la ligne de votre CV qui le prouve.</p></li>
+          <li data-pas="3"><span class="num">04</span><h3 class="petit-titre">Plan</h3><p>Pour chaque écart : comment le montrer si vous l'avez déjà fait, et comment l'acquérir si ce n'est pas le cas.</p></li>
+        </ol>
+        <div class="scene-barre" aria-hidden="true"><span id="scene-barre"></span></div>
+      </div>
+      <div class="cadran" id="cadran">
+        <svg viewBox="0 0 600 600" role="img" aria-labelledby="cadran-desc">
+          <desc id="cadran-desc">Cadran piloté par le défilement. Douze index représentent les exigences d'une offre. Ils s'allument à la lecture, puis l'aiguille indique la part du profil cible que couvre le CV : 68 %. Les quatre exigences restantes forment le plan.</desc>
+          <circle class="anneau" cx="300" cy="300" r="286"/>
+          <g id="minutes"></g>
+          <g id="index"></g>
+          <circle class="arc" id="arc" cx="300" cy="300" r="252" transform="rotate(-90 300 300)"/>
+          <circle class="anneau tourne" cx="300" cy="300" r="190" stroke-dasharray="2 6"/>
+          <g class="aiguille" id="aiguille"><line x1="300" y1="118" x2="300" y2="34" stroke="#ff6b4a" stroke-width="3"/><circle cx="300" cy="118" r="4" fill="#ff6b4a"/></g>
+        </svg>
+        <div class="valeur" aria-hidden="true"><strong id="valeur">0</strong><span id="valeur-label">exigences lues</span></div>
+      </div>
+    </div>
+  </div>
+</section>
 
 
-  /* Dépôt du CV : sur ordinateur, le fichier part dans l'essai en direct ; sur téléphone, on ouvre l'appli */
-  var drop = document.getElementById("dropcv"), input = document.getElementById("cvfile");
-  var frame = document.querySelector("#essayer iframe");
-  function frameUsable() { return frame && getComputedStyle(frame.parentNode).display !== "none"; }
-  function give(file) {
-    if (!file) return;
-    if (!frameUsable()) { location.href = "app/"; return; }
-    drop.classList.add("busy");
-    if (!frame.src) frame.src = frame.getAttribute("data-src");
-    document.getElementById("essayer").scrollIntoView();
-    var tries = 0;
-    (function push() {
-      var doc = null; try { doc = frame.contentDocument; } catch (e) {}
-      var target = doc && doc.readyState === "complete" && doc.getElementById("file");
-      if (!target) { if (tries++ < 60) return setTimeout(push, 250); drop.classList.remove("busy"); window.open("app/", "_blank"); return; }
-      try {
-        var prof = doc.getElementById("go-profile"); if (prof && !prof.hidden) prof.click();
-        var dt = new frame.contentWindow.DataTransfer(); dt.items.add(file); target.files = dt.files;
-        target.dispatchEvent(new frame.contentWindow.Event("change", { bubbles: true }));
-      } catch (e) { window.open("app/", "_blank"); }
-      drop.classList.remove("busy");
-    })();
-  }
-  if (matchMedia("(hover: none) and (pointer: coarse)").matches || !frameUsable()) {
-    drop.addEventListener("click", function (e) { e.preventDefault(); location.href = "app/"; });
-  } else {
-    input.addEventListener("change", function () { give(input.files[0]); input.value = ""; });
-    ["dragenter", "dragover"].forEach(function (t) { window.addEventListener(t, function (e) { if (e.dataTransfer && [].indexOf.call(e.dataTransfer.types, "Files") > -1) { e.preventDefault(); drop.classList.add("over"); } }); });
-    ["dragleave", "drop"].forEach(function (t) { window.addEventListener(t, function (e) { if (t === "drop") { e.preventDefault(); if (e.dataTransfer.files[0]) give(e.dataTransfer.files[0]); } if (t === "drop" || !e.relatedTarget) drop.classList.remove("over"); }); });
-  }
 
-  /* Index plein écran */
-  var index = document.getElementById("index"), opener = document.getElementById("openIndex"), closer = document.getElementById("closeIndex");
-  function setIndex(open) {
-    if (open) { index.hidden = false; requestAnimationFrame(function () { index.classList.add("open"); }); closer.focus(); document.documentElement.style.overflow = "hidden"; }
-    else { index.classList.remove("open"); document.documentElement.style.overflow = ""; setTimeout(function () { index.hidden = true; }, 500); opener.focus(); }
-  }
-  opener.addEventListener("click", function () { setIndex(true); });
-  closer.addEventListener("click", function () { setIndex(false); });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && index.classList.contains("open")) setIndex(false); });
-})();
-</script>
+<section class="bloc" id="vitrine" aria-labelledby="titre-vitrine">
+  <div class="cadre">
+    <div class="bloc-tete apparait">
+      <h2 class="moyen" id="titre-vitrine">Le profil cible à gauche. Vous à droite.</h2>
+      <p>Choisissez votre domaine. À gauche, ce que demande une offre type. À droite, situez-vous : en trente secondes sans rien écrire, ou en collant votre CV pour le détail.</p>
+    </div>
+    <fieldset class="domaines" id="demo-domaines" hidden>
+      <legend>Votre domaine</legend>
+      <div class="domaines-liste" id="demo-domaines-liste"></div>
+      <a class="lien" href="atelier.html">Autre domaine : coller une offre</a>
+    </fieldset>
+    <div class="vitrine cascade" id="demo">
+      <section aria-labelledby="v-cible">
+        <h3 class="petit-titre" id="v-cible">Profil cible</h3>
+        <span class="ref" id="demo-ref">Offre d'exemple · Conseiller clientèle bancaire · CDI · Lyon</span>
+        <ul class="lignes" id="demo-cible">
+          <li>Bac +2 minimum (BTS NDRC, Banque) exigé<span class="poids">Obligatoire · éliminatoire</span></li>
+          <li>2 ans d'expérience en relation client indispensable<span class="poids">Obligatoire</span></li>
+          <li>Maîtrise du pack Office et d'un CRM<span class="poids">Obligatoire</span></li>
+          <li>Anglais courant serait un plus<span class="poids">Atout</span></li>
+          <li>Sens du relationnel, rigueur et esprit d'équipe<span class="poids">Souhaitée</span></li>
+          <li>Certification AMF souhaitée<span class="poids">Souhaitée</span></li>
+        </ul>
+      </section>
+      <section aria-labelledby="v-cv">
+        <h3 class="petit-titre" id="v-cv">Votre CV</h3>
+        <span class="ref" id="demo-etat">Deux façons de vous situer</span>
+        <div class="choix" role="group" aria-label="Façon de répondre">
+          <button type="button" id="mode-rapide" aria-pressed="true">En 30 secondes</button>
+          <button type="button" id="mode-cv" aria-pressed="false">Coller mon CV</button>
+        </div>
+        <div id="demo-rapide">
+          <p class="aide">Pour chaque ligne du profil, dites si vous l'avez. Rien à écrire.</p>
+          <div id="demo-questions"></div>
+          <p class="demo-score" id="rapide-score" hidden><strong id="rapide-chiffre">–</strong><span>% du profil cible</span></p>
+          <p class="aide" id="rapide-suite" role="status" aria-live="polite">0 réponse sur 6</p>
+          <div class="barre" id="rapide-actions" hidden><a class="btn plein" href="atelier.html">Essayer avec votre offre</a></div>
+        </div>
+        <div id="demo-saisie" hidden>
+          <label class="sr" for="demo-cv">Texte de votre CV</label>
+          <textarea id="demo-cv" rows="9" placeholder="Collez ici le texte de votre CV : expériences, formation, compétences…"></textarea>
+          <div class="barre">
+            <button class="btn plein" id="demo-comparer" type="button">Comparer</button>
+            <button class="lien bouton-lien" id="demo-exemple" type="button">Voir avec un CV d'exemple</button>
+          </div>
+          <p class="aide" id="demo-aide">Votre CV reste dans votre navigateur. Rien n'est envoyé.</p>
+        </div>
+        <div id="demo-resultat" hidden tabindex="-1">
+          <p class="demo-score"><strong id="demo-score">–</strong><span>% du profil cible</span></p>
+          <ul class="lignes" id="demo-lignes"></ul>
+          <div class="barre">
+            <a class="btn plein" href="atelier.html">Essayer avec votre offre</a>
+            <button class="lien bouton-lien" id="demo-retour" type="button">Modifier mon CV</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<section class="bloc regle" aria-labelledby="titre-regle">
+  <div class="cadre">
+    <h2 class="grand apparait" id="titre-regle">Le profil cible reste à l'atelier.</h2>
+    <p class="chapo apparait" style="color:#4b463f">Il sert de gabarit, comme une pièce étalon. Il ne remplace jamais votre CV, et rien de ce qu'il contient n'est copié dans le vôtre.</p>
+    <div class="deux apparait">
+      <div>
+        <h3 class="petit-titre">Ce que JusteCV fait</h3>
+        <ul>
+          <li>Montre exactement ce que l'employeur attend</li>
+          <li>Retrouve dans votre CV ce qui y répond déjà</li>
+          <li>Vous aide à reformuler ce qui est vrai avec les mots de l'offre</li>
+          <li>Vous indique comment combler un vrai manque</li>
+        </ul>
+      </div>
+      <div class="non">
+        <h3 class="petit-titre">Ce que JusteCV ne fait jamais</h3>
+        <ul>
+          <li><span>Ajouter un diplôme que vous n'avez pas</span></li>
+          <li><span>Allonger une durée d'expérience</span></li>
+          <li><span>Inventer un poste ou une entreprise</span></li>
+          <li><span>Écrire une compétence que rien ne prouve</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bloc apropos" id="apropos" aria-labelledby="titre-apropos">
+  <div class="cadre apropos-grille">
+    <div class="apropos-clips apparait">
+      <figure class="apropos-clip"><video class="clip" muted loop playsinline preload="none" data-clip="podcast" aria-hidden="true"></video></figure>
+      <figure class="apropos-clip petit"><video class="clip" muted loop playsinline preload="none" data-clip="podcast-2" aria-hidden="true"></video></figure>
+      <p class="mention">Vidéos d'illustration générées par IA, sans son. Ces personnes n'existent pas.</p>
+    </div>
+    <div>
+      <h2 class="moyen apparait" id="titre-apropos">À propos de JusteCV</h2>
+      <p class="chapo apparait">Un outil fait pour celles et ceux qui cherchent un emploi, quel que soit le métier.</p>
+      <dl class="apropos-faits apparait">
+        <div><dt>Qui</dt><dd>JusteCV est édité par Namson Nguyen, à titre non professionnel pendant la bêta gratuite.</dd></div>
+        <div><dt>Notre règle</dt><dd>Votre CV dit la vérité. Nous vous aidons à mieux la dire, jamais à l'arranger.</dd></div>
+        <div><dt>Vos données</dt><dd>Nous ne les vendons pas et nous ne les utilisons pas pour de la publicité.</dd></div>
+        <div><dt>Nous écrire</dt><dd><a class="lien" href="mailto:contact@justecv.fr">contact@justecv.fr</a></dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="bloc" id="prix" aria-labelledby="titre-prix">
+  <div class="cadre">
+    <div class="bloc-tete apparait">
+      <h2 class="moyen" id="titre-prix">Trois formules.</h2>
+      <p>L'atelier est gratuit et sans compte. Les formules payantes ajoutent la réécriture assistée de votre CV et le suivi de vos candidatures.</p>
+    </div>
+    <div class="prix apparait">
+      <div>
+        <h3 class="petit-titre">Gratuit</h3>
+        <p class="montant">0 €</p>
+        <ul><li>Profil cible illimité</li><li>Mesure de l'écart</li><li>Plan d'action</li></ul>
+      </div>
+      <div>
+        <h3 class="petit-titre">Premium</h3>
+        <p class="montant">7,99 € <small>TTC / mois</small></p>
+        <ul><li>Tout le gratuit</li><li>Reformulation de votre CV, ligne par ligne, sourcée</li><li>Export PDF lisible par les logiciels de tri</li></ul>
+      </div>
+      <div>
+        <h3 class="petit-titre">Pass recherche</h3>
+        <p class="montant">19,99 € <small>TTC / 3 mois</small></p>
+        <ul><li>Tout Premium</li><li>Suivi des candidatures</li><li>Sans renouvellement automatique</li></ul>
+      </div>
+    </div>
+    <p class="note-prix">Les formules payantes ouvrent à la fin de la bêta.</p>
+  </div>
+</section>
+
+<section class="bloc faq" id="faq" aria-labelledby="titre-faq" style="padding-top:0">
+  <div class="cadre">
+    <div class="bloc-tete apparait"><h2 class="moyen" id="titre-faq">Questions.</h2><p></p></div>
+    <details><summary>Pourquoi ne pas simplement générer le CV parfait ?</summary><p>Parce qu'un CV qui colle à 100 % à l'offre contiendrait des choses que vous n'avez pas faites. Elles ressortent en entretien, et un diplôme inventé est un motif de licenciement. JusteCV vous montre la cible pour que vous l'atteigniez pour de vrai.</p></details>
+    <details><summary>Mon CV est-il envoyé quelque part ?</summary><p>Non. Dans l'atelier gratuit, l'offre et le CV sont lus dans votre navigateur. Rien ne part sur un serveur, et rien n'est conservé quand vous fermez la page.</p></details>
+    <details><summary>Comment le score est-il calculé ?</summary><p>Chaque exigence pèse 3 si elle est obligatoire, 2 si elle est souhaitée, 1 si c'est un atout. Une exigence présente compte entièrement, en partie pour moitié, absente pour rien. Si un critère éliminatoire (diplôme exigé, permis, habilitation) manque, le score ne dépasse pas 49 %.</p></details>
+    <details><summary>Et si l'offre est mal écrite ?</summary><p>JusteCV signale ce qui mérite d'être vérifié : argent demandé au candidat, contact par messagerie privée, promesses de gains anormales. Ce sont des points à vérifier, pas des accusations.</p></details>
+  </div>
+</section>
+
+<section class="bloc fin" aria-labelledby="titre-fin">
+  <div class="cadre fin-grille">
+    <div>
+      <h2 class="geant apparait" id="titre-fin">Une offre. Votre CV. Deux minutes.</h2>
+      <p class="chapo apparait">La prochaine bonne nouvelle peut être la vôtre.</p>
+      <div class="actions apparait"><a class="btn plein" href="atelier.html">Essayez vous aussi</a><a class="btn" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a></div>
+      <p class="fin-note apparait">L'extension lit l'offre là où vous la consultez : Indeed, HelloWork, France Travail, Welcome to the Jungle.</p>
+    </div>
+    <figure class="fin-clip apparait" style="background-image:url(assets/cine/flou-bureau.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="bureau" aria-hidden="true"></video></figure>
+  </div>
+</section>
+
+</main>
+
+<div class="barre-mobile" id="barre-mobile"><span>Une offre à lire ?</span><a class="btn plein" href="atelier.html" tabindex="-1">Mesurer une offre</a></div>
+
+<footer class="pied">
+  <div class="cadre">
+    <span>© JusteCV, 2026 · Vidéos d'illustration générées par IA : les personnes montrées n'existent pas</span>
+    <nav aria-label="Pied de page">
+      <a href="atelier.html">Atelier</a>
+      <a href="app/">Analyse complète</a>
+      <a href="metiers.html">Métiers</a>
+      <a href="guides.html">Guides</a>
+      <a href="suivi.html">Suivi des candidatures</a>
+      <a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a>
+      <a href="#apropos">À propos</a>
+      <a href="mentions-legales.html">Mentions légales</a>
+      <a href="cgv.html">CGV</a>
+      <a href="confidentialite.html">Confidentialité</a>
+      <a href="mailto:contact@justecv.fr">contact@justecv.fr</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="vendor/lenis.min.js" defer></script>
+<script src="clips.js" defer></script>
+<script src="luxe.js" defer onerror="document.documentElement.classList.remove('js')"></script>
+<script type="module" src="demo.js"></script>
 </body>
 </html>

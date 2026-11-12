@@ -133,3 +133,118 @@ td a { color: var(--fg); text-decoration-color: var(--sapin); text-underline-off
 .mcard .chips span { max-height: calc(1.45em * 2); }
 .mcard > .muted.small { max-height: calc(1.5em * 2); }
 .mcard .chips { align-content: start; }
+
+/* ==========================================================================
+   Habillage JusteCV des pages de contenu (métiers, guides, suivi, merci).
+   Vient après pages-base.css : mêmes classes, nouvelles couleurs et polices.
+   ========================================================================== */
+@font-face { font-family: "Lora"; src: url("fonts/lora-latin-wght-normal.woff2") format("woff2"); font-weight: 400 700; font-display: optional; }
+@font-face { font-family: "Schibsted Grotesk"; src: url("fonts/schibsted-grotesk-latin-wght-normal.woff2") format("woff2"); font-weight: 400 900; font-display: optional; }
+
+:root {
+  color-scheme: light;
+  --bg: #fffaf4; --bg-2: #ffffff; --surface: #ffffff; --surface-2: #f7f0e6; --line: #ebe3d7;
+  --fg: #1c2040; --muted: #555b70; --faint: #5f6478;
+  --sapin: #c63a18; --sapin-soft: #d3f2e2; --mark: #ffe27a; --mark-ink: #1c2040;
+  --red: #b3261e; --red-soft: #fde4e1;
+  --corail: #ff6b4a; --vert: #18804d; --ambre: #8a5300; --ciel: #dcebff; --peche: #ffe1d6; --menthe: #d3f2e2;
+  --display: "Lora", Georgia, "Times New Roman", serif;
+  --body: "Schibsted Grotesk", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "Schibsted Grotesk", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --r: 18px;
+}
+@view-transition { navigation: auto; }
+html { scroll-padding-top: 6.5rem; }
+body { background: var(--bg); color: var(--fg); }
+h1, h2 { font-weight: 500; letter-spacing: -.015em; }
+h1 { line-height: 1.08; }
+h3 { font-family: var(--body); font-weight: 650; font-size: 1rem; }
+a { text-underline-offset: 3px; }
+.crumbs a, .src a { text-decoration: underline; text-decoration-color: var(--line); }
+.crumbs a:hover, .src a:hover { text-decoration-color: var(--corail); }
+.hl { background: linear-gradient(transparent 62%, var(--mark) 62%, var(--mark) 94%, transparent 94%); color: inherit; padding: 0; }
+.eyebrow { display: inline-block; background: var(--mark); color: var(--mark-ink); padding: .5rem .8rem; border-radius: 999px; letter-spacing: .1em; }
+.mono { letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+:focus-visible { outline-color: var(--fg); }
+input:focus, select:focus, textarea:focus { outline-color: var(--fg); }
+
+/* lien d'évitement */
+.sr-lien { position: absolute; left: 12px; top: -60px; z-index: 50; background: var(--fg); color: #fff; padding: .7rem 1rem; border-radius: 10px; text-decoration: none; }
+.sr-lien:focus { top: 12px; }
+
+/* en-tête : la même capsule de verre que l'accueil */
+.nav { position: sticky; top: 0; z-index: 30; background: none; -webkit-backdrop-filter: none; backdrop-filter: none; border: 0; padding: 10px 12px 0; }
+.nav .wrap { max-width: 1180px; min-height: 62px; gap: 1.6rem; padding: 0 .7rem 0 1.5rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.9);
+  background: linear-gradient(180deg, rgba(255,253,249,.9), rgba(255,250,244,.8)); -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5);
+  box-shadow: 0 14px 34px -22px rgba(28,32,64,.45), inset 0 1px 0 rgba(255,255,255,.9); }
+.logo { gap: 0; font: 500 1.45rem/1 var(--display); letter-spacing: -.01em; view-transition-name: marque; }
+.logo .cv { color: var(--sapin); margin-left: .06em; letter-spacing: .02em; }
+.nav-links { gap: 1.6rem; }
+.nav-links a[aria-current] { color: var(--fg); text-decoration: underline; text-decoration-color: var(--corail); text-decoration-thickness: 2px; text-underline-offset: 8px; }
+.nav-menu summary { border-radius: 999px; border-color: var(--line); background: #fff; }
+.nav-menu nav { border-radius: 18px; box-shadow: 0 24px 50px -24px rgba(28,32,64,.45); }
+@media (max-width: 900px) { .nav-links, .nav-cta { display: none; } .nav-menu { display: block; } }
+@media (prefers-reduced-transparency: reduce) { .nav .wrap { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--bg); } }
+
+/* boutons */
+.btn { min-height: 46px; padding: 0 1.3rem; font-weight: 600; transition: background .2s, border-color .2s, color .2s, transform .2s; }
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--corail); color: #1c0d08; border-color: var(--corail); box-shadow: 0 10px 22px -12px rgba(255,107,74,.9), inset 0 1px 0 rgba(255,255,255,.45); }
+.btn-primary:hover { background: #ff7d60; }
+.btn-ghost { background: #fff; color: var(--fg); border-color: var(--line); }
+.btn-ghost:hover { background: #fff; border-color: var(--fg); }
+.btn-sm { min-height: 42px; padding: 0 1.05rem; }
+.btn-quiet { background: transparent; }
+
+/* cartes et pastilles */
+.card, .mcard, .stat { box-shadow: 0 18px 40px -32px rgba(28,32,64,.4); }
+.mcard:hover { border-color: var(--fg); }
+.mcard .more { color: var(--sapin); }
+.mcard .mono { background: var(--surface-2); }
+.mcard .chips span::before { background-color: var(--menthe); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2318804d' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E"); background-size: 78%; background-position: center; background-repeat: no-repeat; }
+.chips span { background: var(--surface-2); }
+.chips span.core { border-color: #e6c64f; background: #fff8dc; }
+.chips span.core::before { color: var(--ambre); }
+.chips.yes span { border-color: #a9dcc1; }
+.pill { background: var(--surface-2); color: var(--muted); }
+.pill-mint { background: var(--menthe); color: #0f5c36; }
+.pill-amber { background: #fff0c2; color: #6f4300; }
+.pill-rose { background: var(--red-soft); color: var(--red); }
+.toc a:hover { border-color: var(--fg); background: #fff; }
+.ico { color: var(--sapin); }
+.verif { border-left-color: var(--corail); }
+.cta { background: linear-gradient(140deg, var(--ciel), #fff 70%); border-color: #cfe0fb; }
+.cta .chips { margin: 0; }
+details summary::after { color: var(--sapin); }
+.conseils li::marker { color: var(--sapin); }
+
+/* suivi des candidatures */
+.statut-envoyee { background: var(--ciel); color: #1d4fb8; }
+.statut-relance { background: #fff0c2; color: #6f4300; }
+.statut-entretien { background: var(--menthe); color: #0f5c36; }
+.statut-refus { background: var(--red-soft); color: var(--red); }
+.statut-offre { background: #c9efd0; color: #14532d; }
+.stat { background: #fff; }
+.stat.is-warn { border-color: #e6c64f; background: #fff8dc; }
+.stat.is-warn strong { color: #6f4300; }
+.stat.is-good strong { color: var(--vert); }
+.row-actions button:hover { border-color: var(--fg); }
+.btn-quiet:hover { color: var(--red); background: var(--red-soft); }
+input[type="date"]::-webkit-calendar-picker-indicator { filter: none; }
+.empty svg { color: var(--sapin); }
+td a { text-decoration-color: var(--corail); }
+
+/* pied de page */
+footer { background: #fff; margin-top: 2rem; padding-block: 2.4rem; color: var(--muted); }
+footer .wrap + .wrap { margin-top: 1.2rem; }
+footer a:hover { color: var(--fg); text-decoration: underline; text-decoration-color: var(--corail); }
+footer .src { max-width: 62rem; margin: 0; }
+
+/* page de remerciement */
+.merci { min-height: 62vh; display: grid; align-content: center; justify-items: start; gap: .4rem; max-width: 40rem; }
+.merci .coche { width: 58px; height: 58px; border-radius: 50%; background: var(--menthe); color: var(--vert); display: grid; place-items: center; margin-bottom: 1rem; }
+.merci .coche svg { width: 28px; height: 28px; }
+.merci .chips { margin-top: 1rem; }
+
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } .mcard, .btn { transition: none; } }
+@media print { .sr-lien { display: none; } body { background: #fff; } }

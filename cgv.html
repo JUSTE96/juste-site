@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Conditions générales de vente – Juste</title>
-<meta name="description" content="Conditions de vente de Juste Premium et du Pass recherche : prix, paiement, résiliation, rétractation, remboursement.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,650&family=Hanken+Grotesk:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
+<title>Conditions générales de vente – JusteCV</title>
+<meta name="description" content="Conditions de vente de JusteCV Premium et du Pass recherche : prix, paiement, résiliation, rétractation, remboursement.">
+<link rel="preload" href="fonts/schibsted-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/lora-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="pages.css">
 <style>
 :root{color-scheme:dark;--bg:#0d1813;--bg-2:#12221b;--surface:#172b22;--line:#2a4436;--fg:#eef3ef;--muted:#a7b9ae;--faint:#7f9488;--sapin:#3f8f68;--mark:#f2df4b;--mark-ink:#1b1a08;--display:"Fraunces",Georgia,serif;--body:"Hanken Grotesk",-apple-system,"Segoe UI",Roboto,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.65 var(--body);-webkit-font-smoothing:antialiased}
 .wrap{max-width:46rem;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.nav .wrap{display:flex;align-items:center;gap:1.5rem;min-height:64px;max-width:72rem}
-.logo{display:flex;align-items:center;gap:.55rem;font:650 1.35rem/1 var(--display);text-decoration:none;color:inherit}
-.logo-mark{width:26px;height:26px;border-radius:7px;background:var(--sapin);display:grid;place-items:center}.logo-mark span{width:12px;height:4px;background:var(--mark);border-radius:2px}
-.nav a.back{margin-left:auto;color:var(--muted);text-decoration:none;font-size:.95rem}.nav a.back:hover{color:var(--fg)}
+
+
+
+
+
 main{padding-block:3rem 5rem}
 .eyebrow{font:600 .78rem/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--sapin);margin:0 0 1rem}
 h1{font:650 clamp(2rem,5vw,2.8rem)/1.1 var(--display);letter-spacing:-.01em;margin:0 0 .5rem;text-wrap:balance}
@@ -30,30 +30,36 @@ mark{background:var(--mark);color:var(--mark-ink);padding:0 .15em}
 .todo{background:#3a1d1a;color:#ff6b5e;padding:.05em .35em;border-radius:4px;font-family:var(--mono);font-size:.85em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 .notice{border:1px dashed var(--line);border-radius:12px;padding:1rem 1.1rem;color:var(--muted);font-size:.95rem;margin:0 0 2rem}
 .email{font-weight:600;user-select:all}
-footer{border-top:1px solid var(--line);padding-block:2rem;color:var(--faint);font-size:.9rem}
-footer .wrap{display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;max-width:72rem}footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--fg)}
+
+
 :focus-visible{outline:2px solid var(--mark);outline-offset:3px;border-radius:6px}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
-<link rel="stylesheet" href="logo.css">
+
+<link rel="stylesheet" href="legal-luxe.css">
+<meta name="theme-color" content="#fffaf4">
+<link rel="icon" href="favicon-32.png" type="image/png">
 </head>
 <body>
+<a class="sr-lien" href="#contenu">Aller au contenu</a>
 <header class="nav"><div class="wrap">
-  <a class="logo" href="index.html" aria-label="Juste, accueil"><span class="logo-mark" aria-hidden="true"><span></span></span>Juste</a>
-  <nav class="back" aria-label="Pages" style="display:flex;gap:1.1rem;margin-left:auto"><a href="index.html" style="color:var(--muted);text-decoration:none">Accueil</a><a href="metiers.html" style="color:var(--muted);text-decoration:none">Métiers</a><a href="guides.html" style="color:var(--muted);text-decoration:none">Guides</a><a href="suivi.html" style="color:var(--muted);text-decoration:none">Suivi</a></nav>
+  <a class="logo" href="./" aria-label="JusteCV, accueil"><span>Juste</span><span class="cv">CV</span></a>
+  <nav class="nav-links" aria-label="Pages"><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html">Suivi</a><a href="atelier.html">Atelier</a><a href="./#prix">Prix</a></nav>
+  <a class="btn btn-primary btn-sm nav-cta" href="atelier.html">Essayez vous aussi</a>
+  <details class="nav-menu"><summary aria-label="Menu"><span></span><span></span><span></span></summary><nav aria-label="Pages (mobile)"><a href="./">Accueil</a><a href="atelier.html">Atelier</a><a href="app/">Analyse complète</a><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html">Suivi</a><a href="./#prix">Prix</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a></nav></details>
 </div></header>
-<main><div class="wrap">
+<main id="contenu"><div class="wrap">
 <p class="eyebrow">Passes sans renouvellement</p>
 <h1>Conditions générales de vente</h1>
 <p class="date">Dernière mise à jour : 6 novembre 2026</p>
 
-<div class="notice">Premium et le Pass recherche ne sont pas encore en vente : pendant la bêta, Juste est gratuit. Ces conditions s'appliqueront à l'ouverture des ventes.</div>
+<div class="notice">Premium et le Pass recherche ne sont pas encore en vente : pendant la bêta, JusteCV est gratuit. Ces conditions s'appliqueront à l'ouverture des ventes.</div>
 
 <h2><span>1.</span>Objet</h2>
-<p>Les présentes conditions régissent la vente de l'abonnement Premium et du Pass recherche du service Juste (ci-après « le Service ») proposés sur le site et dans l'extension Chrome Juste, édités par Namson NGUYEN (ci-après « l'Éditeur »).</p>
+<p>Les présentes conditions régissent la vente de l'abonnement Premium et du Pass recherche du service JusteCV (ci-après « le Service ») proposés sur le site et dans l'extension Chrome JusteCV, édités par Namson NGUYEN (ci-après « l'Éditeur »).</p>
 
 <h2><span>2.</span>Le Service</h2>
-<p>Juste analyse une offre d'emploi, mesure la compatibilité avec le CV de l'utilisateur et propose une version de ce CV adaptée à l'offre, sans ajouter d'expérience, de diplôme ou de compétence absents du CV d'origine. Les résultats sont produits par une intelligence artificielle et constituent des suggestions que l'utilisateur doit relire.</p>
+<p>JusteCV analyse une offre d'emploi, mesure la compatibilité avec le CV de l'utilisateur et propose une version de ce CV adaptée à l'offre, sans ajouter d'expérience, de diplôme ou de compétence absents du CV d'origine. Les résultats sont produits par une intelligence artificielle et constituent des suggestions que l'utilisateur doit relire.</p>
 
 <h2><span>3.</span>Offres et prix</h2>
 <ul>
@@ -91,7 +97,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;max-width:72rem}footer
 
 </div></main>
 <footer><div class="wrap">
-  <a href="index.html">Accueil</a><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a><a href="mailto:contact@justecv.fr">Contact</a>
+  <a href="./">Accueil</a><a href="atelier.html">Atelier</a><a href="app/">Analyse complète</a><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html">Suivi des candidatures</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a><a href="mailto:contact@justecv.fr">contact@justecv.fr</a>
 </div></footer>
 </body>
 </html>

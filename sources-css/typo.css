@@ -1,0 +1,33 @@
+/* Typographie : titres en serif (Lora, OFL), texte courant en Schibsted Grotesk.
+   Casse de phrase, pas de capitales forcées, pas de chasse élargie : plus calme, plus éditorial. */
+@font-face { font-family: "Lora"; src: url("fonts/lora-latin-wght-normal.woff2") format("woff2"); font-weight: 400 700; font-display: swap; }
+:root { --titre: "Lora", Georgia, "Times New Roman", serif; }
+
+.geant, .moyen, .petit-titre, .intitule, .montant, .mesure-chiffre strong, .valeur strong, .num, .num-etape, .temps .num, .rideau-compte, .mouvement .num, .mesure-chiffre strong {
+  font-family: var(--titre); font-stretch: normal; text-transform: none; letter-spacing: -.015em; font-weight: 400;
+}
+.geant { font-size: clamp(2.8rem, 8vw, 9rem); line-height: .98; }
+.moyen { font-size: clamp(2rem, 4vw, 3.6rem); line-height: 1.05; }
+.petit-titre { font-size: 1.3rem; }
+.intitule { text-transform: none; font-size: clamp(1.8rem, 2.8vw, 2.6rem); line-height: 1.1; letter-spacing: -.01em; }
+.montant { font-size: 2.6rem; }
+.ref { font-family: var(--texte); text-transform: uppercase; letter-spacing: .14em; font-size: .72rem; font-weight: 600; }
+.btn, .menu-btn, .marque, .rideau-marque, .menu nav a, .defile-piste span, .etiq, .faq summary, .statut, .poids { font-family: var(--texte); }
+.btn { font-stretch: normal; font-weight: 600; letter-spacing: .01em; text-transform: none; font-size: .98rem; }
+.marque { font-family: var(--titre); text-transform: none; font-size: 1.35rem; letter-spacing: 0; font-weight: 500; }
+.menu nav a { font-family: var(--titre); font-stretch: normal; text-transform: none; letter-spacing: -.01em; font-weight: 400; }
+.menu-btn { text-transform: none; letter-spacing: .02em; font-weight: 600; font-stretch: normal; }
+.rideau-marque { font-family: var(--titre); text-transform: none; letter-spacing: 0; font-size: 1.4rem; font-weight: 500; }
+.rideau-compte { font-weight: 400; letter-spacing: -.02em; }
+.faq summary { font-family: var(--titre); font-stretch: normal; font-size: 1.3rem; font-weight: 400; }
+.defile-piste span { font-family: var(--titre); text-transform: none; letter-spacing: 0; font-size: 1.4rem; font-weight: 400; font-stretch: normal; }
+.cadran .valeur strong, .mesure-chiffre strong { font-weight: 400; letter-spacing: -.03em; }
+.mouvement .num, .temps .num, .num-etape { font-weight: 400; color: var(--corail-texte, #c63a18); }
+.mouvement li:nth-child(2) .num { color: var(--corail); }
+.prix .montant small { font-family: var(--texte); }
+.statut, .poids { text-transform: none; letter-spacing: 0; font-weight: 500; }
+.poids { font-size: .8rem; }
+.fiche dd { font-family: var(--titre); font-stretch: normal; font-size: 1.4rem; }
+.marque { gap: 0; font-size: 1.45rem; letter-spacing: -.01em; }
+.marque .cv { color: var(--corail); font-weight: 500; margin-left: .06em; letter-spacing: .02em; }
+.rideau-marque { font-size: 1.5rem; }

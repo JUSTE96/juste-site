@@ -3,23 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Suivi des candidatures – Juste</title>
+<title>Suivi des candidatures – JusteCV</title>
 <meta name="description" content="Un tableau de bord de vos candidatures, gratuit et sans compte : tout reste dans votre navigateur.">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Hanken+Grotesk:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="icon" href="favicon-32.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#fffaf4">
+<link rel="preload" href="fonts/schibsted-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/lora-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="pages.css">
-<link rel="stylesheet" href="logo.css">
 </head>
 <body>
+<a class="sr-lien" href="#contenu">Aller au contenu</a>
 <header class="nav"><div class="wrap">
-  <a class="logo" href="index.html" aria-label="Juste, accueil"><span class="logo-mark" aria-hidden="true"><span></span></span>Juste</a>
-  <nav class="nav-links" aria-label="Pages"><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html" aria-current="page">Suivi</a><a href="index.html#prix">Prix</a></nav>
-  <a class="btn btn-primary btn-sm nav-cta" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a>
-  <details class="nav-menu"><summary aria-label="Menu"><span></span><span></span><span></span></summary><nav aria-label="Pages (mobile)"><a href="index.html">Accueil</a><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html" aria-current="page">Suivi</a><a href="index.html#prix">Prix</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a></nav></details>
+  <a class="logo" href="./" aria-label="JusteCV, accueil"><span>Juste</span><span class="cv">CV</span></a>
+  <nav class="nav-links" aria-label="Pages"><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html" aria-current="page">Suivi</a><a href="atelier.html">Atelier</a><a href="./#prix">Prix</a></nav>
+  <a class="btn btn-primary btn-sm nav-cta" href="atelier.html">Essayez vous aussi</a>
+  <details class="nav-menu"><summary aria-label="Menu"><span></span><span></span><span></span></summary><nav aria-label="Pages (mobile)"><a href="./">Accueil</a><a href="atelier.html">Atelier</a><a href="app/">Analyse complète</a><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html" aria-current="page">Suivi</a><a href="./#prix">Prix</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a></nav></details>
 </div></header>
-<main><div class="wrap">
+<main id="contenu"><div class="wrap">
   <p class="eyebrow">Suivi des candidatures</p>
   <h1>Toutes vos candidatures, <span class="hl">sans compte</span>.</h1>
   <p class="lede">Notez chaque offre, son statut et la date de relance. Rien n'est envoyé : la liste est enregistrée dans ce navigateur, sur cet appareil. Exportez-la en CSV quand vous voulez.</p>
@@ -54,13 +55,13 @@
   <p class="tip-line"><span class="pill pill-amber">Conseil</span>  relancez une candidature restée sans réponse après 7 à 10 jours. Les lignes « Envoyée » depuis plus de 10 jours passent en jaune pour vous le rappeler.</p>
   <div class="cta">
     <h2>Avant d'envoyer, vérifiez le CV.</h2>
-    <p class="muted">Juste lit l'offre, mesure la compatibilité exigence par exigence et adapte votre CV sans rien inventer.</p>
-    <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter Juste à Chrome</a>
+    <p class="muted">JusteCV lit l'offre, mesure la compatibilité exigence par exigence et adapte votre CV sans rien inventer.</p>
+    <div class="chips"><a class="btn btn-primary" href="atelier.html">Essayer avec une offre</a> <a class="btn btn-ghost" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter JusteCV à Chrome</a></div>
   </div>
 </div></main>
 <footer><div class="wrap">
-  <a href="index.html">Accueil</a><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html">Suivi des candidatures</a><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a><a href="mailto:contact@justecv.fr">contact@justecv.fr</a>
-</div><div class="wrap"><p class="src">Données : ROME 4.0 version 62 (France Travail, <a href="https://www.data.gouv.fr/fr/datasets/repertoire-operationnel-des-metiers-et-des-emplois-rome/" target="_blank" rel="noopener">Licence Ouverte</a>), RNCP (France compétences), enquête BMO 2026. Pages générées sans IA par scripts/site/construire-metiers.py. Juste utilise une IA pour l'analyse des offres : relisez toujours votre CV avant de l'envoyer.</p></div></footer>
+  <a href="./">Accueil</a><a href="atelier.html">Atelier</a><a href="app/">Analyse complète</a><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html">Suivi des candidatures</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a><a href="mailto:contact@justecv.fr">contact@justecv.fr</a>
+</div><div class="wrap"><p class="src">Données : ROME 4.0 version 62 (France Travail, <a href="https://www.data.gouv.fr/fr/datasets/repertoire-operationnel-des-metiers-et-des-emplois-rome/" target="_blank" rel="noopener">Licence Ouverte</a>), RNCP (France compétences), enquête BMO 2026. Pages générées sans IA par scripts/site/construire-metiers.py. JusteCV utilise une IA pour l'analyse des offres : relisez toujours votre CV avant de l'envoyer.</p></div></footer>
 <script>
 (function () {
   var KEY = "juste.suivi.v1";

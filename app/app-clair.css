@@ -1,0 +1,20 @@
+/* JusteCV — l'appli (analyse IA, jury, CV adapté) aux couleurs du site clair. Chargé en dernier. */
+@font-face { font-family: "Lora"; src: url("../fonts/lora-latin-wght-normal.woff2") format("woff2"); font-weight: 400 700; font-display: swap; }
+:root {
+  color-scheme: light;
+  --fond: #fffaf4; --papier: #ffffff; --papier-2: #f6f1ff; --trait: #ebe3d7; --trait-fort: #d6cbbb;
+  --texte: #1c2040; --texte-2: #555b70;
+  --sapin: #1c2040; --sapin-fonce: #11142b; --sapin-clair: #dcebff; --entete: #1c2040;
+  --surligneur: #ffe27a; --surligneur-doux: #fff3c4; --surligneur-trait: #d9a300; --surligneur-texte: #3d3000;
+  --stylo: #c23a1c; --stylo-clair: #ffe1d6; --stylo-trait: #f5b7a5;
+  --rayon: 18px; --rayon-s: 10px;
+}
+body { background: radial-gradient(40% 30% at 0% 0%, #ffe1d6, transparent 70%), radial-gradient(35% 30% at 100% 100%, #dcebff, transparent 70%), #fffaf4; }
+h1, h2, .brand span { font-family: "Lora", Georgia, serif; font-weight: 500; letter-spacing: -.01em; }
+.brand img { display: none; }
+.brand span::after { content: "CV"; color: #d4421f; margin-left: .04em; }
+button, .btn, [role="button"] { border-radius: 999px; }
+header .brand span::after, .topbar .brand span::after { color: #ff9a7e; }
+
+/* transitions natives entre les pages du site */
+@view-transition { navigation: auto; }

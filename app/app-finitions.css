@@ -19,3 +19,10 @@
 
 /* Barre d'enregistrement : même largeur que les cartes */
 .sticky-bar { margin-left: 0 !important; margin-right: 0 !important; border-radius: 20px 20px 0 0; }
+
+/* liens vers le site */
+.app-pied { width: min(640px, 100%); margin: 0 auto; padding: 8px max(16px, env(safe-area-inset-left)) calc(28px + env(safe-area-inset-bottom)); }
+.app-pied nav { display: flex; flex-wrap: wrap; gap: .5rem 1.2rem; padding-top: 16px; border-top: 1px solid #ebe3d7; font-size: .85rem; }
+.app-pied a { color: #555b70; text-decoration: none; }
+.app-pied a:hover, .app-pied a:focus-visible { color: #1c2040; text-decoration: underline; text-decoration-color: #ff6b4a; text-underline-offset: 3px; }
+@media print { .app-pied { display: none; } }

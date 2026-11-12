@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Politique de confidentialité – Juste</title>
-<meta name="description" content="Quelles données Juste traite, où elles sont stockées, et avec qui elles sont partagées.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,650&family=Hanken+Grotesk:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
+<title>Politique de confidentialité – JusteCV</title>
+<meta name="description" content="Quelles données JusteCV traite, où elles sont stockées, et avec qui elles sont partagées.">
+<link rel="preload" href="fonts/schibsted-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/lora-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="pages.css">
 <style>
 :root{color-scheme:dark;--bg:#0d1813;--bg-2:#12221b;--surface:#172b22;--line:#2a4436;--fg:#eef3ef;--muted:#a7b9ae;--faint:#7f9488;--sapin:#3f8f68;--mark:#f2df4b;--mark-ink:#1b1a08;--display:"Fraunces",Georgia,serif;--body:"Hanken Grotesk",-apple-system,"Segoe UI",Roboto,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.65 var(--body);-webkit-font-smoothing:antialiased}
 .wrap{max-width:46rem;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.nav .wrap{display:flex;align-items:center;gap:1.5rem;min-height:64px;max-width:72rem}
-.logo{display:flex;align-items:center;gap:.55rem;font:650 1.35rem/1 var(--display);text-decoration:none;color:inherit}
-.logo-mark{width:26px;height:26px;border-radius:7px;background:var(--sapin);display:grid;place-items:center}.logo-mark span{width:12px;height:4px;background:var(--mark);border-radius:2px}
-.nav a.back{margin-left:auto;color:var(--muted);text-decoration:none;font-size:.95rem}.nav a.back:hover{color:var(--fg)}
+
+
+
+
+
 main{padding-block:3rem 5rem}
 .eyebrow{font:600 .78rem/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--sapin);margin:0 0 1rem}
 h1{font:650 clamp(2rem,5vw,2.8rem)/1.1 var(--display);letter-spacing:-.01em;margin:0 0 .5rem;text-wrap:balance}
@@ -30,27 +30,33 @@ mark{background:var(--mark);color:var(--mark-ink);padding:0 .15em}
 .todo{background:#3a1d1a;color:#ff6b5e;padding:.05em .35em;border-radius:4px;font-family:var(--mono);font-size:.85em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 .notice{border:1px dashed var(--line);border-radius:12px;padding:1rem 1.1rem;color:var(--muted);font-size:.95rem;margin:0 0 2rem}
 .email{font-weight:600;user-select:all}
-footer{border-top:1px solid var(--line);padding-block:2rem;color:var(--faint);font-size:.9rem}
-footer .wrap{display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;max-width:72rem}footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--fg)}
+
+
 :focus-visible{outline:2px solid var(--mark);outline-offset:3px;border-radius:6px}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
-<link rel="stylesheet" href="logo.css">
+
+<link rel="stylesheet" href="legal-luxe.css">
+<meta name="theme-color" content="#fffaf4">
+<link rel="icon" href="favicon-32.png" type="image/png">
 </head>
 <body>
+<a class="sr-lien" href="#contenu">Aller au contenu</a>
 <header class="nav"><div class="wrap">
-  <a class="logo" href="index.html" aria-label="Juste, accueil"><span class="logo-mark" aria-hidden="true"><span></span></span>Juste</a>
-  <nav class="back" aria-label="Pages" style="display:flex;gap:1.1rem;margin-left:auto"><a href="index.html" style="color:var(--muted);text-decoration:none">Accueil</a><a href="metiers.html" style="color:var(--muted);text-decoration:none">Métiers</a><a href="guides.html" style="color:var(--muted);text-decoration:none">Guides</a><a href="suivi.html" style="color:var(--muted);text-decoration:none">Suivi</a></nav>
+  <a class="logo" href="./" aria-label="JusteCV, accueil"><span>Juste</span><span class="cv">CV</span></a>
+  <nav class="nav-links" aria-label="Pages"><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html">Suivi</a><a href="atelier.html">Atelier</a><a href="./#prix">Prix</a></nav>
+  <a class="btn btn-primary btn-sm nav-cta" href="atelier.html">Essayez vous aussi</a>
+  <details class="nav-menu"><summary aria-label="Menu"><span></span><span></span><span></span></summary><nav aria-label="Pages (mobile)"><a href="./">Accueil</a><a href="atelier.html">Atelier</a><a href="app/">Analyse complète</a><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html">Suivi</a><a href="./#prix">Prix</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a></nav></details>
 </div></header>
-<main><div class="wrap">
+<main id="contenu"><div class="wrap">
 <p class="eyebrow">Extension Chrome et site</p>
 <h1>Politique de confidentialité</h1>
 <p class="date">Dernière mise à jour : 6 novembre 2026</p>
 
-<p>Cette politique explique quelles données l'extension Chrome Juste et le site juste traitent, pourquoi, où elles sont conservées et avec qui elles sont partagées. Juste sert à une seule chose : analyser une offre d'emploi et adapter votre CV à cette offre, sans rien inventer.</p>
+<p>Cette politique explique quelles données l'extension Chrome JusteCV et le site juste traitent, pourquoi, où elles sont conservées et avec qui elles sont partagées. JusteCV sert à une seule chose : analyser une offre d'emploi et adapter votre CV à cette offre, sans rien inventer.</p>
 
 <h2><span>1.</span>Responsable du traitement</h2>
-<p>Namson NGUYEN, qui édite Juste à titre non professionnel pendant la bêta gratuite. Contact : <span class="email">contact@justecv.fr</span>.</p>
+<p>Namson NGUYEN, qui édite JusteCV à titre non professionnel pendant la bêta gratuite. Contact : <span class="email">contact@justecv.fr</span>.</p>
 
 <h2><span>2.</span>Données traitées</h2>
 <ul>
@@ -63,17 +69,18 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;max-width:72rem}footer
   <li><strong>Des totaux d'usage par jour</strong> (installations, analyses, avis « utile »), sans lien avec une personne.</li>
   <li><strong>En cas d'achat d'un pass</strong> : votre adresse e-mail et les informations de paiement traitées par Stripe (nous ne voyons jamais votre numéro de carte).</li>
 </ul>
-<p>Juste ne collecte pas votre historique de navigation, votre position géographique, vos mots de passe ni vos communications personnelles. L'extension ne lit aucune autre page que celle de l'offre ouverte, et seulement quand vous la sollicitez.</p>
+<p>JusteCV ne collecte pas votre historique de navigation, votre position géographique, vos mots de passe ni vos communications personnelles. L'extension ne lit aucune autre page que celle de l'offre ouverte, et seulement quand vous la sollicitez.</p>
 
 <h2><span>3.</span>Finalités et base légale</h2>
 <p>Les données servent uniquement à fournir le service que vous demandez : analyser l'offre, mesurer la compatibilité et produire une version adaptée de votre CV. La base légale est l'exécution du contrat (article 6.1.b du RGPD). Pour l'achat d'un pass, les données de facturation sont conservées au titre de nos obligations légales (article 6.1.c).</p>
 
 <h2><span>4.</span>Stockage</h2>
 <p>Votre CV, vos réglages et vos résultats sont enregistrés <mark>localement dans votre navigateur</mark>, sur votre appareil.</p>
-<p>Le serveur de Juste relaie l'analyse : votre CV et l'offre n'y sont jamais écrits sur disque et restent en mémoire 30 minutes au plus, le temps de terminer l'analyse. Il conserve seulement l'identifiant aléatoire, le nombre d'analyses, le statut d'un pass et l'empreinte de l'adresse IP. Ce serveur est hébergé en France par alwaysdata.</p>
+<p>L'atelier (profil cible et mesure de l'écart) fonctionne entièrement dans votre navigateur : l'offre et le CV que vous y déposez ne sont envoyés à aucun serveur et ne sont pas conservés après la fermeture de la page.</p>
+<p>Le serveur de JusteCV relaie l'analyse : votre CV et l'offre n'y sont jamais écrits sur disque et restent en mémoire 30 minutes au plus, le temps de terminer l'analyse. Il conserve seulement l'identifiant aléatoire, le nombre d'analyses, le statut d'un pass et l'empreinte de l'adresse IP. Ce serveur est hébergé en France par alwaysdata.</p>
 
 <h2><span>5.</span>Sous-traitants et transferts</h2>
-<p>Lorsque vous lancez une analyse, le texte de votre CV et celui de l'offre sont envoyés au serveur de Juste, qui les transmet à l'API d'<strong>OpenAI</strong>, uniquement pour produire l'analyse et la version adaptée de votre CV. Aucune donnée n'est envoyée sans action de votre part. Avant l'envoi, l'extension retire de votre CV votre nom, votre e-mail, votre téléphone, votre adresse, vos liens et d'autres coordonnées reconnaissables (dont IBAN et numéro de carte) ; ce retrait n'est pas une anonymisation complète. OpenAI, dont les serveurs peuvent se trouver hors de l'Union européenne, agit comme sous-traitant dans le cadre de son accord de traitement des données et des clauses contractuelles types de la Commission européenne. OpenAI n'utilise pas les données transmises par l'API pour entraîner ses modèles. Sa politique : <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener">openai.com/policies/privacy-policy</a>.</p>
+<p>Lorsque vous lancez une analyse, le texte de votre CV et celui de l'offre sont envoyés au serveur de JusteCV, qui les transmet à l'API d'<strong>OpenAI</strong>, uniquement pour produire l'analyse et la version adaptée de votre CV. Aucune donnée n'est envoyée sans action de votre part. Avant l'envoi, l'extension retire de votre CV votre nom, votre e-mail, votre téléphone, votre adresse, vos liens et d'autres coordonnées reconnaissables (dont IBAN et numéro de carte) ; ce retrait n'est pas une anonymisation complète. OpenAI, dont les serveurs peuvent se trouver hors de l'Union européenne, agit comme sous-traitant dans le cadre de son accord de traitement des données et des clauses contractuelles types de la Commission européenne. OpenAI n'utilise pas les données transmises par l'API pour entraîner ses modèles. Sa politique : <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener">openai.com/policies/privacy-policy</a>.</p>
 <p>Les paiements sont traités par <strong>Stripe</strong> : <a href="https://stripe.com/fr/privacy" target="_blank" rel="noopener">stripe.com/fr/privacy</a>.</p>
 
 <h2><span>6.</span>Ce que nous ne faisons pas</h2>
@@ -117,7 +124,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;max-width:72rem}footer
 
 </div></main>
 <footer><div class="wrap">
-  <a href="index.html">Accueil</a><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a><a href="mailto:contact@justecv.fr">Contact</a>
+  <a href="./">Accueil</a><a href="atelier.html">Atelier</a><a href="app/">Analyse complète</a><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html">Suivi des candidatures</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a><a href="mailto:contact@justecv.fr">contact@justecv.fr</a>
 </div></footer>
 </body>
 </html>

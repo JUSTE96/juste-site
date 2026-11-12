@@ -1,0 +1,10 @@
+juste.css (à la racine du site) est l'assemblage de ces cinq fichiers, dans cet ordre :
+  luxe.css, motion.css, typo.css, clair.css, plus.css
+Pour le reconstruire après une modification :
+  cat luxe.css motion.css typo.css clair.css plus.css > ../juste.css
+(puis, si possible, le passer dans un minifieur CSS)
+
+pages.css (à la racine du site) est l'assemblage de deux fichiers, dans cet ordre :
+  pages-base.css (la feuille d'origine des pages de contenu), pages-luxe.css (l'habillage JusteCV)
+Pour le reconstruire :
+  cat pages-base.css pages-luxe.css > ../pages.css

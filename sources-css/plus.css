@@ -1,0 +1,145 @@
+/* JusteCV — couche de finitions : transitions natives, verre, micro-mouvements, atelier. Chargée en dernier. */
+
+/* ---------- transitions entre pages (natif, sans script ; ignoré là où ce n'est pas géré) ---------- */
+@view-transition { navigation: auto; }
+.marque { view-transition-name: marque; }
+#demo { view-transition-name: demo; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .32s; }
+::view-transition-old(demo), ::view-transition-new(demo) { animation-duration: .28s; }
+
+/* ---------- secours : si le script ne se charge pas, tout reste visible ---------- */
+html:not(.js) .ligne > span, html:not(.js) .apparait { transform: none; opacity: 1; }
+
+/* ---------- barre de progression de lecture ---------- */
+.progression { display: none; }
+@supports (animation-timeline: scroll()) {
+  .progression { display: block; position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 80; background: linear-gradient(90deg, var(--corail), #ffb199); transform-origin: left; transform: scaleX(0); animation: progression linear both; animation-timeline: scroll(root); }
+  @keyframes progression { to { transform: scaleX(1); } }
+}
+
+/* ---------- en-tête : capsule de verre flottante une fois la page entamée ---------- */
+.tete { padding-top: 10px; border: 0; }
+.tete .cadre { border-radius: 999px; border: 1px solid transparent; transition: background .4s, box-shadow .4s, max-width .5s cubic-bezier(.2,.7,.2,1), min-height .4s, padding .4s; }
+.tete.fond { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; border: 0; }
+.tete.fond .cadre { max-width: min(1180px, calc(100% - 24px)); min-height: 62px; padding-inline: 1.5rem .7rem;
+  background: linear-gradient(180deg, rgba(255,253,249,.82), rgba(255,250,244,.66)); border-color: rgba(255,255,255,.8);
+  -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 14px 34px -20px rgba(28,32,64,.5), 0 0 0 1px rgba(28,32,64,.07); }
+.tete .btn, .tete .menu-btn { -webkit-backdrop-filter: none; backdrop-filter: none; }
+.tete nav a { color: var(--acier); } .tete nav a:hover, .tete nav a[aria-current] { color: var(--os); }
+section[id], div[id="demo"] { scroll-margin-top: 96px; }
+
+/* ---------- menu : feuille de verre ---------- */
+.menu { background: rgba(255,250,244,.86); -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%); }
+
+/* ---------- puces de verre sur la vidéo du héros ---------- */
+.puce { position: absolute; z-index: 2; display: inline-flex; align-items: baseline; gap: .55rem; padding: .75rem 1.05rem; border-radius: 18px; color: var(--os); font-size: .92rem; font-weight: 500; white-space: nowrap;
+  background: linear-gradient(180deg, rgba(255,255,255,.74), rgba(255,255,255,.5)); border: 1px solid rgba(255,255,255,.75);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(28,32,64,.05), 0 14px 32px -16px rgba(28,32,64,.55);
+  -webkit-backdrop-filter: blur(14px) saturate(180%); backdrop-filter: blur(14px) saturate(180%);
+  animation: flotte 7s ease-in-out infinite; }
+.puce b { font: 500 1.55rem/1 var(--titre); letter-spacing: -.02em; }
+.puce-1 { left: 18px; bottom: 22px; }
+.puce-2 { right: 18px; top: 86px; animation-delay: -3.5s; }
+@keyframes flotte { 50% { transform: translateY(-8px); } }
+.heros.plein .pause { top: 20px; right: 20px; position: absolute; }
+/* Réfraction « verre liquide » : filtre SVG dans backdrop-filter, pris en charge par Chromium seulement. */
+.verre-liquide .puce, .verre-liquide .heros.plein .pause { -webkit-backdrop-filter: url(#verre) blur(5px) saturate(190%); backdrop-filter: url(#verre) blur(5px) saturate(190%); }
+
+/* ---------- boutons : reflet qui passe ---------- */
+.btn::before, .btn.plein::before { display: block; content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(105deg, transparent 36%, rgba(255,255,255,.7) 50%, transparent 64%); transform: translateX(-130%); transition: transform .9s cubic-bezier(.2,.7,.2,1); }
+.btn:hover::before, .btn.plein:hover::before { transform: translateX(130%); }
+
+/* ---------- barre d'action mobile ---------- */
+.barre-mobile { display: none; }
+@media (max-width: 860px) {
+  .barre-mobile { display: flex; align-items: center; justify-content: space-between; gap: .8rem; position: fixed; z-index: 40; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); padding: .55rem .55rem .55rem 1.1rem; border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255,253,249,.86), rgba(255,250,244,.7)); border: 1px solid rgba(255,255,255,.8);
+    -webkit-backdrop-filter: blur(12px) saturate(180%); backdrop-filter: blur(12px) saturate(180%);
+    box-shadow: inset 0 1px 0 #fff, 0 16px 36px -18px rgba(28,32,64,.55), 0 0 0 1px rgba(28,32,64,.08);
+    transform: translateY(140%); opacity: 0; visibility: hidden; transition: transform .5s cubic-bezier(.2,.7,.2,1), opacity .3s, visibility 0s .5s; }
+  .barre-mobile.visible { transform: none; opacity: 1; visibility: visible; transition-delay: 0s; }
+  .barre-mobile span { font-weight: 600; font-size: .92rem; color: var(--os); }
+  .barre-mobile .btn { min-height: 44px; padding: 0 1.1rem; font-size: .92rem; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  /* verre moins coûteux sur mobile */
+  .btn, .menu-btn, .pause, .puce { -webkit-backdrop-filter: blur(10px) saturate(170%); backdrop-filter: blur(10px) saturate(170%); }
+  .puce { font-size: .82rem; padding: .55rem .8rem; } .puce b { font-size: 1.2rem; } .puce-2 { top: 16px; right: 64px; } .puce-1 { left: 12px; bottom: 12px; }
+}
+
+/* ---------- galerie : cartes qui répondent ---------- */
+.galerie figure { transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s; }
+.galerie video { transition: opacity 1s, transform 1.4s cubic-bezier(.2,.7,.2,1); }
+@media (hover: hover) {
+  .galerie figure:hover { transform: translateY(-6px); box-shadow: 0 30px 54px -28px rgba(28,32,64,.5); }
+  .galerie figure:hover video { transform: scale(1.045); }
+}
+
+/* ---------- la règle : le trait se tire quand la liste arrive à l'écran ---------- */
+.regle .non li { text-decoration: none; }
+.regle .non li span { background: linear-gradient(var(--corail), var(--corail)) no-repeat 0 58% / 100% 2px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.js .regle .non li span { background-size: 0% 2px; transition: background-size .9s cubic-bezier(.7,0,.2,1); }
+.js .regle .deux.vu .non li span { background-size: 100% 2px; }
+.regle .non li:nth-child(2) span { transition-delay: .15s; } .regle .non li:nth-child(3) span { transition-delay: .3s; } .regle .non li:nth-child(4) span { transition-delay: .45s; }
+
+/* ---------- questions : ouverture douce ---------- */
+@supports (interpolate-size: allow-keywords) {
+  :root { interpolate-size: allow-keywords; }
+  .faq details::details-content { block-size: 0; overflow: clip; transition: block-size .45s cubic-bezier(.2,.7,.2,1), content-visibility .45s allow-discrete; }
+  .faq details[open]::details-content { block-size: auto; }
+}
+
+/* ---------- atelier : fil d'étapes, dépôt, actions ---------- */
+.fil { position: sticky; top: 84px; z-index: 20; margin: 0 0 2rem; display: flex; justify-content: center; pointer-events: none; }
+.fil ol { pointer-events: auto; list-style: none; margin: 0; padding: 5px; display: inline-flex; gap: 2px; border-radius: 999px; background: linear-gradient(180deg, rgba(255,253,249,.86), rgba(255,250,244,.68)); border: 1px solid rgba(255,255,255,.8);
+  -webkit-backdrop-filter: blur(14px) saturate(180%); backdrop-filter: blur(14px) saturate(180%); box-shadow: inset 0 1px 0 #fff, 0 12px 28px -18px rgba(28,32,64,.5), 0 0 0 1px rgba(28,32,64,.07); }
+.fil button { display: inline-flex; align-items: center; gap: .5rem; min-height: 40px; padding: 0 1rem; border: 0; border-radius: 999px; background: transparent; color: var(--acier); font: 600 .9rem/1 var(--texte); cursor: pointer; }
+.fil button[disabled] { cursor: default; opacity: .55; }
+.fil button i { font-style: normal; display: inline-grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: rgba(28,32,64,.08); font-size: .78rem; }
+.fil li.fait button i { background: var(--vert); color: #fff; }
+.fil button[aria-current="step"] { background: #fff; color: var(--os); box-shadow: 0 2px 8px -2px rgba(28,32,64,.25); }
+.fil button[aria-current="step"] i { background: var(--os); color: #fff; }
+@media (max-width: 620px) { .fil button span { display: none; } .fil button[aria-current="step"] span { display: inline; } .fil { top: 78px; } }
+.depot-zone { border: 1.5px dashed #c9c1b3; border-radius: 18px; padding: 1rem; transition: border-color .2s, background .2s; }
+.depot-zone.survol { border-color: var(--bleu); background: var(--ciel); }
+.depot-zone textarea { border: 0; background: transparent; padding: .4rem; }
+.actions-resultat { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.6rem; }
+.actions-resultat .btn { min-height: 44px; padding: 0 1.1rem; font-size: .9rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .puce { animation: none; }
+  .progression { display: none; }
+  .js .regle .non li span { background-size: 100% 2px; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .tete.fond .cadre, .menu, .puce, .barre-mobile, .fil ol { -webkit-backdrop-filter: none; backdrop-filter: none; background: #fffaf4; }
+}
+
+/* ---------- impression du résultat de l'atelier ---------- */
+@media print {
+  #etape-offre, #etape-cv, .tete, .pied, .fil, .barre, .depot, .depot-zone, textarea, select, .etiquette, .suite, .actions-resultat, .etape-gauche p, #exemple { display: none !important; }
+  body { background: #fff; } .atelier { padding: 0; } .etape { display: block; border: 0; padding: 0 0 1rem; break-inside: avoid-page; }
+  .piece, .reperes { border: 1px solid #ccc; background: #fff; box-shadow: none; } .mesure-jauge span { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  [hidden] { display: none !important; }
+}
+
+/* ---------- menu : sept entrées qui tiennent sous l'en-tête, quelle que soit la hauteur ---------- */
+.menu { background: rgba(255,250,244,.93); justify-content: flex-start; padding-top: clamp(96px, 14vh, 150px); overflow-y: auto; }
+.menu nav a { font-size: clamp(1.7rem, 6.2vh, 4rem); line-height: 1.15; padding: .35rem 0; color: #5a607a; }
+.tete.fond .cadre { background: linear-gradient(180deg, rgba(255,253,249,.88), rgba(255,250,244,.76)); }
+.barre-mobile span, .barre-mobile .btn { white-space: nowrap; }
+
+/* à propos sans vidéo : une colonne de texte */
+.apropos-grille.sans-clip { grid-template-columns: minmax(0, 1fr); max-width: 860px; }
+.apropos-grille.sans-clip .apropos-clips { display: none; }
+
+/* aperçus flous : visibles tout de suite, la vidéo se pose dessus quand elle est prête */
+.heros-media, .galerie figure, .fin-clip { background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; }
+
+/* ---------- liens vers les pages de contenu (métiers, guides, suivi, extension) ---------- */
+.menu-plus { max-width: none; display: flex; flex-wrap: wrap; gap: .5rem 1.8rem; margin: 2rem 0 0; font-size: 1rem; }
+.menu-plus a { color: var(--os); text-decoration: underline; text-decoration-color: var(--corail); text-decoration-thickness: 1px; text-underline-offset: .35em; }
+.menu-plus + .menu-pied { margin-top: 1.4rem; }
+.suite-metiers { margin: 1.2rem 0 0; font-weight: 600; }
+.fin-note { margin: 1.2rem 0 0; max-width: 34rem; font-size: .95rem; color: var(--acier); }
+.reperes-suite { margin-top: 1.2rem !important; font-weight: 600; }

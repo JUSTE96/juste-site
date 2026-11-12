@@ -1,0 +1,3 @@
+Lora — Copyright The Lora Project Authors (https://github.com/cyrealtype/Lora-Cyrillic).
+Police sous licence SIL Open Font License 1.1 : https://openfontlicense.org
+Fichier réduit aux caractères latins utiles au site.

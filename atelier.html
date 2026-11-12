@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>L'atelier – JusteCV</title>
+<meta name="description" content="Collez une offre d'emploi : JusteCV assemble le profil cible, puis mesure l'écart avec votre vrai CV. Tout se passe dans votre navigateur.">
+<meta name="theme-color" content="#fffaf4">
+<link rel="icon" href="favicon-32.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="juste.css">
+<script>document.documentElement.classList.add("js")</script>
+</head>
+<body class="page-atelier">
+<a class="sr" href="#contenu">Aller au contenu</a>
+<header class="tete fond" id="tete">
+  <div class="cadre">
+    <a class="marque" href="./" aria-label="JusteCV, accueil"><span>Juste</span><span class="cv">CV</span></a>
+    <nav aria-label="Navigation principale">
+      <a href="./#mouvement">Méthode</a>
+      <a href="atelier.html" aria-current="page">Atelier</a>
+      <a href="metiers.html">Métiers</a>
+      <a href="./#prix">Prix</a>
+    </nav>
+  </div>
+</header>
+
+<main id="contenu" class="atelier">
+  <div class="cadre">
+    <header class="atelier-tete">
+      <span class="ref">L'atelier · tout se passe dans votre navigateur</span>
+      <h1 class="moyen">Posez l'offre sur l'établi.</h1>
+    </header>
+
+    <nav class="fil" aria-label="Étapes de l'atelier">
+      <ol id="fil">
+        <li><button type="button" data-cible="etape-offre" aria-current="step"><i>1</i><span>L'offre</span></button></li>
+        <li><button type="button" data-cible="profil" disabled><i>2</i><span>Profil cible</span></button></li>
+        <li><button type="button" data-cible="etape-cv" disabled><i>3</i><span>Votre CV</span></button></li>
+        <li><button type="button" data-cible="ecart" disabled><i>4</i><span>Écart et plan</span></button></li>
+      </ol>
+    </nav>
+
+    <section class="etape" id="etape-offre" aria-labelledby="t-offre">
+      <div class="etape-gauche">
+        <span class="num-etape">01</span>
+        <h2 class="petit-titre" id="t-offre">L'offre</h2>
+        <p>Copiez le texte complet de l'annonce, rubriques comprises (missions, profil, avantages).</p>
+        <label for="exemple" class="etiquette">Pas d'offre sous la main ?</label>
+        <select id="exemple"><option value="">Choisir une offre d'exemple…</option></select>
+      </div>
+      <div class="etape-droite">
+        <label class="sr" for="offre">Texte de l'offre</label>
+        <textarea id="offre" rows="12" placeholder="Collez ici le texte de l'offre d'emploi…"></textarea>
+        <div class="barre"><button class="btn plein" id="assembler" type="button">Assembler le profil cible</button><span class="aide" id="aide-offre"></span></div>
+      </div>
+    </section>
+
+    <section class="etape resultat" id="profil" hidden aria-labelledby="t-profil" tabindex="-1">
+      <div class="etape-gauche">
+        <span class="num-etape">02</span>
+        <h2 class="petit-titre" id="t-profil">Profil cible</h2>
+        <p>Le candidat que l'offre décrit. C'est un gabarit : il ne sera jamais copié dans votre CV.</p>
+      </div>
+      <div class="etape-droite">
+        <div class="piece">
+          <div class="piece-tete">
+            <h3 class="intitule" id="p-intitule"></h3>
+            <dl class="specs" id="p-specs"></dl>
+          </div>
+          <ul class="lignes" id="p-exigences"></ul>
+          <div class="pastilles" id="p-pastilles"></div>
+        </div>
+        <div class="signaux" id="p-signaux" hidden></div>
+        <div class="reperes" id="p-reperes" hidden>
+          <h3 class="petit-titre" id="r-titre"></h3>
+          <p class="aide">D'après le référentiel public ROME de France Travail. Reprenez un terme seulement s'il décrit ce que vous avez vraiment fait.</p>
+          <div id="r-listes"></div>
+          <p class="aide reperes-suite"><a class="lien" id="r-fiche" href="metiers.html">Voir la fiche complète de ce métier</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="etape" id="etape-cv" hidden aria-labelledby="t-cv">
+      <div class="etape-gauche">
+        <span class="num-etape">03</span>
+        <h2 class="petit-titre" id="t-cv">Votre vrai CV</h2>
+        <p>Importez votre CV (PDF, Word ou texte) ou collez son contenu. Il n'est envoyé nulle part.</p>
+      </div>
+      <div class="etape-droite">
+        <div class="depot">
+          <input type="file" id="fichier" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain">
+          <label for="fichier" class="btn">Importer un fichier</label>
+          <span class="aide" id="aide-fichier">PDF, DOCX ou TXT, 15 Mo au plus.</span>
+        </div>
+        <label class="sr" for="cv">Texte du CV</label>
+        <div class="depot-zone" id="depot-zone"><textarea id="cv" rows="10" placeholder="…ou collez ici le texte de votre CV. Vous pouvez aussi glisser le fichier dans ce cadre."></textarea></div>
+        <div class="barre"><button class="btn plein" id="mesurer" type="button">Mesurer l'écart</button><span class="aide" id="aide-cv"></span></div>
+      </div>
+    </section>
+
+    <section class="etape resultat" id="ecart" hidden aria-labelledby="t-ecart" tabindex="-1">
+      <div class="etape-gauche">
+        <span class="num-etape">04</span>
+        <h2 class="petit-titre" id="t-ecart">Écart et plan</h2>
+        <p>Ce que votre CV couvre déjà, avec la ligne qui le prouve, et ce qu'il reste à faire.</p>
+      </div>
+      <div class="etape-droite">
+        <div class="mesure">
+          <div class="mesure-chiffre"><strong id="e-score">–</strong><span>% du profil cible</span></div>
+          <div class="mesure-jauge" aria-hidden="true"><span id="e-jauge"></span></div>
+          <p class="mesure-detail" id="e-detail"></p>
+        </div>
+        <ul class="lignes correspondances" id="e-lignes"></ul>
+        <h3 class="petit-titre plan-titre">Le plan</h3>
+        <ol class="plan" id="e-plan"></ol>
+        <div class="actions-resultat">
+          <button class="btn" id="copier" type="button">Copier le plan</button>
+          <button class="btn" id="imprimer" type="button">Imprimer ou enregistrer en PDF</button>
+          <button class="btn" id="recommencer" type="button">Essayer une autre offre</button>
+        </div>
+        <p class="aide" id="aide-actions" role="status" aria-live="polite"></p>
+        <div class="suite">
+          <h3 class="petit-titre">Aller plus loin avec l'IA</h3>
+          <p>Sept lecteurs simulés (logiciel de tri, recruteur, manager, autre candidat, patron, expert métier, sceptique) notent votre CV. Puis JusteCV le reformule ligne par ligne avec les mots de l'offre, en citant chaque ligne d'origine.</p>
+          <div class="barre"><button class="btn plein" id="complet" type="button">Lancer l'analyse complète</button><span class="aide">Votre CV est anonymisé avant l'envoi. Quota gratuit limité.</span></div>
+        </div>
+        <p class="garde">Rien n'a été ajouté à votre CV. Les lignes ci-dessus sont des pistes : n'écrivez que ce que vous pouvez raconter en entretien.</p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="pied">
+  <div class="cadre">
+    <span>© JusteCV, 2026</span>
+    <nav aria-label="Pied de page">
+      <a href="./">Accueil</a>
+      <a href="app/">Analyse complète</a>
+      <a href="metiers.html">Métiers</a>
+      <a href="guides.html">Guides</a>
+      <a href="suivi.html">Suivi des candidatures</a>
+      <a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a>
+      <a href="mentions-legales.html">Mentions légales</a>
+      <a href="cgv.html">CGV</a>
+      <a href="confidentialite.html">Confidentialité</a>
+    </nav>
+  </div>
+</footer>
+<script type="module" src="atelier.js"></script>
+</body>
+</html>

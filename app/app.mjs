@@ -125,6 +125,7 @@ function updateQuality() {
 function openSetup() {
   const p = state.profile || {};
   for (const id of ["name", "city", "email", "phone", "cv"]) $(id).value = p[id] || "";
+  const brouillon = session.get("cvDraft"); if (brouillon && !p.cv) $("cv").value = String(brouillon).slice(0, 12000);
   const pending = session.get("pendingJob");
   $("setup-pending").hidden = !pending;
   if (pending) $("setup-pending").innerHTML = `<b>Offre reçue :</b> ${esc(pending.title || "offre d'emploi")}. Ajoutez votre CV, l'analyse démarre juste après.`;
@@ -535,7 +536,7 @@ async function loadSecond(id, data) {
   catch { if (state.result === data) { data.secondState = "error"; renderJury(data); } }
 }
 $("tab-jury").addEventListener("click", (event) => {
-  if (event.target.closest("[data-open-premium]")) { location.href = "../#tarifs"; return; }
+  if (event.target.closest("[data-open-premium]")) { location.href = "../#prix"; return; }
   const link = event.target.closest(".q-link"); if (!link) return;
   activateTab("cv");
   const item = document.getElementById("question-" + link.dataset.question); if (!item) return;
