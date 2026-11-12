@@ -33,3 +33,4 @@ html[data-theme="light"] .score-num { background: none; }
 .direct body main .view:not([hidden]) > * { opacity: 1; transform: none; animation: none; transition: none; }
 /* le pied reste sous l'écran tant que la vue se charge : pas de saut de mise en page */
 main { min-height: 100dvh; }
+.brand { padding-block: 11px; }

@@ -10,5 +10,5 @@ html[data-nuit] .regle li { border-bottom-color: #f7f1e81f; }
 html[data-nuit] .hl { background: linear-gradient(transparent 84%, #ffe27a 84%, #ffe27a 94%, transparent 94%); color: inherit; }
 html[data-nuit] body { background: transparent; }
 html[data-nuit] .rideau, html[data-nuit] .menu { background: #141936; }
-@media (max-width: 640px) { .ciel-btn:not(.dans-barre) { width: 40px; height: 40px; left: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); } }
+@media (max-width: 640px) { .ciel-btn:not(.dans-barre) { width: 42px; height: 42px; left: auto; right: max(12px, env(safe-area-inset-right)); bottom: calc(12px + env(safe-area-inset-bottom)); } }
 html[data-nuit] .pill-amber { background: rgba(255, 226, 122, .14); color: #ffe27a; }

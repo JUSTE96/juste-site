@@ -248,3 +248,12 @@ footer .src { max-width: 62rem; margin: 0; }
 
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } .mcard, .btn { transition: none; } }
 @media print { .sr-lien { display: none; } body { background: #fff; } }
+
+/* confort sur téléphone : zones tactiles et petits textes */
+@media (max-width: 640px) {
+  .marque, .logo { padding-block: 11px; }
+  .lien { display: inline-block; padding-block: 9px; }
+  .ref, .mono { font-size: .75rem !important; }
+  .pill { font-size: .75rem; padding: .62rem .75rem; }
+  .crumbs a, .breadcrumb a, nav[aria-label*="ariane"] a { display: inline-block; padding-block: 8px; }
+}
