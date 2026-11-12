@@ -309,6 +309,23 @@ function playSteps() {
   clearInterval(stepTimer);
   stepTimer = setInterval(() => { if (i < items.length - 1) { items[i].className = "done"; items[++i].className = "doing"; } }, 2200);
 }
+/* Même offre, même CV : on rend le résultat déjà obtenu, sans rappeler le serveur ni entamer le quota. */
+const DEJA_MAX = 8, DEJA_JOURS = 7;
+const empreinte = (job, cv) => {
+  const t = [job.juryOnly ? "jury" : "", job.title, job.text, cv].join("\u0001").toLowerCase().replace(/\s+/g, " ").trim();
+  let h = 2166136261; for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0).toString(36) + "-" + t.length.toString(36);
+};
+function dejaLire(cle) {
+  const e = (store.get("deja") || []).find((x) => x.cle === cle);
+  if (!e || Date.now() - e.at > DEJA_JOURS * 86400000) return null;
+  const r = e.result; return r && (r.cv_adapte || (r.mode === "jury" && r.jury)) ? e : null;
+}
+function dejaNoter(cle, result, job) {
+  if (!cle || !result) return;
+  let liste = [{ cle, result, job, at: Date.now() }, ...(store.get("deja") || []).filter((x) => x.cle !== cle)].slice(0, DEJA_MAX);
+  while (liste.length && !store.set("deja", liste)) liste = liste.slice(0, -1);   // stockage plein : on garde les plus récents
+}
 async function runAnalysis(job) {
   if (state.analyzing) return;
   // Sans offre (job absent) : le jury juge le CV contre les attentes habituelles du métier.
@@ -320,12 +337,21 @@ async function runAnalysis(job) {
   try {
     const p = state.profile;
     const cv = pseudonymize(p.cv, p);
+    const cle = empreinte(job, cv), deja = dejaLire(cle);
+    if (deja) {
+      state.result = deja.result; state.cle = cle;
+      store.set("last", { result: deja.result, job, at: Date.now() });
+      renderResult(deja.result, job); show("result"); renderQuota();
+      toast("Déjà analysée : résultat retrouvé, sans toucher à votre quota");
+      return;
+    }
     const data = await api("/api/analyze", job.juryOnly ? { cv, progressive: true, mode: "jury" } : { cv, progressive: true, job: { title: job.title, company: job.company, location: job.location, text: job.text, host: job.host } });
     const pendingCv = data.cvPending; delete data.cvPending;
     if (pendingCv) { data.analysisId = pendingCv; data.analysisAt = Date.now(); }
     state.me = { remaining: data.remaining, premium: data.premium, resetAt: data.resetAt };
-    state.result = data;
+    state.result = data; state.cle = cle;
     store.set("last", { result: data, job, at: Date.now() });
+    dejaNoter(cle, data, job);
     renderResult(data, job); show("result"); renderQuota();
     if (pendingCv) { loadAdaptedCv(pendingCv, data); if (!data.jury) loadJury(pendingCv, data); loadSecond(pendingCv, data); }
   } catch (e) {
@@ -527,7 +553,7 @@ function renderQuestions(d) {
   const list = expired ? [] : questionList(d);
   $("qa-box").innerHTML = list.length ? questionsHtml(list, { remaining: d.completionsLeft ?? 2, busy: !!state.completing, keyQuestions: d.second?.questions_cles || [] }) : "";
 }
-const saveLast = (d) => { if (state.result === d) store.set("last", { result: d, job: state.job, at: Date.now() }); };
+const saveLast = (d) => { if (state.result === d) { store.set("last", { result: d, job: state.job, at: Date.now() }); dejaNoter(state.cle, d, state.job); } };
 async function loadJury(id, data) {
   try { const jury = await api(`/api/analyze/${encodeURIComponent(id)}/jury`); if (state.result !== data) return; data.jury = jury; renderJury(data); saveLast(data); }
   catch { if (state.result === data) { data.juryState = "error"; renderJury(data); } }
