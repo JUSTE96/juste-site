@@ -24,11 +24,23 @@ function choisir(id) {
   actuel = domaine(id); profil = profilCible(actuel.offre);
   const radio = document.querySelector(`input[name="domaine"][value="${actuel.id}"]`); if (radio) radio.checked = true;
   $("demo-ref").textContent = `Offre d'exemple · ${actuel.intitule} · ${actuel.ligne}`;
-  $("demo-cible").innerHTML = profil.exigences.map((e) => `<li>${esc(e.texte)}<span class="poids">${NIVEAU[e.niveau]}${e.eliminatoire ? " · éliminatoire" : ""}</span></li>`).join("");
+  $("demo-cible").innerHTML = profil.exigences.map((e) => `<li>${esc(e.texte)}<span class="poids" data-niveau="${e.niveau}">${NIVEAU[e.niveau]}${e.eliminatoire ? " · éliminatoire" : ""}</span></li>`).join("");
   $("demo-questions").innerHTML = profil.exigences.map((e, i) => `<fieldset class="question"><legend>${esc(e.texte)}</legend><div class="reponses">${CHOIX.map(([v, t]) => `<label><input type="radio" name="q${i}" value="${v}"><span>${t}</span></label>`).join("")}</div></fieldset>`).join("");
+  $("demo-jalons").innerHTML = profil.exigences.map(() => "<i></i>").join("");
   $("demo-cv").value = ""; $("demo-aide").textContent = AIDE0;
   majRapide(); mode(rapide);
 }
+// Le profil cible (à gauche) et les jalons reflètent chaque réponse : on voit tout de suite ce qui est couvert.
+function marquer(statuts) {
+  [...$("demo-cible").children].forEach((li, i) => { if (statuts[i]) li.dataset.statut = statuts[i]; else delete li.dataset.statut; });
+  [...$("demo-jalons").children].forEach((j, i) => { if (statuts[i]) j.dataset.s = statuts[i]; else delete j.dataset.s; });
+}
+// Survol ou saisie d'une question : la ligne correspondante du profil cible s'éclaire.
+function viser(e) {
+  const q = e.target.closest?.(".question"), i = q ? [...$("demo-questions").children].indexOf(q) : -1;
+  [...$("demo-cible").children].forEach((li, k) => li.classList.toggle("vise", k === i && e.type !== "pointerleave" && e.type !== "focusout"));
+}
+["pointerover", "focusin", "pointerleave", "focusout"].forEach((t) => $("demo-questions").addEventListener(t, viser));
 // Changement de domaine : fondu natif entre les deux profils quand le navigateur le permet.
 const calme = matchMedia("(prefers-reduced-motion: reduce)").matches;
 $("demo-domaines-liste").addEventListener("change", (e) => {
@@ -44,6 +56,7 @@ function mode(r) {
   $("mode-rapide").setAttribute("aria-pressed", r); $("mode-cv").setAttribute("aria-pressed", !r);
   $("demo-rapide").hidden = !r; $("demo-saisie").hidden = r; $("demo-resultat").hidden = true;
   $("demo-etat").textContent = ETAT0;
+  if (r) majRapide(); else marquer([]);
 }
 $("mode-rapide").addEventListener("click", () => mode(true));
 $("mode-cv").addEventListener("click", () => { mode(false); $("demo-cv").focus(); });
@@ -53,6 +66,7 @@ function majRapide() {
   const rep = profil.exigences.map((e, i) => ({ e, statut: document.querySelector(`input[name="q${i}"]:checked`)?.value }));
   const faites = rep.filter((r) => r.statut).length, total = rep.length;
   const fini = faites === total;
+  marquer(rep.map((r) => r.statut));
   $("rapide-score").hidden = !fini; $("rapide-actions").hidden = !fini;
   if (!fini) $("rapide-chiffre").textContent = "0";
   if (!fini) { $("rapide-suite").textContent = `${faites} réponse${faites > 1 ? "s" : ""} sur ${total}`; return; }
@@ -70,10 +84,11 @@ function comparer(cv) {
   $("demo-score").textContent = "0"; compter($("demo-score"), s ? s.score : NaN);
   $("demo-etat").textContent = s ? `${s.presentes} présente${s.presentes > 1 ? "s" : ""}, ${s.partielles} en partie, ${s.absentes} absente${s.absentes > 1 ? "s" : ""}${s.eliminatoires ? " · plafonné : critère exigé manquant" : ""}` : "Détail par exigence";
   $("demo-lignes").innerHTML = r.correspondances.map((c) => `<li><span>${c.preuve ? esc(c.preuve) : "Rien dans votre CV"}<small>${esc(c.texte)}</small></span><span class="statut ${c.statut}">${STATUT[c.statut]}</span></li>`).join("");
+  marquer(r.correspondances.length === profil.exigences.length ? r.correspondances.map((c) => c.statut) : []);
   $("demo-saisie").hidden = true; $("demo-resultat").hidden = false; $("demo-resultat").focus({ preventScroll: true });
 }
 $("demo-comparer").addEventListener("click", () => comparer($("demo-cv").value));
 $("demo-exemple").addEventListener("click", () => { $("demo-cv").value = actuel.cv; comparer(actuel.cv); });
-$("demo-retour").addEventListener("click", () => { $("demo-resultat").hidden = true; $("demo-saisie").hidden = false; $("demo-etat").textContent = ETAT0; $("demo-aide").textContent = AIDE0; $("demo-cv").focus(); });
+$("demo-retour").addEventListener("click", () => { marquer([]); $("demo-resultat").hidden = true; $("demo-saisie").hidden = false; $("demo-etat").textContent = ETAT0; $("demo-aide").textContent = AIDE0; $("demo-cv").focus(); });
 
 choisir("soin");

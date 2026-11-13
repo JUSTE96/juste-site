@@ -18,15 +18,27 @@ let profil = null, metier = null, dernier = null;
 $("exemple").insertAdjacentHTML("beforeend", DOMAINES.map((d) => `<option value="${d.id}">${d.nom} : ${d.intitule}</option>`).join(""));
 $("exemple").addEventListener("change", (e) => { if (e.target.value) { $("offre").value = domaine(e.target.value).offre; garder(); $("aide-offre").textContent = "Offre d'exemple chargée. Vous pouvez la modifier."; } });
 
-$("assembler").addEventListener("click", () => {
+// Un court temps de lecture avant le résultat : on voit l'outil parcourir le texte, puis la suite arrive.
+// Le calcul est immédiat ; ce temps sert seulement à relier le clic à ce qui apparaît plus bas.
+const lire = (zone, bouton, libelle, suite) => {
+  if (bouton.getAttribute("aria-busy") === "true") return;
+  if (calme) { suite(); return; }
+  const texte = bouton.textContent;
+  bouton.setAttribute("aria-busy", "true"); bouton.textContent = libelle; zone.classList.add("lit");
+  setTimeout(() => { zone.classList.remove("lit"); bouton.removeAttribute("aria-busy"); bouton.textContent = texte; suite(); }, 760);
+};
+
+$("assembler").addEventListener("click", (ev) => {
   const texte = $("offre").value.trim();
   if (texte.replace(/\s/g, "").length < 80) { $("aide-offre").textContent = "Le texte est trop court. Collez l'annonce entière."; return; }
   $("aide-offre").textContent = "";
-  profil = profilCible(texte);
-  afficherProfil(profil, offerSignals(texte));
-  metier = repereMetier(profil.intitule); afficherReperes("");
-  $("etape-cv").hidden = false; $("ecart").hidden = true; dernier = null;
-  aller($("profil")); majFil();
+  lire($("lecteur-offre"), ev.currentTarget, "Lecture de l'offre…", () => {
+    profil = profilCible(texte);
+    afficherProfil(profil, offerSignals(texte));
+    metier = repereMetier(profil.intitule); afficherReperes("");
+    $("etape-cv").hidden = false; $("ecart").hidden = true; dernier = null;
+    aller($("profil")); majFil();
+  });
 });
 
 function afficherProfil(p, signaux) {
@@ -39,7 +51,7 @@ function afficherProfil(p, signaux) {
   ];
   $("p-specs").innerHTML = specs.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("");
   $("p-exigences").innerHTML = p.exigences.length
-    ? p.exigences.map((e) => `<li>${esc(e.texte)}<span class="poids">${NIVEAU[e.niveau]}${e.eliminatoire ? " · éliminatoire" : ""}</span>${e.deMission ? "<small>Déduit des missions : l'offre ne détaille presque pas le profil.</small>" : ""}</li>`).join("")
+    ? p.exigences.map((e, i) => `<li style="--i:${i}">${esc(e.texte)}<span class="poids" data-niveau="${e.niveau}">${NIVEAU[e.niveau]}${e.eliminatoire ? " · éliminatoire" : ""}</span>${e.deMission ? "<small>Déduit des missions : l'offre ne détaille presque pas le profil.</small>" : ""}</li>`).join("")
     : `<li>Aucune attente claire n'a été trouvée. Vérifiez que la rubrique « Profil » a bien été copiée.</li>`;
   const groupe = (titre, liste) => liste.length ? `<div><span class="ref">${titre}</span><p>${liste.map((x) => `<span class="pastille">${esc(x)}</span>`).join("")}</p></div>` : "";
   $("p-pastilles").innerHTML = groupe("Outils", p.outils) + groupe("Langues", p.langues) + groupe("Savoir-être", p.savoirEtre);
@@ -79,14 +91,16 @@ const zone = $("depot-zone");
 ["dragleave", "drop"].forEach((t) => zone.addEventListener(t, (e) => { e.preventDefault(); zone.classList.remove("survol"); }));
 zone.addEventListener("drop", (e) => lireFichier(e.dataTransfer?.files?.[0]));
 
-$("mesurer").addEventListener("click", () => {
+$("mesurer").addEventListener("click", (ev) => {
   if (!profil) return;
   const cv = $("cv").value.trim();
   if (cv.split(/\s+/).length < 20) { $("aide-cv").textContent = "Le CV est trop court pour être comparé."; return; }
   $("aide-cv").textContent = "";
-  afficherEcart(ecart(profil, cv));
-  afficherReperes(cv);
-  aller($("ecart")); majFil();
+  lire($("depot-zone"), ev.currentTarget, "Comparaison…", () => {
+    afficherEcart(ecart(profil, cv));
+    afficherReperes(cv);
+    aller($("ecart")); majFil();
+  });
 });
 
 function afficherEcart(r) {
@@ -96,9 +110,10 @@ function afficherEcart(r) {
   $("e-detail").innerHTML = s
     ? `${s.presentes} présente${s.presentes > 1 ? "s" : ""}, ${s.partielles} en partie, ${s.absentes} absente${s.absentes > 1 ? "s" : ""} sur ${s.total} exigences.${s.eliminatoires ? ` <b>Score plafonné à 49 %</b> : un critère éliminatoire manque.` : ""}`
     : "L'offre contient moins de trois exigences claires : le pourcentage ne serait pas fiable, voici seulement le détail.";
-  $("e-lignes").innerHTML = r.correspondances.map((c) => `<li><span>${esc(c.texte)}</span><span class="statut ${c.statut}">${STATUT[c.statut]}</span>${c.preuve ? `<small>Dans votre CV : « ${esc(c.preuve)} »</small>` : ""}${c.note ? `<small>${esc(c.note)}</small>` : ""}</li>`).join("");
+  $("e-jalons").innerHTML = r.correspondances.map((c, i) => `<i data-s="${c.statut}" style="--i:${i}"></i>`).join("");
+  $("e-lignes").innerHTML = r.correspondances.map((c, i) => `<li style="--i:${i}"><span>${esc(c.texte)}</span><span class="statut ${c.statut}">${STATUT[c.statut]}</span>${c.preuve ? `<small>Dans votre CV : « ${esc(c.preuve)} »</small>` : ""}${c.note ? `<small>${esc(c.note)}</small>` : ""}</li>`).join("");
   $("e-plan").innerHTML = r.plan.length
-    ? r.plan.map((p) => `<li><h4>${esc(p.texte)} <span class="poids">${NIVEAU[p.niveau]}${p.eliminatoire ? " · éliminatoire" : ""}</span></h4><p><b>Déjà fait ?</b> ${esc(p.siDejaFait)}</p><p><b>Sinon :</b> ${esc(p.sinon)}</p></li>`).join("")
+    ? r.plan.map((p, i) => `<li style="--i:${i}"><h4>${esc(p.texte)} <span class="poids" data-niveau="${p.niveau}">${NIVEAU[p.niveau]}${p.eliminatoire ? " · éliminatoire" : ""}</span></h4><p><b>Déjà fait ?</b> ${esc(p.siDejaFait)}</p><p><b>Sinon :</b> ${esc(p.sinon)}</p></li>`).join("")
     : `<li><h4>Votre CV couvre tout le profil cible.</h4><p>Vérifiez que chaque ligne est appuyée par un exemple concret, puis postulez.</p></li>`;
 }
 

@@ -20,7 +20,7 @@
 <link rel="icon" href="favicon-32.png" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preload" href="fonts/lora-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="juste.css?v=2">
+<link rel="stylesheet" href="juste.css?v=3">
 <script>document.documentElement.classList.add("js")</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Pourquoi ne pas simplement générer le CV parfait ?", "acceptedAnswer": {"@type": "Answer", "text": "Parce qu'un CV qui colle à 100 % à l'offre contiendrait des choses que vous n'avez pas faites. Elles ressortent en entretien, et un diplôme inventé est un motif de licenciement. JusteCV vous montre la cible pour que vous l'atteigniez pour de vrai."}}, {"@type": "Question", "name": "Mon CV est-il envoyé quelque part ?", "acceptedAnswer": {"@type": "Answer", "text": "Non. Dans l'atelier gratuit, l'offre et le CV sont lus dans votre navigateur. Rien ne part sur un serveur, et rien n'est conservé quand vous fermez la page."}}, {"@type": "Question", "name": "Comment le score est-il calculé ?", "acceptedAnswer": {"@type": "Answer", "text": "Chaque exigence pèse 3 si elle est obligatoire, 2 si elle est souhaitée, 1 si c'est un atout. Une exigence présente compte entièrement, en partie pour moitié, absente pour rien. Si un critère éliminatoire (diplôme exigé, permis, habilitation) manque, le score ne dépasse pas 49 %."}}, {"@type": "Question", "name": "Et si l'offre est mal écrite ?", "acceptedAnswer": {"@type": "Answer", "text": "JusteCV signale ce qui mérite d'être vérifié : argent demandé au candidat, contact par messagerie privée, promesses de gains anormales. Ce sont des points à vérifier, pas des accusations."}}]}</script>
 <link rel="stylesheet" href="nuit.css?v=3">
@@ -63,12 +63,24 @@
     <button class="pause" id="pause-film" type="button" aria-label="Mettre la vidéo en pause" aria-pressed="false" hidden>
     <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="1" width="2.5" height="10" fill="currentColor"/><rect x="7.5" y="1" width="2.5" height="10" fill="currentColor"/></svg>
   </button>
-    <div class="puce puce-2" aria-hidden="true"><b>6</b> exigences lues dans l'offre</div>
-    <div class="puce puce-1" aria-hidden="true"><b>68 %</b> du profil déjà couvert</div>
+    <div class="puce puce-2" aria-hidden="true"><b id="puce-lues">6</b> exigences lues dans l'offre</div>
+    <div class="lecture" id="lecture" aria-hidden="true">
+      <p class="lecture-tete"><i></i>Lecture de l'offre<span id="lecture-compte">6 / 6</span></p>
+      <div class="lecture-fenetre"><ol id="lecture-lignes">
+        <li data-n="obligatoire" data-s="presente"><span>Diplôme d'État d'aide-soignant</span><b>Présent</b></li>
+        <li data-n="obligatoire" data-s="partielle"><span>2 ans d'expérience en EHPAD</span><b>En partie</b></li>
+        <li data-n="souhaitee" data-s="presente"><span>Soins d'hygiène et de confort</span><b>Présent</b></li>
+        <li data-n="souhaitee" data-s="presente"><span>Transmissions écrites et orales</span><b>Présent</b></li>
+        <li data-n="souhaitee" data-s="partielle"><span>Écoute et travail en équipe</span><b>En partie</b></li>
+        <li data-n="souhaitee" data-s="absente"><span>Permis B</span><b>Absent</b></li>
+      </ol></div>
+      <p class="lecture-score"><strong id="lecture-score">68</strong><span>% du profil déjà couvert</span></p>
+      <div class="lecture-jauge"><i id="lecture-jauge"></i></div>
+    </div>
   </div>
   <div class="cadre heros-texte">
     <span class="ref">Lecture d'offre</span>
-    <h1 class="geant" id="titre-heros"><span class="ligne"><span>Voyez qui l'offre</span></span><span class="ligne"><span>cherche vraiment.</span></span></h1>
+    <h1 class="geant" id="titre-heros"><span class="ligne"><span>Voyez qui l'offre</span></span><span class="ligne"><span>cherche <em class="surligne">vraiment.</em></span></span></h1>
     <div class="heros-bas">
       <p class="chapo">Soignant, maçon, comptable ou cuisinier : JusteCV lit l'annonce, vous montre le profil attendu et mesure l'écart avec votre vrai CV. Sans rien inventer.</p>
       <div class="actions">
@@ -89,7 +101,7 @@
       <p class="suite-metiers"><a class="lien" href="metiers.html">Voir les repères de 94 métiers</a></p>
     </div>
   </div>
-  <div class="galerie" id="galerie">
+  <div class="galerie elan" id="galerie">
     <figure style="background-image:url(assets/cine/flou-soin.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="soin" aria-hidden="true"></video><figcaption><b>Soin</b>Infirmier, aide-soignant, brancardier<a class="lien" href="#vitrine" data-domaine="soin">Voir ce qu'une offre demande</a></figcaption></figure>
     <figure style="background-image:url(assets/cine/flou-batiment.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="batiment" aria-hidden="true"></video><figcaption><b>Bâtiment</b>Maçon, électricien, peintre<a class="lien" href="#vitrine" data-domaine="batiment">Voir ce qu'une offre demande</a></figcaption></figure>
     <figure style="background-image:url(assets/cine/flou-cuisine.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="cuisine" aria-hidden="true"></video><figcaption><b>Restauration</b>Cuisinier, serveur, boulanger<a class="lien" href="#vitrine" data-domaine="restauration">Voir ce qu'une offre demande</a></figcaption></figure>
@@ -99,7 +111,7 @@
 
 <section class="fiche" aria-label="Fiche technique">
   <div class="cadre">
-    <dl>
+    <dl class="elan">
       <div><dt>Niveaux d'exigence</dt><dd>3</dd></div>
       <div><dt>Poids des exigences</dt><dd>3 · 2 · 1</dd></div>
       <div><dt>Plafond si éliminatoire absent</dt><dd>49 %</dd></div>
@@ -175,6 +187,7 @@
         <div id="demo-rapide">
           <p class="aide">Pour chaque ligne du profil, dites si vous l'avez. Rien à écrire.</p>
           <div id="demo-questions"></div>
+          <div class="jalons" id="demo-jalons" aria-hidden="true"></div>
           <p class="demo-score" id="rapide-score" hidden><strong id="rapide-chiffre">–</strong><span>% du profil cible</span></p>
           <p class="aide" id="rapide-suite" role="status" aria-live="polite">0 réponse sur 6</p>
           <div class="barre" id="rapide-actions" hidden><a class="btn plein" href="atelier.html">Essayer avec votre offre</a></div>
@@ -238,7 +251,7 @@
     <div>
       <h2 class="moyen apparait" id="titre-apropos">À propos de JusteCV</h2>
       <p class="chapo apparait">Un outil fait pour celles et ceux qui cherchent un emploi, quel que soit le métier.</p>
-      <dl class="apropos-faits apparait">
+      <dl class="apropos-faits elan">
         <div><dt>Qui</dt><dd>JusteCV est édité par Namson Nguyen, à titre non professionnel pendant la bêta gratuite.</dd></div>
         <div><dt>Notre règle</dt><dd>Votre CV dit la vérité. Nous vous aidons à mieux la dire, jamais à l'arranger.</dd></div>
         <div><dt>Vos données</dt><dd>Nous ne les vendons pas et nous ne les utilisons pas pour de la publicité.</dd></div>
@@ -254,18 +267,22 @@
       <h2 class="moyen" id="titre-prix">Trois formules.</h2>
       <p>L'atelier est gratuit et sans compte. Les formules payantes ajoutent la réécriture assistée de votre CV et le suivi de vos candidatures.</p>
     </div>
-    <div class="prix apparait">
+    <div class="prix elan">
       <div>
+        <span class="etat-prix ouvert">Disponible</span>
         <h3 class="petit-titre">Gratuit</h3>
         <p class="montant">0 €</p>
         <ul><li>Profil cible illimité</li><li>Mesure de l'écart</li><li>Plan d'action</li></ul>
+        <a class="btn plein" href="atelier.html">Ouvrir l'atelier</a>
       </div>
       <div>
+        <span class="etat-prix">À la fin de la bêta</span>
         <h3 class="petit-titre">Premium</h3>
         <p class="montant">7,99 € <small>TTC / mois</small></p>
         <ul><li>Tout le gratuit</li><li>Reformulation de votre CV, ligne par ligne, sourcée</li><li>Export PDF lisible par les logiciels de tri</li></ul>
       </div>
       <div>
+        <span class="etat-prix">À la fin de la bêta</span>
         <h3 class="petit-titre">Pass recherche</h3>
         <p class="montant">19,99 € <small>TTC / 3 mois</small></p>
         <ul><li>Tout Premium</li><li>Suivi des candidatures</li><li>Sans renouvellement automatique</li></ul>
@@ -301,29 +318,46 @@
 
 <div class="barre-mobile" id="barre-mobile"><span>Une offre à lire ?</span><a class="btn plein" href="atelier.html" tabindex="-1">Mesurer une offre</a></div>
 
-<footer class="pied">
+<footer class="pied ample">
   <div class="cadre">
-    <span>© JusteCV, 2026 · Vidéos d'illustration générées par IA : les personnes montrées n'existent pas</span>
+    <div class="pied-tete">
+      <a class="pied-marque" href="./" aria-label="JusteCV, accueil">Juste<span>CV</span></a>
+      <p class="pied-devise">Votre CV dit la vérité. Nous vous aidons à mieux la dire, jamais à l'arranger.</p>
+      <a class="btn plein" href="atelier.html">Mesurer une offre</a>
+    </div>
     <nav aria-label="Pied de page">
-      <a href="atelier.html">Atelier</a>
-      <a href="app/">Analyse complète</a>
-      <a href="metiers.html">Métiers</a>
-      <a href="guides.html">Guides</a>
-      <a href="suivi.html">Suivi des candidatures</a>
-      <a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a>
-      <a href="#apropos">À propos</a>
-      <a href="mentions-legales.html">Mentions légales</a>
-      <a href="cgv.html">CGV</a>
-      <a href="confidentialite.html">Confidentialité</a>
-      <a href="mailto:contact@justecv.fr">contact@justecv.fr</a>
+      <div>
+        <h2>L'outil</h2>
+        <a href="atelier.html">Atelier</a>
+        <a href="app/">Analyse complète</a>
+        <a href="suivi.html">Suivi des candidatures</a>
+        <a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a>
+      </div>
+      <div>
+        <h2>Repères</h2>
+        <a href="metiers.html">Métiers</a>
+        <a href="guides.html">Guides</a>
+        <a href="#apropos">À propos</a>
+        <a href="#faq">Questions</a>
+      </div>
+      <div>
+        <h2>Cadre</h2>
+        <a href="mentions-legales.html">Mentions légales</a>
+        <a href="cgv.html">CGV</a>
+        <a href="confidentialite.html">Confidentialité</a>
+        <a href="mailto:contact@justecv.fr">contact@justecv.fr</a>
+      </div>
     </nav>
+    <p class="pied-bas"><span>© JusteCV, 2026</span><span>Vidéos d'illustration générées par IA : les personnes montrées n'existent pas</span></p>
+    <p class="pied-geant" aria-hidden="true">JusteCV</p>
   </div>
 </footer>
 
 <script src="vendor/lenis.min.js" defer></script>
 <script src="clips.js" defer></script>
 <script src="luxe.js" defer onerror="document.documentElement.classList.remove('js')"></script>
-<script type="module" src="demo.js"></script>
+<script type="module" src="demo.js?v=2"></script>
+<script type="module" src="elan.js?v=1"></script>
 <script src="passage.js?v=4" defer></script>
 </body>
 </html>

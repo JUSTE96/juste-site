@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#fffaf4">
 <link rel="icon" href="favicon-32.png" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="stylesheet" href="juste.css?v=2">
+<link rel="stylesheet" href="juste.css?v=3">
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="nuit.css?v=3">
 <script src="nuit.js?v=1"></script>
@@ -53,7 +53,7 @@
       </div>
       <div class="etape-droite">
         <label class="sr" for="offre">Texte de l'offre</label>
-        <textarea id="offre" rows="12" placeholder="Collez ici le texte de l'offre d'emploi…"></textarea>
+        <div class="lecteur" id="lecteur-offre"><textarea id="offre" rows="12" placeholder="Collez ici le texte de l'offre d'emploi…"></textarea></div>
         <div class="barre"><button class="btn plein" id="assembler" type="button">Assembler le profil cible</button><span class="aide" id="aide-offre"></span></div>
       </div>
     </section>
@@ -96,7 +96,7 @@
           <span class="aide" id="aide-fichier">PDF, DOCX ou TXT, 15 Mo au plus.</span>
         </div>
         <label class="sr" for="cv">Texte du CV</label>
-        <div class="depot-zone" id="depot-zone"><textarea id="cv" rows="10" placeholder="…ou collez ici le texte de votre CV. Vous pouvez aussi glisser le fichier dans ce cadre."></textarea></div>
+        <div class="depot-zone lecteur" id="depot-zone"><textarea id="cv" rows="10" placeholder="…ou collez ici le texte de votre CV. Vous pouvez aussi glisser le fichier dans ce cadre."></textarea></div>
         <div class="barre"><button class="btn plein" id="mesurer" type="button">Mesurer l'écart</button><span class="aide" id="aide-cv"></span></div>
       </div>
     </section>
@@ -111,6 +111,7 @@
         <div class="mesure">
           <div class="mesure-chiffre"><strong id="e-score">–</strong><span>% du profil cible</span></div>
           <div class="mesure-jauge" aria-hidden="true"><span id="e-jauge"></span></div>
+          <div class="jalons" id="e-jalons" aria-hidden="true"></div>
           <p class="mesure-detail" id="e-detail"></p>
         </div>
         <ul class="lignes correspondances" id="e-lignes"></ul>
@@ -149,7 +150,7 @@
     </nav>
   </div>
 </footer>
-<script type="module" src="atelier.js?v=2"></script>
+<script type="module" src="atelier.js?v=3"></script>
 <script src="passage.js?v=4" defer></script>
 </body>
 </html>
