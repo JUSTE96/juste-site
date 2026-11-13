@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex">
 <title>JusteCV – calque des publicités filmées</title>
-<!-- Calque transparent (1080 × 1920, 12 s) posé sur un plan filmé généré par IA. ?m=soin|macon|cuisine|logistique
+<!-- Calque transparent (1080 × 1920, 12 s) posé sur un plan filmé généré par IA. ?m=soin|macon|cuisine|logistique|domicile|administratif|vente|banque
      La mention « Personnage généré par IA » reste à l'écran du début à la fin. Rendu : node pub/composer.mjs -->
 <style>
 @font-face { font-family: Lora; src: url(fonts/lora-latin-wght-normal.woff2) format("woff2"); font-weight: 400 700; }
@@ -88,6 +88,10 @@ const M = {
   macon: { accroche: "Maçon : votre CV dit-il <i>« lecture de plans » ?</i>", offre: "Lecture de plans et implantation d'ouvrages", cv: "Maçon, 5 ans : pose de blocs, coffrage, ferraillage", question: "Avez-vous déjà lu des plans sur un chantier ?", ajout: "lecture de plans" },
   cuisine: { accroche: "Cuisinier : votre CV cite-t-il <i>« HACCP » ?</i>", offre: "Connaissance des règles d'hygiène HACCP", cv: "Cuisinier, 3 ans : préparations chaudes et froides, dressage", question: "Appliquez-vous les règles HACCP au quotidien ?", ajout: "respect des règles HACCP" },
   logistique: { accroche: "Préparatrice de commandes : votre CV cite-t-il <i>le « CACES 1 » ?</i>", offre: "CACES 1 exigé", cv: "Préparatrice de commandes, 2 ans : terminal de scan, contrôle des colis", question: "Avez-vous un CACES 1 en cours de validité ?", ajout: "CACES 1" },
+  domicile: { accroche: "Auxiliaire de vie : votre CV dit-il <i>« permis B » ?</i>", offre: "Permis B et véhicule exigés", cv: "Auxiliaire de vie, 4 ans : aide au lever, repas, courses, accompagnement", question: "Avez-vous le permis B et un véhicule ?", ajout: "Permis B, véhicule personnel" },
+  administratif: { accroche: "Assistante administrative : votre CV cite-t-il <i>Excel ?</i>", offre: "Maîtrise d'Excel et Outlook", cv: "Assistante administrative, 5 ans : accueil, courrier, agendas, devis", question: "Utilisez-vous Excel et Outlook au quotidien ?", ajout: "Excel, Outlook" },
+  vente: { accroche: "Vendeuse : votre CV parle-t-il <i>de la caisse ?</i>", offre: "Tenue de caisse et encaissements", cv: "Vendeuse en prêt-à-porter, 3 ans : conseil client, mise en rayon", question: "Tenez-vous la caisse et les encaissements ?", ajout: "Tenue de caisse, encaissements" },
+  banque: { accroche: "Conseiller bancaire : votre CV cite-t-il <i>votre portefeuille clients ?</i>", offre: "Gestion d'un portefeuille de particuliers", cv: "Conseiller clientèle, 3 ans : accueil, ouverture de comptes, crédits", question: "Suivez-vous un portefeuille de clients attitrés ?", ajout: "Portefeuille de particuliers" },
 };
 M["soin-h"] = { ...M.soin, accroche: M.soin.accroche.replace("Aide-soignante", "Aide-soignant"), cv: M.soin.cv.replace("Aide-soignante", "Aide-soignant") };
 M["cuisine-f"] = { ...M.cuisine, accroche: M.cuisine.accroche.replace("Cuisinier", "Cuisinière"), cv: M.cuisine.cv.replace("Cuisinier", "Cuisinière") };
