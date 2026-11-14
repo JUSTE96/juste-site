@@ -135,7 +135,7 @@ if (scene) {
   maj();
   // Le libellé sous le chiffre change de sens d'un temps à l'autre : il se repose au lieu de sauter.
   const label = $("#valeur-label");
-  if (label && !calme) new MutationObserver(() => rejouer(label)).observe(label, { childList: true, characterData: true, subtree: true });
+  if (label && !calme) { let vu = label.textContent; new MutationObserver(() => { if (label.textContent !== vu) { vu = label.textContent; rejouer(label); } }).observe(label, { childList: true, characterData: true, subtree: true }); }
 }
 
 /* ---------- bandeau : il suit la vitesse et le sens du défilement ---------- */

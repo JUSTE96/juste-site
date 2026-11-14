@@ -10,6 +10,27 @@
 /* JusteCV — couche « élan » : le produit en mouvement. Chargée en dernier, après plus.css.
    Principe : chaque mouvement montre quelque chose (une offre lue, une étape franchie, une réponse prise en compte).
    Tout s'efface sous prefers-reduced-motion, et rien n'est caché si le script ne se charge pas. */
+
+/* ---------- socle : corrections qui valent pour tout le site ---------- */
+/* L'attribut hidden doit toujours l'emporter : des règles display: grid/flex le faisaient ignorer
+   (atelier ouvert sur trois étapes vides, « 0 % » de la démo affiché avant toute réponse). */
+[hidden] { display: none !important; }
+/* Contrastes (jour) : ambre lisible sur crème, contour des pastilles de réponse visible. */
+:root { --ambre: #8a5300; }
+.reponses span, .domaines-liste span { border-color: #8a8f9c; }
+.temps li:nth-child(4) .num { color: var(--violet); }
+/* Un seul code couleur pour le résultat : vert présent, ambre en partie, corail-texte absent ;
+   le corail vif reste réservé aux boutons et à l'aiguille. Les jauges de score sont à l'encre. */
+.mesure-jauge span { background: var(--os); }
+.cadran .index.couvert { stroke: var(--vert); }
+.cadran .arc { stroke: var(--os); }
+.scene .cadran .index.plan { stroke: var(--corail-texte); }
+/* L'anneau qui tournait en 90 s était imperceptible et forçait un recalcul permanent. */
+.cadran .tourne { animation: none; }
+html[data-nuit] { --violet: #b39cf0; }
+html[data-nuit] .fil li.fait button i { color: #10261c; }
+html[data-nuit] .reponses span, html[data-nuit] .domaines-liste span { border-color: #6f78ad; }
+
 :root { --elan: cubic-bezier(.16, 1, .3, 1); --elan-io: cubic-bezier(.76, 0, .24, 1); --rebond: cubic-bezier(.3, 1.6, .5, 1); --violet: #7a4fd6; }
 
 /* ---------- héros : fond vivant ---------- */
@@ -35,7 +56,7 @@
 
 /* ---------- héros : lecture en direct d'une offre ---------- */
 .lecture { position: absolute; z-index: 2; left: 18px; bottom: 22px; width: min(356px, calc(100% - 36px)); padding: 1rem 1.1rem 1.05rem; border-radius: 22px; color: var(--os); font-size: .86rem; line-height: 1.3;
-  background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,253,249,.78)); border: 1px solid rgba(255,255,255,.85);
+  background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,253,249,.91)); border: 1px solid rgba(255,255,255,.85);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(28,32,64,.05), 0 26px 50px -24px rgba(28,32,64,.6);
   -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%);
   translate: calc(var(--mx, 0) * 14px) calc(var(--my, 0) * 10px); transition: translate .9s var(--elan), opacity .9s ease 1s, scale 1.2s var(--elan) 1s; transform-origin: 0 100%; }
@@ -66,7 +87,7 @@
 .lecture-score { display: flex; align-items: baseline; gap: .55rem; padding-top: .7rem; border-top: 1px solid rgba(28,32,64,.09); color: var(--acier); }
 .lecture-score strong { font: 500 2.1rem/1 var(--titre); letter-spacing: -.02em; font-variant-numeric: normal; color: var(--os); min-width: 2.3rem; }
 .lecture-jauge { height: 5px; border-radius: 5px; background: rgba(28,32,64,.1); margin-top: .65rem; overflow: hidden; }
-.lecture-jauge i { display: block; height: 100%; border-radius: inherit; transform-origin: left; transform: scaleX(var(--v, .68)); background: linear-gradient(90deg, var(--corail), #ffb199); transition: transform .9s var(--elan); }
+.lecture-jauge i { display: block; height: 100%; border-radius: inherit; transform-origin: left; transform: scaleX(var(--v, .68)); background: var(--os); transition: transform .9s var(--elan); }
 .verre-liquide .lecture { -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%); }
 @media (max-width: 900px) {
   /* sur mobile : le titre et l'action d'abord, la lecture en direct juste dessous */

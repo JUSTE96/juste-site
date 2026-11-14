@@ -39,3 +39,12 @@
   }
 }
 @media print { *, *::before, *::after { animation: none !important; } }
+
+/* ---------- mode nuit : statuts du suivi et sources lisibles ---------- */
+html[data-nuit] .statut-relance { background: rgba(255,226,122,.16); color: #ffe27a; }
+html[data-nuit] .statut-offre { background: rgba(127,214,176,.18); color: #7fd6b0; }
+html[data-nuit] .statut-entretien { color: #7fd6b0; }
+html[data-nuit] .statut-envoyee { color: #9db8ff; }
+html[data-nuit] .stat.is-warn { border-color: rgba(255,226,122,.45); }
+html[data-nuit] .stat.is-warn strong { color: #ffe27a; }
+html[data-nuit] footer .src { color: #a9aecd; }

@@ -123,9 +123,10 @@
     });
     arc.style.strokeDashoffset = L * (1 - (VALEUR / 100) * k);
     aiguille.style.transform = `rotate(${VALEUR * 3.6 * k}deg)`;
-    if (p < .5) { valeur.textContent = lus; label.textContent = pas === 0 ? "exigences lues" : "exigences dans le profil cible"; }
-    else if (!plan) { valeur.textContent = Math.round(VALEUR * k); label.textContent = "% du profil cible"; }
-    else { valeur.textContent = PLAN.length; label.textContent = "écarts dans le plan"; }
+    const ecrire = (el, t) => { t = String(t); if (el.textContent !== t) el.textContent = t; };
+    if (p < .5) { ecrire(valeur, lus); ecrire(label, pas === 0 ? "exigences lues" : "exigences dans le profil cible"); }
+    else if (!plan) { ecrire(valeur, Math.round(VALEUR * k)); ecrire(label, "% du profil cible"); }
+    else { ecrire(valeur, PLAN.length); ecrire(label, "écarts dans le plan"); }
   };
 
   /* ---------- boucle de défilement : en-tête, parallaxe, scène ---------- */

@@ -57,8 +57,9 @@
   const boucle = (t) => {
     image = 0;
     if (!nuit || document.hidden) return;
-    if (t - dernier > 32) { dernier = t; peindre(t); }
-    if (!calme.matches) image = requestAnimationFrame(boucle);
+    dernier = t; peindre(t);
+    // Le scintillement est lent (3 à 16 s) : 8 images par seconde suffisent ; l'étoile filante garde la pleine cadence.
+    if (!calme.matches) image = filante ? requestAnimationFrame(boucle) : setTimeout(() => { image = requestAnimationFrame(boucle); }, 125);
   };
   const allumer = () => {
     if (!document.body) return;
