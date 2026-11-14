@@ -11,8 +11,11 @@ const borne = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 const rejouer = (el, cl = "tic") => { if (!el) return; el.classList.remove(cl); void el.offsetWidth; el.classList.add(cl); };
 
 /* ---------- héros : lecture en direct ----------
-   Les six lignes viennent du HTML (état final, lisible sans script). Le score est calculé par le vrai moteur. */
-const lecture = $("#lecture");
+   Les six lignes viennent du HTML (état final, lisible sans script). Le score est calculé par le vrai moteur.
+   Une seule passe : elle part quand la carte est vraiment à l'écran, et se termine d'un trait si la carte s'en va,
+   pour que personne ne quitte le héros sur un chiffre intermédiaire. */
+const heros = $(".heros.plein"), lecture = $("#lecture");
+let figerLecture = () => {};
 if (lecture) {
   const ol = $("#lecture-lignes"), lignes = $$("li", ol), fenetre = ol.parentElement;
   const elScore = $("#lecture-score"), jauge = $("#lecture-jauge"), compte = $("#lecture-compte"), lues = $("#puce-lues");
@@ -22,51 +25,87 @@ if (lecture) {
   elScore.textContent = final; jauge.style.setProperty("--v", final / 100);
 
   if (!calme) {
-    let visible = true, affiche = final, image = 0;
-    new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(lecture);
-    const pause = (ms) => new Promise((ok) => setTimeout(ok, ms));
-    const attendre = async (ms) => { await pause(ms); while (!visible || document.hidden) await pause(350); };
-    const monter = (vers, duree = 750) => {
+    let affiche = 0, image = 0, ratio = 0, parti = false, presse = false, reveil = null;
+    const DUREE = { attente: 300, lue: 420, jugee: 520, presse: 70 };
+    const monter = (vers, duree = 600) => {
       cancelAnimationFrame(image);
       const de = affiche, t0 = performance.now();
       const pas = (t) => {
-        const k = borne((t - t0) / duree), e = 1 - Math.pow(1 - k, 3);
+        const k = duree ? borne((t - t0) / duree) : 1, e = 1 - Math.pow(1 - k, 3);
         affiche = de + (vers - de) * e; elScore.textContent = Math.round(affiche);
         if (k < 1) image = requestAnimationFrame(pas);
       };
-      image = requestAnimationFrame(pas);
+      if (duree) image = requestAnimationFrame(pas); else pas(0);
       jauge.style.setProperty("--v", vers / 100);
     };
-    const poser = (n) => {
-      compte.textContent = `${n} / ${lignes.length}`; rejouer(compte);
-      if (lues) { lues.textContent = n; rejouer(lues); }
-      const style = getComputedStyle(fenetre), visibles = Number(style.getPropertyValue("--n")) || 4;
+    const poser = (n, signe = true) => {
+      compte.textContent = `${n} / ${lignes.length}`;
+      if (lues) lues.textContent = n;
+      if (signe) { rejouer(compte); if (lues) rejouer(lues); }
+      const visibles = Number(getComputedStyle(fenetre).getPropertyValue("--n")) || 4;
       ol.style.transform = `translateY(calc(${-Math.max(0, n - visibles)} * var(--h)))`;
     };
-    const boucle = async () => {
-      lecture.classList.add("vive");
-      for (;;) {
-        lecture.classList.remove("finie");
-        lignes.forEach((li) => li.classList.remove("la", "juge"));
-        poser(0); monter(0, 350);
-        await attendre(900);
-        let acquis = 0;
-        for (let i = 0; i < lignes.length; i++) {
-          lignes[i].classList.add("la"); poser(i + 1);               // la ligne est lue
-          await attendre(560);
-          lignes[i].classList.add("juge");                            // puis jugée : le score suit
-          acquis += WEIGHTS[corr[i].exigence] * CREDIT[corr[i].statut];
-          monter(i === lignes.length - 1 ? final : Math.round((acquis / possible) * 100));
-          await attendre(820);
-        }
-        lecture.classList.add("finie");
-        await attendre(5600);
+    // État de départ posé tout de suite : la carte se révèle vide, puis se remplit, sans retour en arrière.
+    lecture.classList.add("vive");
+    lignes.forEach((li) => li.classList.remove("la", "juge"));
+    poser(0, false); elScore.textContent = "0"; jauge.style.setProperty("--v", 0);
+
+    // Une attente que l'avance rapide (ou la pause) peut écourter.
+    const attendre = (ms) => new Promise((ok) => {
+      const fin = () => { clearTimeout(t); reveil = null; ok(); };
+      const t = setTimeout(fin, lecture.classList.contains("figee") ? 0 : presse ? DUREE.presse : ms); reveil = fin;
+    }).then(async () => { while (document.hidden && !presse) await new Promise((ok) => setTimeout(ok, 350)); });
+    const presser = () => { if (presse) return; presse = true; reveil?.(); };
+    figerLecture = () => { lecture.classList.add("figee"); presser(); if (!parti) lire(); };
+
+    const lire = async () => {
+      parti = true;
+      // la carte finit d'entrer (opacité, échelle) avant que la première ligne tombe
+      if (!presse) {
+        await new Promise(requestAnimationFrame);
+        const entree = lecture.getAnimations().filter((a) => a.transitionProperty === "opacity").map((a) => a.finished.catch(() => {}));
+        await Promise.race([Promise.all(entree), new Promise((ok) => setTimeout(ok, 1400))]);
       }
+      await attendre(DUREE.attente);
+      let acquis = 0;
+      for (let i = 0; i < lignes.length; i++) {
+        lignes[i].classList.add("la"); poser(i + 1, !presse);         // la ligne est lue
+        await attendre(DUREE.lue);
+        lignes[i].classList.add("juge");                              // puis jugée : le score suit
+        acquis += WEIGHTS[corr[i].exigence] * CREDIT[corr[i].statut];
+        const vers = i === lignes.length - 1 ? final : Math.round((acquis / possible) * 100);
+        monter(vers, lecture.classList.contains("figee") ? 0 : presse ? 400 : 600);
+        await attendre(DUREE.jugee);
+      }
+      lecture.classList.add("finie");
     };
-    const depart = () => setTimeout(boucle, 1700);
-    if (document.body.classList.contains("pret-page")) depart();
-    else new MutationObserver((_, o) => { if (document.body.classList.contains("pret-page")) { o.disconnect(); depart(); } }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    const essayer = () => { if (!parti && ratio >= .6 && document.body.classList.contains("pret-page")) lire(); };
+    new IntersectionObserver(([e]) => {
+      ratio = e.isIntersecting ? e.intersectionRatio : 0;
+      if (parti && ratio < .35) presser();                             // la carte s'en va : on finit d'un trait
+      essayer();
+    }, { threshold: [0, .35, .6] }).observe(lecture);
+    if (!document.body.classList.contains("pret-page")) new MutationObserver((_, o) => { if (document.body.classList.contains("pret-page")) { o.disconnect(); essayer(); } }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
   }
+}
+
+/* ---------- héros : un seul bouton pause pour tout ce qui bouge (vidéo, lecture, fond) ----------
+   Caché sous animations réduites : rien n'y bouge. Une vidéo qui arrive après une pause ne démarre pas (film.dataset.arret). */
+const pauseFilm = $("#pause-film"), film = $("#film");
+if (heros && pauseFilm && !calme) {
+  pauseFilm.hidden = false;
+  const basculer = () => {
+    const arret = pauseFilm.getAttribute("aria-pressed") !== "true";
+    pauseFilm.setAttribute("aria-pressed", arret);
+    heros.classList.toggle("en-pause", arret);
+    if (arret) figerLecture();
+    if (film) {
+      if (arret) { film.dataset.arret = 1; film.pause(); }
+      else { delete film.dataset.arret; if (film.classList.contains("pret")) film.play().catch(() => {}); }
+    }
+  };
+  // Pris en phase de capture : ce bouton commande désormais l'ensemble, plus seulement la vidéo.
+  heros.addEventListener("click", (e) => { if (e.target.closest?.("#pause-film")) { e.stopPropagation(); basculer(); } }, true);
 }
 
 /* ---------- titres : les mots montent un à un ---------- */

@@ -1,0 +1,18 @@
+/* JusteCV — couche « élan · héros et cadran ». Assemblée après elan.css : elle surcharge, elle n'efface rien.
+   Héros : l'action principale arrive vite, la lecture se joue une fois, un seul bouton pause pour tout ce qui bouge.
+   Cadran : le calcul du score de l'offre du héros, en quatre temps pilotés par le défilement. */
+
+/* ---------- héros : l'action d'abord, la carte posée tout de suite ---------- */
+.js .heros-texte .ref, .js .heros-bas { transition: opacity .45s .1s; }
+.lecture { transition: translate .9s var(--elan), opacity .5s ease .2s, scale .9s var(--elan) .2s; }
+/* pause : tout se fige d'un coup, sans transition */
+.lecture.figee *, .lecture.figee ol { transition: none !important; }
+
+/* ---------- héros : bouton pause commun (vidéo, lecture, fond) ---------- */
+.heros.plein .pause { width: 44px; height: 44px; z-index: 3; }
+/* Le cadre du texte couvre toute la largeur, par-dessus le cadre vidéo : il laisse passer les clics vers le bouton pause. */
+.heros.plein .heros-texte { pointer-events: none; }
+.heros.plein .heros-texte > * { pointer-events: auto; }
+.pause .i-lecture, .pause[aria-pressed="true"] .i-pause { display: none; }
+.pause[aria-pressed="true"] .i-lecture { display: inline; }
+.heros.en-pause::before, .heros.en-pause .puce, .heros.en-pause .lecture-tete i, .heros.en-pause .lecture-tete i::after { animation-play-state: paused !important; }

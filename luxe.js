@@ -1,4 +1,4 @@
-// Juste — accueil : rideau, menu, défilement doux, parallaxe, scène du cadran pilotée au défilement.
+// Juste — accueil : ouverture, menu, défilement doux, parallaxe, scène du cadran pilotée au défilement.
 (() => {
   const calme = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const racine = document.documentElement;
@@ -36,21 +36,11 @@
     }
   }
 
-  /* ---------- rideau ---------- */
-  const rideau = document.getElementById("rideau"), compte = document.getElementById("rideau-compte");
+  /* ---------- ouverture ----------
+     Plus de rideau ni de compteur : l'entrée du héros (titre, cadre, lecture) est l'ouverture.
+     La classe est posée à l'image suivante pour que les transitions d'entrée se jouent. */
   const ouvrir = () => { document.body.classList.add("pret-page"); };
-  if (!rideau || calme || sessionStorage.getItem("juste.vu")) { rideau?.classList.add("fini"); ouvrir(); }
-  else {
-    try { sessionStorage.setItem("juste.vu", "1"); } catch {}
-    const t0 = performance.now(), D = 600;
-    const pas = (t) => {
-      const k = Math.min(1, (t - t0) / D), e = 1 - Math.pow(1 - k, 3);
-      compte.textContent = String(Math.round(e * 100)).padStart(3, "0");
-      if (k < 1) requestAnimationFrame(pas);
-      else { rideau.classList.add("leve"); setTimeout(ouvrir, 180); setTimeout(() => rideau.classList.add("fini"), 1000); }
-    };
-    requestAnimationFrame(pas);
-  }
+  if (calme) ouvrir(); else requestAnimationFrame(() => requestAnimationFrame(ouvrir));
 
   /* ---------- défilement doux ---------- */
   let lenis = null;
