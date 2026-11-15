@@ -8,3 +8,7 @@
   header.nav .ciel-btn.dans-barre { width: 44px; height: 44px; flex: none; margin-left: auto; }
   header.nav .ciel-btn.dans-barre + .nav-menu { margin-left: 0; }
 }
+
+/* ---------- pied de page : liens à 44 px (pages de contenu et fiches) ---------- */
+footer .wrap > a { display: inline-flex; align-items: center; min-height: 44px; padding-inline: .4rem; margin-inline: -.4rem; }
+footer .wrap:first-child { row-gap: 0; }

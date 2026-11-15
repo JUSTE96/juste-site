@@ -126,12 +126,17 @@
   const barreMobile = document.getElementById("barre-mobile");
   if (barreMobile) {
     const vus = new Map(), lien = barreMobile.querySelector("a");
-    const obs = new IntersectionObserver((es) => {
+    const regler = (es) => {
       es.forEach((e) => vus.set(e.target, e.isIntersecting));
       const montrer = ![...vus.values()].some(Boolean);
       barreMobile.classList.toggle("visible", montrer); lien.tabIndex = montrer ? 0 : -1;
-    });
+    };
+    const obs = new IntersectionObserver(regler);
     document.querySelectorAll(".heros, #demo, #prix, .fin, .pied").forEach((el) => { vus.set(el, true); obs.observe(el); });
+    // Sur les écrans bas, le fil d'étapes de la scène descend dans la bande où vit la barre : elle lui laisse la place.
+    // (Le fil est construit par elan.js, d'où l'attente de DOMContentLoaded.)
+    const bande = new IntersectionObserver(regler, { rootMargin: `-${Math.max(0, innerHeight - 92)}px 0px 0px 0px` });
+    addEventListener("DOMContentLoaded", () => document.querySelectorAll(".scene-rail").forEach((el) => { vus.set(el, false); bande.observe(el); }));
   }
 
   /* ---------- cadran : construction ---------- */

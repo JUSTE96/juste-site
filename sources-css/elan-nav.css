@@ -90,3 +90,25 @@ html[data-nuit] .menu-pied a { text-decoration-color: #f7f1e840; }
   .tete.fond .cadre { padding-inline: 1.1rem .55rem; }
   .tete .menu-btn { gap: .55rem; padding-inline: .85rem; }
 }
+
+/* ---------- cibles tactiles : liens de pied de page à 44 px ---------- */
+.pied nav a { display: inline-flex; align-items: center; min-height: 44px; }
+/* Pied ample de l'accueil : les liens restent en colonne ; le trait corail suit le texte, pas le bas de la cible. */
+.pied.ample nav a { display: flex; padding-block: 0; background-position: 0 calc(50% + .78em); }
+.pied.ample nav h2 { margin-bottom: .35rem; }
+
+/* ---------- statuts lisibles sur téléphone : les mots qui portent le verdict ne sont plus les plus petits ---------- */
+@media (max-width: 860px) {
+  .poids, .statut, .lecture li b { font-size: .875rem; }
+  .lecture-tete, .scene-rail a, .etat-prix { font-size: .8rem; letter-spacing: .08em; }
+  .scene-rail a { letter-spacing: 0; }
+}
+/* À 320 px, « Obligatoire · éliminatoire » en un bloc élargissait la carte du profil : le niveau passe à la ligne. */
+@media (max-width: 420px) { .lignes li .poids { white-space: normal; text-align: right; line-height: 1.25; } }
+
+/* ---------- barre d'action mobile : le bouton tient en entier jusqu'à 320 px ---------- */
+@media (max-width: 380px) {
+  .barre-mobile { gap: .4rem; padding-left: .85rem; }
+  .barre-mobile span { font-size: .82rem; }
+  .barre-mobile .btn { padding-inline: .8rem; font-size: .86rem; }
+}
