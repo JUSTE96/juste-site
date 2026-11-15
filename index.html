@@ -102,10 +102,10 @@
     </div>
   </div>
   <div class="galerie elan" id="galerie">
-    <figure style="background-image:url(assets/cine/flou-soin.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="soin" aria-hidden="true"></video><figcaption><b>Soin</b>Infirmier, aide-soignant, brancardier<a class="lien" href="#vitrine" data-domaine="soin">Voir ce qu'une offre demande</a></figcaption></figure>
-    <figure style="background-image:url(assets/cine/flou-batiment.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="batiment" aria-hidden="true"></video><figcaption><b>Bâtiment</b>Maçon, électricien, peintre<a class="lien" href="#vitrine" data-domaine="batiment">Voir ce qu'une offre demande</a></figcaption></figure>
-    <figure style="background-image:url(assets/cine/flou-cuisine.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="cuisine" aria-hidden="true"></video><figcaption><b>Restauration</b>Cuisinier, serveur, boulanger<a class="lien" href="#vitrine" data-domaine="restauration">Voir ce qu'une offre demande</a></figcaption></figure>
-    <figure style="background-image:url(assets/cine/flou-logistique.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="logistique" aria-hidden="true"></video><figcaption><b>Logistique</b>Cariste, préparateur, chauffeur<a class="lien" href="#vitrine" data-domaine="logistique">Voir ce qu'une offre demande</a></figcaption></figure>
+    <figure style="background-image:url(assets/cine/flou-soin.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="soin" aria-hidden="true"></video><figcaption><b>Soin</b>Infirmier, aide-soignant, brancardier<a class="lien" href="#vitrine" data-domaine="soin">Voir ce qu'une offre demande<span class="sr"> en soin</span></a></figcaption></figure>
+    <figure style="background-image:url(assets/cine/flou-batiment.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="batiment" aria-hidden="true"></video><figcaption><b>Bâtiment</b>Maçon, électricien, peintre<a class="lien" href="#vitrine" data-domaine="batiment">Voir ce qu'une offre demande<span class="sr"> dans le bâtiment</span></a></figcaption></figure>
+    <figure style="background-image:url(assets/cine/flou-cuisine.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="cuisine" aria-hidden="true"></video><figcaption><b>Restauration</b>Cuisinier, serveur, boulanger<a class="lien" href="#vitrine" data-domaine="restauration">Voir ce qu'une offre demande<span class="sr"> en restauration</span></a></figcaption></figure>
+    <figure style="background-image:url(assets/cine/flou-logistique.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="logistique" aria-hidden="true"></video><figcaption><b>Logistique</b>Cariste, préparateur, chauffeur<a class="lien" href="#vitrine" data-domaine="logistique">Voir ce qu'une offre demande<span class="sr"> en logistique</span></a></figcaption></figure>
   </div>
 </section>
 
@@ -164,6 +164,7 @@
       <div class="domaines-liste" id="demo-domaines-liste"></div>
       <a class="lien" href="atelier.html">Autre domaine : coller une offre</a>
     </fieldset>
+    <p class="sr" role="status" id="demo-annonce"></p>
     <div class="vitrine cascade" id="demo">
       <section aria-labelledby="v-cible">
         <h3 class="petit-titre" id="v-cible">Profil cible</h3>
@@ -203,7 +204,7 @@
             <button class="lien bouton-lien" id="demo-exemple" type="button">Voir avec un CV d'exemple</button>
           </div>
         </div>
-        <div id="demo-resultat" hidden tabindex="-1">
+        <div id="demo-resultat" hidden tabindex="-1" role="region" aria-label="Résultat de la comparaison">
           <p class="demo-score"><strong id="demo-score">–</strong><span>% du profil cible</span></p>
           <ul class="lignes" id="demo-lignes"></ul>
           <div class="barre">

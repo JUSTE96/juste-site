@@ -11,6 +11,7 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<
 const NIVEAU = { obligatoire: "Obligatoire", souhaitee: "Souhaitée", atout: "Atout" };
 const POIDS = { obligatoire: 3, souhaitee: 2, atout: 1 };
 const STATUT = { presente: "Présent", partielle: "En partie", absente: "Absent" };
+const MARQUE = { presente: "vous l'avez", partielle: "en partie", absente: "vous ne l'avez pas" };
 const CHOIX = [["presente", "Oui"], ["partielle", "En partie"], ["absente", "Non"]];
 const ETAT0 = "Deux façons de vous situer";
 const AIDE0 = "Votre CV reste dans votre navigateur. Rien n'est envoyé.";
@@ -31,7 +32,8 @@ function choisir(id) {
   actuel = domaine(id); profil = profilCible(actuel.offre);
   const radio = document.querySelector(`input[name="domaine"][value="${actuel.id}"]`); if (radio) radio.checked = true;
   $("demo-ref").textContent = `Offre d'exemple · ${actuel.intitule} · ${actuel.ligne}`;
-  $("demo-cible").innerHTML = profil.exigences.map((e) => `<li>${esc(e.texte)}${niveau(e)}</li>`).join("");
+  // Chaque ligne garde un équivalent texte de sa pastille de statut (span.sr), tenu à jour par marquer().
+  $("demo-cible").innerHTML = profil.exigences.map((e) => `<li>${esc(e.texte)}<span class="sr"></span>${niveau(e)}</li>`).join("");
   // Le niveau suit chaque question (hors de la légende, pour garder un nom de groupe court).
   $("demo-questions").innerHTML = profil.exigences.map((e, i) => `<fieldset class="question"><legend>${esc(e.texte)}</legend>${niveau(e)}<div class="reponses">${CHOIX.map(([v, t]) => `<label><input type="radio" name="q${i}" value="${v}"><span>${t}</span></label>`).join("")}</div></fieldset>`).join("");
   // Chaque jalon a la largeur de son poids dans le score (3, 2 ou 1).
@@ -46,6 +48,7 @@ function marquer(statuts, plan = false) {
   let k = 0;
   [...$("demo-cible").children].forEach((li, i) => {
     if (statuts[i]) li.dataset.statut = statuts[i]; else delete li.dataset.statut;
+    const sr = li.querySelector(".sr"); if (sr) sr.textContent = statuts[i] ? ` : ${MARQUE[statuts[i]]}. ` : "";
     li.style.setProperty("--k", statuts[i] && statuts[i] !== "presente" ? k++ : 0);
   });
   [...$("demo-jalons").children].forEach((j, i) => { if (statuts[i]) j.dataset.s = statuts[i]; else delete j.dataset.s; });
@@ -59,13 +62,15 @@ function viser(e) {
   [...$("demo-cible").children].forEach((li, k) => li.classList.toggle("vise", k === i && e.type !== "pointerleave" && e.type !== "focusout"));
 }
 ["pointerover", "focusin", "pointerleave", "focusout"].forEach((t) => $("demo-questions").addEventListener(t, viser));
+// Un changement de domaine remplace tout le profil : on le dit aux lecteurs d'écran.
+const annoncer = () => { $("demo-annonce").textContent = `Profil cible : ${actuel.intitule}, ${profil.exigences.length} exigences.`; };
 // Changement de domaine : fondu natif entre les deux profils quand le navigateur le permet.
 $("demo-domaines-liste").addEventListener("change", (e) => {
-  const id = e.target.value;
-  if (document.startViewTransition && !calme) document.startViewTransition(() => choisir(id)); else choisir(id);
+  const id = e.target.value, changer = () => { choisir(id); annoncer(); };
+  if (document.startViewTransition && !calme) document.startViewTransition(changer); else changer();
 });
 // Les cartes métiers de la page renvoient ici avec leur domaine déjà choisi.
-document.addEventListener("click", (e) => { const a = e.target.closest("[data-domaine]"); if (a) choisir(a.dataset.domaine); });
+document.addEventListener("click", (e) => { const a = e.target.closest("[data-domaine]"); if (a) { choisir(a.dataset.domaine); annoncer(); } });
 
 /* ---------- deux façons de répondre ---------- */
 function mode(r) {

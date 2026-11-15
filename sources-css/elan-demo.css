@@ -3,6 +3,9 @@
    Même principe que la couche élan : chaque mouvement montre une réponse prise en compte ou un résultat,
    tout se pose sans animation sous prefers-reduced-motion, et rien n'est caché si le script manque. */
 
+/* ---------- galerie : la flèche du lien est décorative (hors du nom accessible quand le navigateur le permet) ---------- */
+.galerie figcaption .lien::after { content: "→"; content: "→" / ""; }
+
 /* ---------- démo : le cadre ne coupe plus le collage ----------
    overflow: hidden faisait de la carte un conteneur de défilement : rien n'y collait.
    overflow: clip découpe pareil (coins arrondis compris) sans créer ce conteneur ; hidden reste en repli. */
