@@ -48,7 +48,8 @@ function afficherProfil(p, signaux) {
   const specs = [
     ["Contrat", p.contrat || "Non précisé"],
     ["Expérience", p.experienceAns === null ? "Non précisée" : p.experienceAns === 0 ? "Première expérience ou débutant" : `${p.experienceAns} an${p.experienceAns > 1 ? "s" : ""}`],
-    ["Diplôme", p.diplome ? p.diplome.nom : "Non précisé"],
+    // Diplôme hors de la table (DEAS, DEAES…) : il est demandé, la liste dit lequel.
+    ["Diplôme", p.diplome ? p.diplome.nom : p.exigences.some((e) => e.categorie === "diplome") ? "Demandé : voir la liste" : "Non précisé"],
     ["Exigences", String(p.exigences.length)],
   ];
   $("p-specs").innerHTML = specs.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("");
@@ -114,9 +115,29 @@ function afficherEcart(r) {
     : "L'offre contient moins de trois exigences claires : le pourcentage ne serait pas fiable, voici seulement le détail.";
   $("e-jalons").innerHTML = r.correspondances.map((c, i) => `<i data-s="${c.statut}" style="--i:${i}"></i>`).join("");
   $("e-lignes").innerHTML = r.correspondances.map((c, i) => `<li style="--i:${i}"><span>${esc(c.texte)}</span><span class="statut ${c.statut}">${STATUT[c.statut]}</span>${c.preuve ? `<small>Dans votre CV : « ${esc(c.preuve)} »</small>` : ""}${c.note ? `<small>${esc(c.note)}</small>` : ""}</li>`).join("");
+  let i = 0;
   $("e-plan").innerHTML = r.plan.length
-    ? r.plan.map((p, i) => `<li style="--i:${i}"><h4>${esc(p.texte)} <span class="poids" data-niveau="${p.niveau}">${NIVEAU[p.niveau]}${p.eliminatoire ? " · éliminatoire" : ""}</span></h4><p><b>Déjà fait ?</b> ${esc(p.siDejaFait)}</p><p><b>Sinon :</b> ${esc(p.sinon)}</p></li>`).join("")
-    : `<li><h4>Votre CV couvre tout le profil cible.</h4><p>Vérifiez que chaque ligne est appuyée par un exemple concret, puis postulez.</p></li>`;
+    ? groupesDuPlan(r.plan).map((g) => `<div class="plan-groupe" data-statut="${g.statut}" style="--i:${i}"><h4 class="plan-groupe-titre">${g.titre}</h4><p class="plan-commun"><b>Déjà fait ?</b> ${esc(g.commune)}</p><ol class="plan">${g.points.map((p) =>
+        `<li style="--i:${i++}"><h5>${esc(p.texte)} <span class="poids" data-niveau="${p.niveau}">${NIVEAU[p.niveau]}${p.eliminatoire ? " · éliminatoire" : ""}</span></h5>${p.siDejaFait !== g.commune ? `<p><b>Déjà fait ?</b> ${esc(p.siDejaFait)}</p>` : ""}<p><b>Sinon :</b> ${esc(p.sinon)}</p></li>`).join("")}</ol></div>`).join("")
+    : `<ol class="plan"><li><h5>Votre CV couvre tout le profil cible.</h5><p>Vérifiez que chaque ligne est appuyée par un exemple concret, puis postulez.</p></li></ol>`;
+}
+
+/* ---------- le plan en deux groupes : à mieux montrer (en partie), à ajouter ou à acquérir (absent) ---------- */
+// La phrase « déjà fait ? » commune à un groupe est dite une fois en tête ; un point ne garde la sienne que si elle diffère.
+// Le moteur trie déjà le plan (éliminatoire, puis obligatoire, souhaitée, atout) : le groupe qui contient le point
+// le plus urgent passe en premier, pour qu'un critère éliminatoire absent reste toujours le point 01.
+const RANG = { obligatoire: 0, souhaitee: 1, atout: 2 };
+const urgence = (p) => (p.eliminatoire ? 0 : 10) + RANG[p.niveau];
+function groupesDuPlan(plan) {
+  const groupes = [["partielle", "À mieux montrer"], ["absente", "À ajouter ou à acquérir"]]
+    .map(([statut, titre]) => ({ statut, titre, points: plan.filter((p) => p.statut === statut) }))
+    .filter((g) => g.points.length)
+    .sort((a, b) => urgence(a.points[0]) - urgence(b.points[0]));
+  for (const g of groupes) {
+    const n = new Map(); g.points.forEach((p) => n.set(p.siDejaFait, (n.get(p.siDejaFait) || 0) + 1));
+    g.commune = [...n.entries()].sort((a, b) => b[1] - a[1])[0][0];
+  }
+  return groupes;
 }
 
 /* ---------- passerelle vers l'analyse complète (serveur, jury, CV adapté) ---------- */
@@ -188,7 +209,13 @@ function texteDuPlan() {
   if (!dernier) return "";
   const s = dernier.score, l = [`JusteCV : ${profil.intitule}`, s ? `Profil cible couvert à ${s.score} %` : "Détail par exigence", ""];
   dernier.correspondances.forEach((c) => l.push(`[${STATUT[c.statut]}] ${c.texte}`));
-  if (dernier.plan.length) { l.push("", "Le plan"); dernier.plan.forEach((p, i) => l.push(`${i + 1}. ${p.texte}`, `   Déjà fait ? ${p.siDejaFait}`, `   Sinon : ${p.sinon}`)); }
+  if (dernier.plan.length) {
+    l.push("", "Le plan"); let i = 0;
+    for (const g of groupesDuPlan(dernier.plan)) {
+      l.push("", g.titre, `Déjà fait ? ${g.commune}`);
+      g.points.forEach((p) => l.push(`${++i}. ${p.texte} (${NIVEAU[p.niveau]}${p.eliminatoire ? ", éliminatoire" : ""})`, ...(p.siDejaFait !== g.commune ? [`   Déjà fait ? ${p.siDejaFait}`] : []), `   Sinon : ${p.sinon}`));
+    }
+  }
   return l.join("\n");
 }
 $("copier").addEventListener("click", async () => {

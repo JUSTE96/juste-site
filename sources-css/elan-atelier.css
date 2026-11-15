@@ -41,7 +41,21 @@ html[data-nuit] .fil ol { background: #232a5c; border-color: #f7f1e824; box-shad
 }
 @media (max-width: 620px) { .fil button { padding: 0 .55rem; } .fil button[aria-current="step"] { padding: 0 .9rem 0 .55rem; } }
 
+/* ---------- le plan en deux groupes, numérotés d'un seul tenant ---------- */
+.plan-groupes { counter-reset: p; margin-top: 1rem; }
+.plan-groupes .plan { counter-reset: none; margin-top: .4rem; }
+.plan-groupe + .plan-groupe { margin-top: 2.2rem; }
+.plan-groupe-titre { display: flex; align-items: center; gap: .6rem; margin: 0; font: 400 1.2rem/1.3 var(--titre); letter-spacing: -.01em; }
+.plan-groupe-titre::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--corail-texte); }
+.plan-groupe[data-statut="partielle"] .plan-groupe-titre::before { background: var(--ambre); }
+.plan-commun { max-width: none; margin: .7rem 0 0; padding: .8rem 1rem; border-radius: 14px; background: rgba(28,32,64,.045); color: var(--acier); font-size: .95rem; }
+.plan-commun b { color: var(--os); font-weight: 600; }
+.plan h5 { margin: 0 0 .6rem; font: 500 1.05rem/1.35 var(--texte); }
+.plan h5 .poids { margin-left: .6rem; }
+.plan-groupe > .plan-groupe-titre, .plan-groupe > .plan-commun { animation: monte .7s var(--elan) both; animation-delay: calc(.2s + var(--i, 0) * 70ms); }
+
 /* ---------- nuit ---------- */
+html[data-nuit] .plan-commun { background: #f7f1e80f; }
 html[data-nuit] .reperes-compte { color: var(--vert); }
 html[data-nuit] .reperes .chevron { background: #f7f1e814; }
 html[data-nuit] .reperes .chevron::before { border-color: var(--os); }
