@@ -114,3 +114,12 @@ html:not(.js) .scene .cadran { position: sticky; top: 110px; }
   .fiche .fiche-groupe dl > div:nth-child(3) { grid-column: 1 / -1; border-right: 0 !important; }
 }
 html[data-nuit] .fiche-titre { color: var(--os); }
+
+/* ---------- titres : des coupes de ligne décidées ----------
+   Héros : deux lignes à toutes les largeurs d'ordinateur (plus de « cherche » ni de « Voyez » orphelins).
+   Fin : trois temps, un par ligne. */
+@media (min-width: 901px) {
+  .heros-texte .geant { max-width: none; width: max-content; font-size: clamp(2.4rem, 5vw, 4.5rem); }
+  .heros-texte .geant .ligne { white-space: nowrap; }
+}
+.fin .geant .l { display: block; white-space: nowrap; }
