@@ -29,7 +29,9 @@ function retirerCalque() {
   if (!calque) return;
   calque.el.remove(); calque.champ.style.visibility = ""; calque.champ.scrollTop = calque.el.scrollTop; calque = null;
 }
-addEventListener("resize", retirerCalque);
+// Sur téléphone, la barre d'adresse qui apparaît au défilement déclenche « resize » sans changer la largeur :
+// le calque ne part que si la largeur change (les retours à la ligne ne seraient plus les mêmes).
+addEventListener("resize", () => { if (calque && innerWidth !== calque.largeur) retirerCalque(); });
 ["offre", "cv"].forEach((id) => $(id).addEventListener("input", retirerCalque));
 
 function poserCalque(zone, champ, marques, teinte) {
@@ -60,7 +62,7 @@ function poserCalque(zone, champ, marques, teinte) {
   const basN = mn.offsetTop + mn.offsetHeight + lh / 2 - el.clientHeight;
   if (basN > el.scrollTop) el.scrollTop = Math.min(basN, Math.max(el.scrollTop, m0.offsetTop - lh));
   champ.style.visibility = "hidden";
-  calque = { el, champ };
+  calque = { el, champ, largeur: innerWidth };
   return n;
 }
 
@@ -100,7 +102,7 @@ function signaler(champ, message) {
   aide.textContent = message; aide.classList.add("erreur"); aide.setAttribute("role", "alert");
   champ.setAttribute("aria-invalid", "true"); cadre?.classList.add("invalide");
   champ.focus({ preventScroll: true });
-  aide.closest(".barre").scrollIntoView({ behavior: calme ? "auto" : "smooth", block: "nearest" });
+  aide.closest(".barre").scrollIntoView({ behavior: calme ? "auto" : "smooth", block: "center" });
 }
 function effacerErreur(champ) {
   if (champ.getAttribute("aria-invalid") !== "true") return;
@@ -239,7 +241,10 @@ function phraseDeTete(r) {
   if (elim.length > 1) return `${elim.length} critères éliminatoires manquent : ${elim.map((c) => cite(c.texte)).join(", ")}. Ce sont les premiers points du plan.`;
   if (oblig) return `Il manque ${oblig} exigence${oblig > 1 ? "s" : ""} obligatoire${oblig > 1 ? "s" : ""}.`;
   if (!r.plan.length) return "Toutes les exigences sont visibles dans votre CV.";
-  const n = r.plan.length, autres = r.plan.every((p) => p.niveau !== "obligatoire");
+  const n = r.plan.length;
+  // Un éliminatoire seulement « en partie » : rien de rassurant, le seul décompte (il est le premier point du plan).
+  if (cs.some((c) => c.eliminatoire && c.statut === "partielle")) return `${n} point${n > 1 ? "s" : ""} à travailler.`;
+  const autres = r.plan.every((p) => p.niveau !== "obligatoire");
   return `Aucune exigence obligatoire ne manque. ${n} point${n > 1 ? "s" : ""}${autres ? ` souhaité${n > 1 ? "s" : ""} ou atout${n > 1 ? "s" : ""}` : ""} à travailler.`;
 }
 
@@ -265,7 +270,7 @@ function afficherEcart(r, avant = null) {
   let i = 0;
   $("e-plan").innerHTML = r.plan.length
     ? groupesDuPlan(r.plan).map((g) => `<div class="plan-groupe" data-statut="${g.statut}" style="--i:${i}"><h4 class="plan-groupe-titre">${g.titre}</h4><p class="plan-commun"><b>Déjà fait ?</b> ${esc(g.commune)}</p><ol class="plan">${g.points.map((p) =>
-        `<li style="--i:${i++}"><h5>${esc(p.texte)} <span class="poids" data-niveau="${p.niveau}">${NIVEAU[p.niveau]}${p.eliminatoire ? " · éliminatoire" : ""}</span></h5>${p.siDejaFait !== g.commune ? `<p><b>Déjà fait ?</b> ${esc(p.siDejaFait)}</p>` : ""}<p><b>Sinon :</b> ${esc(p.sinon)}</p></li>`).join("")}</ol></div>`).join("")
+        `<li style="--i:${i++}"><h5>${esc(p.texte)} <span class="poids" data-niveau="${p.niveau}">${NIVEAU[p.niveau]}${p.eliminatoire ? " · éliminatoire" : ""}</span></h5>${p.siDejaFait !== g.commune ? `<p><b>Déjà fait ?</b> ${esc(p.siDejaFait)}</p>` : ""}${p.sinon ? `<p><b>Sinon :</b> ${esc(p.sinon)}</p>` : ""}</li>`).join("")}</ol></div>`).join("")
     : `<ol class="plan"><li><h5>Votre CV couvre tout le profil cible.</h5><p>Vérifiez que chaque ligne est appuyée par un exemple concret, puis postulez.</p></li></ol>`;
 }
 
@@ -357,8 +362,9 @@ try {
 } catch {}
 $("retirer-cv").addEventListener("click", () => {
   $("cv").value = ""; try { sessionStorage.removeItem("juste.atelier"); } catch {}
+  // Le bouton disparaît : le curseur va à l'offre, ce qui manque encore ; la note (role=status) annonce le retrait.
   $("note-accueil-texte").textContent = "CV retiré."; $("retirer-cv").hidden = true;
-  majPerime(); majExemple();
+  majPerime(); majExemple(); $("offre").focus();
 });
 
 /* ---------- CV d'exemple : seulement avec une offre d'exemple non modifiée, toujours dit fictif ---------- */
@@ -366,7 +372,9 @@ const offreExemple = () => DOMAINES.find((d) => d.offre === $("offre").value);
 const estCvExemple = (t) => DOMAINES.some((d) => d.cv === String(t ?? "").trim());
 function majExemple() {
   const d = offreExemple(), ex = estCvExemple($("cv").value);
-  $("cv-exemple").hidden = !d || $("cv").value.trim() === d.cv;
+  // Jamais par-dessus un CV personnel : le bouton ne s'offre que sur un champ vide ou un autre CV d'exemple.
+  const cv = $("cv").value.trim();
+  $("cv-exemple").hidden = !d || (cv !== "" && !ex) || cv === d.cv;
   $("cv-fictif").hidden = !ex;
   // Le quota de l'analyse complète ne se dépense pas sur une personne fictive.
   $("complet").disabled = ex; $("complet-exemple").hidden = !ex;
@@ -391,7 +399,7 @@ function texteDuPlan() {
     l.push("", "Le plan"); let i = 0;
     for (const g of groupesDuPlan(dernier.plan)) {
       l.push("", g.titre, `Déjà fait ? ${g.commune}`);
-      g.points.forEach((p) => l.push(`${++i}. ${p.texte} (${NIVEAU[p.niveau]}${p.eliminatoire ? ", éliminatoire" : ""})`, ...(p.siDejaFait !== g.commune ? [`   Déjà fait ? ${p.siDejaFait}`] : []), `   Sinon : ${p.sinon}`));
+      g.points.forEach((p) => l.push(`${++i}. ${p.texte} (${NIVEAU[p.niveau]}${p.eliminatoire ? ", éliminatoire" : ""})`, ...(p.siDejaFait !== g.commune ? [`   Déjà fait ? ${p.siDejaFait}`] : []), ...(p.sinon ? [`   Sinon : ${p.sinon}`] : [])));
     }
   }
   return l.join("\n");

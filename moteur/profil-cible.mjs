@@ -273,7 +273,9 @@ function piste(c) {
     case "diplome": return "Regardez la VAE (validation des acquis) ou une formation certifiante. Vous pouvez aussi postuler en expliquant l'équivalent de votre parcours.";
     case "experience": return "Mettez en avant les missions qui s'en approchent (stages, jobs, alternance), sans gonfler les durées.";
     case "langue": return "Passez un test reconnu (TOEIC, Linguaskill, DELE…) pour pouvoir écrire un niveau vérifiable.";
-    case "permis": return parleVehicule(c)
+    // Véhicule exigé : chercher un poste « sans voiture » contredirait l'offre ; pas de piste.
+    case "permis": if (parleVehicule(c) && c.niveau === "obligatoire") return null;
+      return parleVehicule(c)
       ? "Regardez si le poste est accessible sans voiture et dites-le dans votre candidature."
       : "Si vous le préparez, écrivez où vous en êtes (code obtenu, examen prévu). Sinon, regardez si le poste est accessible sans voiture et dites-le dans votre candidature.";
     case "habilitation": return PERMIS.test(fold(c.texte))

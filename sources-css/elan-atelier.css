@@ -123,3 +123,9 @@ html[data-nuit] .reperes .chevron::before { border-color: var(--os); }
 @media (prefers-reduced-motion: reduce) {
   .reperes .chevron { transition: none; }
 }
+
+/* Impression du plan : un titre de groupe ne reste pas seul en bas de page, un point ne se coupe pas. */
+@media print {
+  .plan-titre, .plan-groupe-titre, .plan-commun { break-after: avoid; page-break-after: avoid; }
+  .plan li { break-inside: avoid; page-break-inside: avoid; }
+}
