@@ -281,11 +281,12 @@ footer .src { max-width: 62rem; margin: 0; }
 @media (prefers-reduced-motion: no-preference) {
   /* tête de page : l'étiquette, le titre, le chapeau se posent l'un après l'autre ; le surlignage se tire ensuite */
   main > .wrap:first-child > .crumbs, main > .wrap:first-child > .eyebrow, main > .wrap:first-child > h1, main > .wrap:first-child > .badges,
-  main > .wrap:first-child > .lede, main > .wrap:first-child > .search, main > .wrap:first-child > .toc { animation: pose .9s var(--elan) both; }
+  main > .wrap:first-child > .lede, main > .wrap:first-child > .search, main > .wrap:first-child > .toc,
+  main > .wrap:first-child > .guides-corps > .toc { animation: pose .9s var(--elan) both; }
   main > .wrap:first-child > h1 { animation-delay: .07s; }
   main > .wrap:first-child > .badges { animation-delay: .12s; }
   main > .wrap:first-child > .lede { animation-delay: .16s; }
-  main > .wrap:first-child > .search, main > .wrap:first-child > .toc { animation-delay: .24s; }
+  main > .wrap:first-child > .search, main > .wrap:first-child > .toc, main > .wrap:first-child > .guides-corps > .toc { animation-delay: .24s; }
   @keyframes pose { from { opacity: 0; transform: translateY(18px); } }
   h1 .hl { background-repeat: no-repeat; animation: surligne 1s var(--elan-io) .55s both; }
   @keyframes surligne { from { background-size: 0% 100%; } to { background-size: 100% 100%; } }
@@ -299,6 +300,77 @@ footer .src { max-width: 62rem; margin: 0; }
 }
 @media print { *, *::before, *::after { animation: none !important; } }
 
+/* ---------- metiers.html : la recherche montre ses résultats juste sous le champ ---------- */
+#resultats { margin: .3rem 0 2.5rem; }
+.resultats-sep { grid-column: 1 / -1; margin: 1.1rem 0 -.1rem; padding-top: 1rem; border-top: 1px solid var(--line); max-width: 46rem; }
+#vide { display: block; justify-items: start; text-align: left; padding: 1rem 0 1.5rem; }
+#vide p { margin: 0 0 .9rem; max-width: 40rem; color: var(--muted); }
+#vide p a { color: var(--fg); text-decoration-color: var(--corail); }
+#vide .btn { min-height: 44px; }
+/* les copies ne suivent pas l'animation liée au défilement des cartes d'origine : sinon elles restent pâles */
+#resultats .mcard { animation: none; }
+@media (prefers-reduced-motion: no-preference) {
+  #resultats .mcard.arrive { animation: pose .35s var(--elan) both; animation-timeline: auto; animation-range: normal; animation-delay: calc(var(--i, 0) * 30ms); }
+}
+
+/* ---------- metiers.html sur téléphone : familles en bandeau collant sous l'en-tête, cartes compactes ----------
+   Le bandeau défile à l'horizontale ; le fondu à droite signale qu'il continue. La recherche reste au-dessus.
+   Les trois savoir-faire des cartes sont masqués ici seulement : la fiche les détaille. */
+@media (max-width: 640px) {
+  .search ~ .toc { position: sticky; top: 72px; z-index: 5; display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; overscroll-behavior-x: contain;
+    margin: .4rem -16px 1.2rem; padding: 8px 48px 8px 16px; scroll-padding-inline: 16px 48px;
+    background: rgba(255,250,244,.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line);
+    scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
+  .search ~ .toc::-webkit-scrollbar { display: none; }
+  .search ~ .toc a { flex: none; white-space: nowrap; min-height: 44px; display: inline-flex; align-items: center; }
+  .famille { scroll-margin-top: 2.6rem; margin: 1.8rem 0; }
+  .mcard .chips { display: none; }
+  .mcard > .muted.small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .mcard { gap: .4rem; padding: 1rem 1.1rem; }
+  .mcard .more { padding-top: .2rem; }
+}
+
+/* sommaires (familles de métiers, guides) : l'entrée en cours de lecture, posée par script ; fond doux et filet corail, sans déplacement */
+.toc a { transition: border-color .25s ease, background-color .25s ease, color .25s ease, transform .4s var(--elan); }
+.toc a[aria-current] { border-color: var(--corail); background: #fff0e9; color: var(--fg); }
+html[data-nuit] .toc a[aria-current] { border-color: #ff8f73; background: rgba(255,143,115,.16); }
+@media (prefers-reduced-motion: reduce) { .toc a { transition: none; } }
+
+/* ---------- fiches métier : les mots-clés se lisent comme une liste ----------
+   Des phrases de 40 à 100 caractères, pas des étiquettes : une ligne par terme, filet fin entre deux, l'étoile des termes
+   essentiels en repère de marge. Deux colonnes à partir de 700 px. Seule la carte #mots-cles est visée : la rangée de
+   liens .chips de la carte « Avec JusteCV » reste intacte. */
+#mots-cles.card .chips { --pas: .42rem; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin: 0 0 .6rem; }
+#mots-cles.card .chips span { position: relative; background: none; border: 0; border-top: 1px solid var(--line); border-radius: 0;
+  padding: var(--pas) 0 var(--pas) 1.45rem; font-size: .9rem; line-height: 1.4; color: var(--fg); }
+#mots-cles.card .chips span:first-child { border-top: 0; }
+/* tiret fin : un filet de bordure (calé au pixel) plutôt qu'un fond de 1,5 px, pour la même épaisseur à chaque ligne */
+#mots-cles.card .chips span::before { content: ""; position: absolute; left: .1rem; top: calc(var(--pas) + .7em); width: .55rem; height: 0; border-top: 1px solid currentColor; color: var(--muted); opacity: .7; }
+#mots-cles.card .chips span.core { background: none; border-color: var(--line); font-weight: 500; }
+#mots-cles.card .chips span.core::before { content: "★"; top: var(--pas); left: 0; width: auto; height: auto; background: none; border-top: 0; opacity: 1; color: var(--ambre); font-size: .9em; line-height: 1.58; }
+@media (min-width: 700px) {
+  /* en deux colonnes, des lignes un peu plus serrées : une fiche à listes courtes ne grandit pas */
+  #mots-cles.card .chips { --pas: .36rem; display: block; columns: 2; column-gap: 2rem; margin-bottom: .2rem; }
+  #mots-cles.card .chips span { display: block; break-inside: avoid; border-top: 0; border-bottom: 1px solid var(--line); }
+}
+html[data-nuit] #mots-cles.card .chips span { background: none; border-color: rgba(247,241,232,.12); }
+html[data-nuit] #mots-cles.card .chips span.core::before { color: #ffd479; }
+/* la colonne collante se lit pendant le défilement : elle ne s'estompe pas avec lui */
+.layout .side .card { animation: none; }
+
+/* ---------- guides.html : à partir de 1100 px, le sommaire se tient à droite des articles pendant la lecture ----------
+   En dessous, il reste où il est, en pastilles, sans rien de collant. Le guide en cours est marqué par un script en ligne. */
+@media (min-width: 1100px) {
+  .guides-corps { display: grid; grid-template-columns: minmax(0, 46rem) 15rem; justify-content: space-between; column-gap: 4rem; align-items: start; margin-top: 2.6rem; }
+  .guides-corps > * { grid-column: 1; min-width: 0; }
+  .guides-corps > .toc { grid-column: 2; grid-row: 1 / span 7; position: sticky; top: 6.5rem; display: grid; gap: .1rem; margin: .3rem 0 0; padding: 0; border-left: 1px solid var(--line); }
+  .guides-corps > .toc a { display: flex; align-items: center; min-height: 44px; margin-left: -1px; padding: .45rem .8rem .45rem .95rem; border: 0; border-left: 2px solid transparent; border-radius: 0 10px 10px 0; background: none; color: var(--muted); font-size: .9rem; line-height: 1.3; }
+  .guides-corps > .toc a:hover { transform: none; background: var(--surface-2); color: var(--fg); }
+  .guides-corps > .toc a[aria-current] { border-left-color: var(--corail); background: #fff0e9; color: var(--fg); }
+  html[data-nuit] .guides-corps > .toc a:hover { background: rgba(247,241,232,.06); }
+  html[data-nuit] .guides-corps > .toc a[aria-current] { border-left-color: #ff8f73; background: rgba(255,143,115,.14); }
+}
+
 /* ---------- mode nuit : statuts du suivi et sources lisibles ---------- */
 html[data-nuit] .statut-relance { background: rgba(255,226,122,.16); color: #ffe27a; }
 html[data-nuit] .statut-offre { background: rgba(127,214,176,.18); color: #7fd6b0; }
@@ -307,3 +379,172 @@ html[data-nuit] .statut-envoyee { color: #9db8ff; }
 html[data-nuit] .stat.is-warn { border-color: rgba(255,226,122,.45); }
 html[data-nuit] .stat.is-warn strong { color: #ffe27a; }
 html[data-nuit] footer .src { color: #a9aecd; }
+@media (max-width: 640px) { html[data-nuit] .search ~ .toc { background: rgba(20,25,54,.9); } }
+/* JusteCV — couche « pages-outils » : suivi des candidatures, page 404, page merci.
+   Vient après pages-elan.css (voir assembler.py) : on surcharge, on n'édite pas les couches d'avant.
+   Sans script et sous prefers-reduced-motion: reduce, tout est à sa place finale. */
+
+/* ---------- suivi : le statut se change dans la liste, en pastille ---------- */
+select.statut { width: auto; min-height: 36px; padding: .3rem 2rem .3rem .8rem; border: 1px solid transparent; border-radius: 999px;
+  font: 600 .85rem/1.2 var(--body); cursor: pointer; white-space: nowrap;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231c2040' stroke-opacity='.6' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .7rem center; background-size: .8rem;
+  transition: border-color .2s, box-shadow .3s var(--elan); }
+select.statut:hover { border-color: color-mix(in srgb, currentColor 40%, transparent); }
+select.statut:focus { border-color: transparent; outline: 2px solid var(--fg); outline-offset: 2px; }
+select.statut option { color: #1c2040; background: #fff; font-weight: 500; }
+html[data-nuit] select.statut { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f7f1e8' stroke-opacity='.75' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .7rem center; background-size: .8rem; }
+html[data-nuit] select.statut option { color: #f7f1e8; background: #1f2550; }
+
+/* cellules : lieu et durée sous leur ligne principale (ordinateur) */
+#table .lieu, #table .ecoule { display: block; }
+#table .relancer { color: var(--ambre); font-weight: 600; }
+#table tr { scroll-margin: 6.5rem 0 5rem; }
+/* la cellule d'actions reste une cellule : son filet s'aligne sur ceux de la ligne */
+@media (min-width: 701px) {
+  #table td.row-actions { display: table-cell; text-align: right; white-space: normal; }
+  #table td.row-actions button { margin: 0 0 .35rem .35rem; }
+}
+#table tr:focus { outline: none; }
+#table tr:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+/* annonce sous le bouton : ce qui vient d'être fait, et où le voir */
+.annonce { margin: 0; }
+.annonce:not(:empty) { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0 .7rem; margin-top: 1rem; padding: .3rem .5rem .3rem .9rem; min-height: 50px;
+  border-radius: 14px; background: var(--menthe); color: #0f5c36; font-weight: 500; line-height: 1.4; }
+.annonce:not(:empty)::before { content: ""; width: 1.15rem; height: 1.15rem; border-radius: 50%; background: #18804d url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12.5 4 4L18 8.5'/%3E%3C/svg%3E") center / 72% no-repeat; }
+.annonce span { padding-block: .45rem; }
+.annonce a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .45rem; color: inherit; font-weight: 650; white-space: nowrap;
+  text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; border-radius: 8px; }
+@media (max-width: 520px) {
+  .annonce:not(:empty) { grid-template-columns: auto minmax(0, 1fr); padding-bottom: .1rem; align-items: start; }
+  .annonce:not(:empty)::before { margin-top: .62rem; }
+  .annonce a { grid-column: 2; justify-self: start; margin: -.35rem 0 0 -.45rem; }
+}
+.annonce a:hover { text-decoration-color: var(--corail); }
+/* lien périmé (ligne disparue) : message neutre, sans coche de réussite */
+.annonce.perimee:not(:empty) { grid-template-columns: minmax(0, 1fr); padding-left: .9rem; background: var(--surface); color: var(--muted);
+  box-shadow: inset 0 0 0 1px var(--line); }
+.annonce.perimee:not(:empty)::before { content: none; }
+html[data-nuit] .annonce.perimee:not(:empty) { background: var(--surface); color: var(--muted); }
+.annonce:focus { outline: none; }
+.annonce:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+html[data-nuit] .annonce:not(:empty) { background: rgba(127,214,176,.14); color: #c6f0dc; }
+/* la même annonce, en tête de liste : quand un changement de statut fait sortir la ligne du filtre */
+.annonce-liste:not(:empty) { margin: 0 0 1rem; }
+.suivi-liste .liste-head { scroll-margin-top: 5.5rem; }
+.vide-filtre { margin: 0; padding: 1.4rem 1rem 1rem; text-align: center; }
+.vide-filtre[hidden] { display: none; }
+html[data-nuit] .annonce:not(:empty)::before { background-color: #2f9e6c; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .annonce.vient { animation: annonce-vient .55s var(--elan) both; }
+  @keyframes annonce-vient { from { opacity: 0; transform: translateY(8px); } }
+  /* la ligne qu'on vient d'ajouter ou de modifier : un coup de surligneur qui s'efface */
+  #table tr.neuve { animation: ligne-neuve 1.4s ease-out; }
+  @keyframes ligne-neuve { from { background-color: color-mix(in srgb, var(--mark) 75%, transparent); } }
+  html[data-nuit] #table tr.neuve { animation-name: ligne-neuve-nuit; }
+  @keyframes ligne-neuve-nuit { from { background-color: rgba(255,226,122,.26); } }
+}
+
+/* ---------- suivi sur téléphone : le tableau devient une liste de cartes ---------- */
+@media (max-width: 700px) {
+  .suivi-liste .table-scroll { overflow: visible; margin: 0; }
+  #table, #table tbody { display: block; }
+  #table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  #table tr { display: grid; grid-template-columns: fit-content(62%) minmax(0, 1fr) auto; column-gap: .45rem; row-gap: .3rem; align-items: start;
+    padding: 1rem 1rem .9rem; margin: 0 0 .7rem; border: 1px solid var(--line); border-radius: 16px; background: var(--bg); }
+  #table tr:last-child { margin-bottom: 0; }
+  #table td { display: block; padding: 0; border: 0; min-width: 0; }
+  #table tbody tr:hover td { background: none; }
+  #table td.poste { grid-column: 1 / 3; grid-row: 1; align-self: center; padding-right: .3rem; font-size: 1.05rem; line-height: 1.3; overflow-wrap: anywhere; }
+  #table td.poste .lieu { margin-top: .1rem; font-size: .88rem; }
+  #table td.statut-cell { grid-column: 3; grid-row: 1; justify-self: end; }
+  /* entreprise sur sa ligne, puis « date · il y a N j » : chaque morceau reste entier et passe à la ligne au besoin, jamais rogné */
+  #table td.entreprise, #table td.quand { grid-column: 1 / -1; font-size: .9rem; line-height: 1.4; }
+  #table td.entreprise { grid-row: 2; padding-top: .35rem; font-weight: 600; overflow-wrap: anywhere; }
+  #table td.entreprise:empty { display: none; }
+  /* le « · » est porté par la durée, dans l'espace qui la précède : si elle passe à la ligne, il tombe hors de la cellule
+     (overflow) et disparaît ; aucun point ne reste seul en fin ou en début de ligne */
+  #table td.quand { grid-row: 3; display: flex; flex-wrap: wrap; column-gap: 1.1rem; overflow: hidden; padding-top: .05rem; color: var(--muted); }
+  #table td.quand:empty { display: none; }
+  #table td.quand .date, #table td.quand .ecoule { display: inline; font-size: inherit; white-space: nowrap; }
+  #table td.quand .date ~ .ecoule { position: relative; }
+  #table td.quand .date ~ .ecoule::before { content: "·"; content: "·" / ""; position: absolute; top: 0; right: 100%; width: 1.1rem; text-align: center;
+    color: var(--faint); font-weight: 400; }
+  #table td.notes { grid-column: 1 / -1; padding-top: .35rem; color: var(--muted); line-height: 1.45; }
+  #table td.notes:empty { display: none; }
+  #table td.row-actions { grid-column: 1 / -1; display: flex; gap: .5rem; margin-top: .55rem; padding-top: .75rem; border-top: 1px solid var(--line); }
+  #table td.row-actions button { flex: 1 1 0; min-height: 44px; border-radius: 12px; font: 600 .92rem/1 var(--body); color: var(--fg); background: var(--surface); border-color: var(--line); }
+  #table td.row-actions button[data-act="del"]:hover { color: var(--red); border-color: currentColor; }
+  /* au doigt : 44 px de haut, et 16 px de texte pour qu'iOS ne zoome pas à l'ouverture */
+  select.statut { min-height: 44px; padding: .5rem 2.1rem .5rem .9rem; font-size: 1rem; background-position: right .8rem center; }
+  html[data-nuit] select.statut { background-position: right .8rem center; }
+}
+/* petits téléphones : le statut laisse toute la largeur au titre et passe juste dessous, aligné à gauche */
+@media (max-width: 380px) {
+  #table tr { grid-template-columns: minmax(0, 1fr); }
+  #table td.poste { grid-column: 1; padding-right: 0; }
+  #table td.statut-cell { grid-column: 1; grid-row: 2; justify-self: start; margin-top: .3rem; }
+  #table td.entreprise { grid-row: 3; }
+  #table td.quand { grid-row: 4; }
+}
+
+/* ---------- 404 et merci : une même entrée, qui pose la page élément par élément ---------- */
+.merci .search { justify-self: stretch; align-items: stretch; width: 100%; max-width: 34rem; margin: 1.1rem 0 .4rem; gap: .6rem; }
+.merci .search input { flex: 1 1 auto; min-width: 0; }
+/* la recherche est l'action de la page : bouton à l'encre, pour ne pas doubler le corail de « Essayer avec une offre » */
+.merci .search .btn { flex: none; justify-content: center; min-height: 50px; background: var(--fg); border-color: var(--fg); color: var(--bg); box-shadow: 0 12px 24px -16px rgba(28,32,64,.7); }
+.merci .search .btn:hover { background: color-mix(in srgb, var(--fg) 86%, var(--corail)); border-color: transparent; }
+@media (max-width: 520px) {
+  .merci .search { flex-wrap: wrap; }
+  .merci .search input, .merci .search .btn { flex: 1 1 100%; }
+}
+.merci .conseils { margin: .5rem 0 0; max-width: 36rem; padding-left: 1.6em; gap: .7rem; color: var(--fg); }
+.merci .conseils li { padding-left: .35em; line-height: 1.55; }
+.merci .conseils li::marker { font: 600 1.02rem var(--display); color: var(--sapin); }
+@media (prefers-reduced-motion: no-preference) {
+  .merci > * { animation: pose .8s var(--elan) both; }
+  .merci > :nth-child(2) { animation-delay: .08s; }
+  .merci > :nth-child(3) { animation-delay: .16s; }
+  .merci > :nth-child(4) { animation-delay: .24s; }
+  .merci > :nth-child(n+5) { animation-delay: .32s; }
+}
+/* JusteCV — couche « navigation » des pages de contenu (pages.css) : lune dans l'en-tête, menu mobile, pied de page.
+   Vient après pages-elan.css. Elle vaut aussi pour les 94 fiches, qu'on ne régénère pas. */
+
+/* ---------- lune dans l'en-tête (860 px et moins) ----------
+   nuit.js range le bouton dans header.nav .wrap, avant le menu ; nuit.css (chargé après) le met en 40 px, d'où la spécificité. */
+@media (max-width: 860px) {
+  .nav .wrap { gap: .55rem; }
+  header.nav .ciel-btn.dans-barre { width: 44px; height: 44px; flex: none; margin-left: auto; }
+  header.nav .ciel-btn.dans-barre + .nav-menu { margin-left: 0; }
+}
+
+/* ---------- pied de page : liens à 44 px (pages de contenu et fiches) ---------- */
+footer .wrap > a { display: inline-flex; align-items: center; min-height: 44px; padding-inline: .4rem; margin-inline: -.4rem; }
+footer .wrap:first-child { row-gap: 0; }
+
+/* ---------- menu mobile : panneau pleine largeur, ancré sur la capsule de l'en-tête ----------
+   Pas de position: fixed (la capsule porte backdrop-filter et deviendrait de toute façon le bloc conteneur) :
+   le panneau se cale sous la capsule, à sa largeur. La fermeture (toucher à côté, Échap, lien) est dans passage.js. */
+@media (max-width: 900px) {
+  .nav .wrap { position: relative; }
+  .nav-menu { position: static; }
+  .nav-menu nav { position: absolute; left: 0; right: 0; top: calc(100% + .6rem); min-width: 0; max-height: calc(100dvh - 100px); overflow-y: auto; overscroll-behavior: contain; padding: .5rem; }
+  .nav-menu nav a { display: flex; align-items: center; gap: .7rem; min-height: 50px; }
+  .nav-menu nav a + a { box-shadow: 0 -1px 0 var(--line); }
+  .nav-menu nav a:hover + a, .nav-menu nav a + a:hover { box-shadow: none; }
+  .nav-menu nav a[aria-current] { font-weight: 700; }
+  .nav-menu nav a[aria-current]::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--corail); }
+}
+@media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .nav-menu[open] nav { transform-origin: 50% 0; animation: menu-pose .35s var(--elan) both; }
+  .nav-menu[open] nav a { animation: menu-lien .4s var(--elan) both; }
+  .nav-menu[open] nav a:nth-child(2) { animation-delay: .03s; } .nav-menu[open] nav a:nth-child(3) { animation-delay: .06s; }
+  .nav-menu[open] nav a:nth-child(4) { animation-delay: .09s; } .nav-menu[open] nav a:nth-child(5) { animation-delay: .12s; }
+  .nav-menu[open] nav a:nth-child(6) { animation-delay: .15s; } .nav-menu[open] nav a:nth-child(n+7) { animation-delay: .18s; }
+  @keyframes menu-pose { from { opacity: 0; transform: translateY(-8px) scale(.98); } }
+  @keyframes menu-lien { from { opacity: 0; transform: translateY(-4px); } }
+}
