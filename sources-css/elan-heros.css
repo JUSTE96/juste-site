@@ -140,3 +140,8 @@ html[data-nuit] .fiche-titre { color: var(--os); }
 @media (prefers-reduced-motion: reduce) {
   .lecture-tete i::after, .etat-prix.ouvert::after { content: none; animation: none !important; }
 }
+
+/* ---------- nuit : les images ne doivent plus éblouir à côté du texte ----------
+   Vidéos du héros et de la fin baissées ; un voile sur les aperçus, sous la carte de lecture. */
+html[data-nuit] #film, html[data-nuit] .fin-clip video { filter: brightness(.8) saturate(.92); }
+html[data-nuit] .heros-media, html[data-nuit] .fin-clip { box-shadow: inset 0 0 0 100vmax rgba(20,25,54,.26), 0 30px 60px -30px #00000059; }
