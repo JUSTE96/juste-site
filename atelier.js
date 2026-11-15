@@ -16,37 +16,151 @@ const aller = (el) => { el.hidden = false; el.focus({ preventScroll: true }); el
 let profil = null, metier = null, dernier = null;
 
 $("exemple").insertAdjacentHTML("beforeend", DOMAINES.map((d) => `<option value="${d.id}">${d.nom} : ${d.intitule}</option>`).join(""));
-$("exemple").addEventListener("change", (e) => { if (e.target.value) { $("offre").value = domaine(e.target.value).offre; garder(); $("aide-offre").textContent = "Offre d'exemple chargée. Vous pouvez la modifier."; } });
+$("exemple").addEventListener("change", (e) => { if (e.target.value) { $("offre").value = domaine(e.target.value).offre; effacerErreur($("offre")); garder(); majPerime(); $("aide-offre").textContent = "Offre d'exemple chargée. Vous pouvez la modifier."; } });
 
-// Un court temps de lecture avant le résultat : on voit l'outil parcourir le texte, puis la suite arrive.
-// Le calcul est immédiat ; ce temps sert seulement à relier le clic à ce qui apparaît plus bas.
-const lire = (zone, bouton, libelle, suite) => {
+// Un court temps de lecture avant le résultat : la bande parcourt le texte collé et surligne, mot pour mot,
+// les phrases que l'outil retient (exigences de l'offre, lignes du CV qui les prouvent). Le calcul est déjà fait ;
+// ce temps (1,2 s au plus) montre d'où vient le résultat, puis la suite arrive.
+// Pendant la séquence, le textarea est masqué et un calque de lecture opaque, aria-hidden, reprend sa boîte,
+// sa police et son défilement : une seule couche visible, donc aucun décalage possible entre texte et surlignage.
+const BALAYAGE = 760, MAINTIEN = 440;
+let calque = null;
+function retirerCalque() {
+  if (!calque) return;
+  calque.el.remove(); calque.champ.style.visibility = ""; calque.champ.scrollTop = calque.el.scrollTop; calque = null;
+}
+// Sur téléphone, la barre d'adresse qui apparaît au défilement déclenche « resize » sans changer la largeur :
+// le calque ne part que si la largeur change (les retours à la ligne ne seraient plus les mêmes).
+addEventListener("resize", () => { if (calque && innerWidth !== calque.largeur) retirerCalque(); });
+["offre", "cv"].forEach((id) => $(id).addEventListener("input", retirerCalque));
+
+function poserCalque(zone, champ, marques, teinte) {
+  const v = champ.value, plages = [];
+  // Marques posées par indexOf strict : une phrase introuvable telle quelle n'est jamais approchée.
+  // Seule une preuve tronquée par le moteur (« … » final, coupée à 137 caractères) et coupée au milieu d'un mot
+  // est prolongée jusqu'à la fin de ce mot dans le champ : le début ne bouge pas, le texte marqué reste une sous-chaîne
+  // exacte du CV. Une marque complète n'est jamais prolongée.
+  for (const brut of new Set(marques)) {
+    const coupe = /…$/.test(brut || ""), m = coupe ? brut.slice(0, -1) : brut;
+    const i = m ? v.indexOf(m) : -1; if (i < 0) continue;
+    let b = i + m.length;
+    if (coupe && /[\p{L}\p{N}]/u.test(v[b - 1] || "")) while (b < v.length && /[\p{L}\p{N}]/u.test(v[b])) b++;
+    plages.push([i, b]);
+  }
+  plages.sort((a, b) => a[0] - b[0]);
+  let html = "", k = 0, n = 0;
+  for (const [a, b] of plages) { if (a < k) continue; html += esc(v.slice(k, a)) + `<mark>${esc(v.slice(a, b))}</mark>`; k = b; n++; }
+  if (!n) return 0;
+  html += esc(v.slice(k)) + "\n";
+  const cs = getComputedStyle(champ), el = document.createElement("div");
+  el.className = "lecteur-lecture"; el.dataset.teinte = teinte; el.setAttribute("aria-hidden", "true");
+  for (const p of ["fontFamily", "fontSize", "fontWeight", "fontStyle", "fontStretch", "lineHeight", "letterSpacing", "wordSpacing", "textIndent", "tabSize",
+    "paddingTop", "paddingBottom", "paddingLeft", "borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth", "borderStyle", "borderColor",
+    "borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius", "backgroundColor", "color"]) el.style[p] = cs[p];
+  // La barre de défilement du textarea mange de la largeur : on la rend en marge pour garder les mêmes retours à la ligne.
+  const barre = champ.offsetWidth - champ.clientWidth - parseFloat(cs.borderLeftWidth) - parseFloat(cs.borderRightWidth);
+  el.style.paddingRight = `${parseFloat(cs.paddingRight) + Math.max(0, barre)}px`;
+  Object.assign(el.style, { left: `${champ.offsetLeft}px`, top: `${champ.offsetTop}px`, width: `${champ.offsetWidth}px`, height: `${champ.offsetHeight}px` });
+  el.innerHTML = html;
+  zone.appendChild(el);
+  el.scrollTop = champ.scrollTop;
+  // Si la première marque est hors de vue, on l'amène au tiers haut de la zone ; si les suivantes débordent
+  // en bas, on remonte le texte autant que possible sans faire sortir la première.
+  const ms = el.querySelectorAll("mark"), m0 = ms[0], mn = ms[ms.length - 1], lh = parseFloat(cs.lineHeight) || 24;
+  if (m0.offsetTop < el.scrollTop || m0.offsetTop + lh > el.scrollTop + el.clientHeight) el.scrollTop = Math.max(0, m0.offsetTop - el.clientHeight / 3);
+  const basN = mn.offsetTop + mn.offsetHeight + lh / 2 - el.clientHeight;
+  if (basN > el.scrollTop) el.scrollTop = Math.min(basN, Math.max(el.scrollTop, m0.offsetTop - lh));
+  champ.style.visibility = "hidden";
+  calque = { el, champ, largeur: innerWidth };
+  return n;
+}
+
+// Chaque marque se surligne quand le bord corail de la bande passe sur elle : on lit la position réelle de la bande.
+function suivreBande(zone, el) {
+  const marques = [...el.querySelectorAll("mark")], t0 = performance.now();
+  const pas = () => {
+    if (!el.isConnected) return;
+    const ap = getComputedStyle(zone, "::after"), ty = new DOMMatrixReadOnly(ap.transform === "none" ? undefined : ap.transform).m42;
+    const bord = zone.getBoundingClientRect().top + ty + parseFloat(ap.height) * .95;
+    marques.forEach((m) => { if (!m.classList.contains("vu") && m.getBoundingClientRect().top + 4 <= bord) m.classList.add("vu"); });
+    if (performance.now() - t0 < BALAYAGE) requestAnimationFrame(pas); else marques.forEach((m) => m.classList.add("vu"));
+  };
+  requestAnimationFrame(pas);
+}
+
+function lire({ zone, champ, bouton, direct, libelle, marques, fin, teinte }, suite) {
   if (bouton.getAttribute("aria-busy") === "true") return;
-  if (calme) { suite(); return; }
+  if (calme || direct) { retirerCalque(); suite(); return; }
   const texte = bouton.textContent;
   bouton.setAttribute("aria-busy", "true"); bouton.textContent = libelle; zone.classList.add("lit");
-  setTimeout(() => { zone.classList.remove("lit"); bouton.removeAttribute("aria-busy"); bouton.textContent = texte; suite(); }, 760);
-};
+  retirerCalque();
+  const n = poserCalque(zone, champ, marques, teinte);
+  if (n) suivreBande(zone, calque.el);
+  setTimeout(() => {
+    zone.classList.remove("lit");
+    if (n) bouton.textContent = fin(n);
+    setTimeout(() => { retirerCalque(); bouton.removeAttribute("aria-busy"); bouton.textContent = texte; suite(); }, n ? MAINTIEN : 0);
+  }, BALAYAGE);
+}
 
-$("assembler").addEventListener("click", (ev) => {
-  const texte = $("offre").value.trim();
-  if (texte.replace(/\s/g, "").length < 80) { $("aide-offre").textContent = "Le texte est trop court. Collez l'annonce entière."; return; }
-  $("aide-offre").textContent = "";
-  lire($("lecteur-offre"), ev.currentTarget, "Lecture de l'offre…", () => {
-    profil = profilCible(texte);
+/* ---------- erreurs : visibles, annoncées une fois, effacées dès qu'on corrige ---------- */
+// Une seule annonce : le curseur revient dans le champ à corriger, qui lit alors le message relié par
+// aria-describedby. Si le curseur y est déjà (aucune prise de focus à annoncer), le message passe par role="alert".
+function signaler(champ, message) {
+  const aide = $(champ.getAttribute("aria-describedby")), cadre = champ.closest(".lecteur");
+  const dejaLa = document.activeElement === champ;
+  if (dejaLa) aide.setAttribute("role", "alert"); else aide.removeAttribute("role");
+  aide.textContent = message; aide.classList.add("erreur");
+  champ.setAttribute("aria-invalid", "true"); cadre?.classList.add("invalide");
+  if (!dejaLa) champ.focus({ preventScroll: true });
+  montrerErreur(cadre || champ, aide.closest(".barre"));
+}
+// Au bureau, la barre (message + bouton) au centre. Au pouce, le fil d'étapes reste collé en haut (bas à 64 px) :
+// le haut du champ vient juste sous lui (76 px, comme scroll-margin-top), sans que la barre sorte en bas de l'écran ;
+// si les deux ne tiennent pas ensemble, la barre passe d'abord, à 16 px du bas.
+function montrerErreur(cadre, barre) {
+  const behavior = calme ? "auto" : "smooth";
+  if (!matchMedia("(max-width: 860px)").matches) { barre.scrollIntoView({ behavior, block: "center" }); return; }
+  const haut = cadre.getBoundingClientRect().top - 76, bas = barre.getBoundingClientRect().bottom - (innerHeight - 16);
+  scrollBy({ top: bas > haut ? bas : haut, behavior });
+}
+function effacerErreur(champ) {
+  if (champ.getAttribute("aria-invalid") !== "true") return;
+  const aide = $(champ.getAttribute("aria-describedby"));
+  aide.textContent = ""; aide.classList.remove("erreur"); aide.removeAttribute("role");
+  champ.removeAttribute("aria-invalid"); champ.closest(".lecteur")?.classList.remove("invalide");
+}
+["offre", "cv"].forEach((id) => $(id).addEventListener("input", () => effacerErreur($(id))));
+const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? "s" : ""}`;
+const nbMots = (t) => (t.trim() ? t.trim().split(/\s+/).length : 0);
+
+// direct : relancé depuis un bandeau « a changé », loin du texte : pas de lecture animée hors de l'écran.
+function assembler(bouton, direct = false) {
+  const texte = $("offre").value.trim(), n = texte.replace(/\s/g, "").length;
+  if (!n) { signaler($("offre"), "Rien à lire pour l'instant. Collez l'annonce, ou choisissez une offre d'exemple."); return; }
+  if (n < 80) { signaler($("offre"), `Il manque du texte (${pluriel(n, "caractère")}, il en faut au moins 80). Collez l'annonce entière, rubrique «\u00a0Profil\u00a0» comprise.`); return; }
+  effacerErreur($("offre")); $("aide-offre").textContent = "";
+  const p = profilCible(texte);
+  lire({ zone: $("lecteur-offre"), champ: $("offre"), bouton, direct, libelle: "Lecture de l'offre…", teinte: "offre",
+    marques: p.exigences.map((e) => e.texte), fin: (n) => `${n} exigence${n > 1 ? "s" : ""} retenue${n > 1 ? "s" : ""}` }, () => {
+    profil = p; offreAssemblee = texte;
     afficherProfil(profil, offerSignals(texte));
     metier = repereMetier(profil.intitule); afficherReperes("");
-    $("etape-cv").hidden = false; $("ecart").hidden = true; dernier = null;
-    aller($("profil")); majFil();
+    // Repères ouverts d'emblée sur grand écran ; repliés au pouce, où ils repoussaient l'étape 3 de quatre écrans.
+    $("p-reperes").open = matchMedia("(min-width: 861px)").matches;
+    $("etape-cv").hidden = false; $("ecart").hidden = true; dernier = null; cvMesure = null;
+    majPerime(); aller($("profil")); majFil();
   });
-});
+}
+$("assembler").addEventListener("click", (ev) => assembler(ev.currentTarget));
 
 function afficherProfil(p, signaux) {
   $("p-intitule").textContent = p.intitule;
   const specs = [
     ["Contrat", p.contrat || "Non précisé"],
     ["Expérience", p.experienceAns === null ? "Non précisée" : p.experienceAns === 0 ? "Première expérience ou débutant" : `${p.experienceAns} an${p.experienceAns > 1 ? "s" : ""}`],
-    ["Diplôme", p.diplome ? p.diplome.nom : "Non précisé"],
+    // Diplôme hors de la table (DEAS, DEAES…) : il est demandé, la liste dit lequel.
+    ["Diplôme", p.diplome ? p.diplome.nom : p.exigences.some((e) => e.categorie === "diplome") ? "Demandé : voir la liste" : "Non précisé"],
     ["Exigences", String(p.exigences.length)],
   ];
   $("p-specs").innerHTML = specs.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("");
@@ -61,11 +175,13 @@ function afficherProfil(p, signaux) {
 }
 
 /* ---------- import du CV ---------- */
+// #aide-fichier est une zone role="status" : chaque message y est annoncé, sans déplacer le curseur ;
+// les échecs prennent en plus la couleur des erreurs.
+function direFichier(m, erreur = false) { $("aide-fichier").textContent = m; $("aide-fichier").classList.toggle("erreur", erreur); }
 async function lireFichier(f) {
-  const aide = $("aide-fichier");
   if (!f) return;
-  if (f.size > 15 * 1024 * 1024) { aide.textContent = "Ce fichier dépasse 15 Mo."; return; }
-  aide.textContent = "Lecture du fichier…";
+  if (f.size > 15 * 1024 * 1024) { direFichier("Ce fichier dépasse 15 Mo.", true); return; }
+  direFichier("Lecture du fichier…");
   try {
     let texte = "";
     if (/\.pdf$/i.test(f.name) || f.type === "application/pdf") {
@@ -79,11 +195,11 @@ async function lireFichier(f) {
       if (!window.mammoth) await new Promise((ok, ko) => { const s = document.createElement("script"); s.src = "vendor/mammoth.browser.min.js"; s.onload = ok; s.onerror = ko; document.head.appendChild(s); });
       texte = (await window.mammoth.extractRawText({ arrayBuffer: await f.arrayBuffer() })).value;
     } else if (/\.txt$/i.test(f.name) || f.type.startsWith("text/")) texte = await f.text();
-    else { aide.textContent = "Format non pris en charge. Utilisez un PDF, un fichier Word (.docx) ou du texte."; return; }
-    if (texte.trim().split(/\s+/).length < 20) { aide.textContent = "Presque aucun texte lu : ce CV est sans doute une image. Les logiciels de tri des recruteurs le liront mal aussi. Collez son texte à la main."; return; }
-    $("cv").value = texte.trim(); garder();
-    aide.textContent = `${f.name} lu (${texte.trim().split(/\s+/).length} mots).`;
-  } catch { aide.textContent = "Ce fichier n'a pas pu être lu. Collez le texte de votre CV à la main."; }
+    else { direFichier("Format non pris en charge. Utilisez un PDF, un fichier Word (.docx) ou du texte.", true); return; }
+    if (nbMots(texte) < 20) { direFichier("Presque aucun texte lu : ce CV est sans doute une image. Les logiciels de tri des recruteurs le liront mal aussi. Collez son texte à la main.", true); return; }
+    $("cv").value = texte.trim(); cvFictif = false; effacerErreur($("cv")); garder(); majPerime();
+    direFichier(`${f.name} lu (${nbMots(texte)} mots).`);
+  } catch { direFichier("Ce fichier n'a pas pu être lu. Collez le texte de votre CV à la main.", true); }
 }
 $("fichier").addEventListener("change", (ev) => { lireFichier(ev.target.files?.[0]); ev.target.value = ""; });
 const zone = $("depot-zone");
@@ -91,30 +207,112 @@ const zone = $("depot-zone");
 ["dragleave", "drop"].forEach((t) => zone.addEventListener(t, (e) => { e.preventDefault(); zone.classList.remove("survol"); }));
 zone.addEventListener("drop", (e) => lireFichier(e.dataTransfer?.files?.[0]));
 
-$("mesurer").addEventListener("click", (ev) => {
+function mesurer(bouton, direct = false) {
   if (!profil) return;
-  const cv = $("cv").value.trim();
-  if (cv.split(/\s+/).length < 20) { $("aide-cv").textContent = "Le CV est trop court pour être comparé."; return; }
-  $("aide-cv").textContent = "";
-  lire($("depot-zone"), ev.currentTarget, "Comparaison…", () => {
-    afficherEcart(ecart(profil, cv));
+  const cv = $("cv").value.trim(), n = nbMots(cv);
+  if (!n) { signaler($("cv"), "Ajoutez votre CV : importez un fichier ou collez son texte."); return; }
+  if (n < 20) { signaler($("cv"), `${n} mot${n > 1 ? "s" : ""} lu${n > 1 ? "s" : ""}, il en faut au moins 20 : ajoutez vos expériences et votre formation.`); return; }
+  effacerErreur($("cv")); $("aide-cv").textContent = "";
+  const r = ecart(profil, cv);
+  lire({ zone: $("depot-zone"), champ: $("cv"), bouton, direct, libelle: "Comparaison…", teinte: "cv",
+    marques: r.correspondances.map((c) => c.preuve || ""), fin: (n) => `${n} ligne${n > 1 ? "s" : ""} retrouvée${n > 1 ? "s" : ""}` }, () => {
+    // Mémoire du module seulement : la mesure précédente sur la même offre, pour dire ce qui a bougé.
+    const avant = dernier;
+    cvMesure = cv; fictifMesure = cvFictif; afficherEcart(r, avant);
     afficherReperes(cv);
-    aller($("ecart")); majFil();
+    majPerime(); aller($("ecart")); majFil();
   });
-});
+}
+$("mesurer").addEventListener("click", (ev) => mesurer(ev.currentTarget));
 
-function afficherEcart(r) {
+/* ---------- un résultat qui ne correspond plus au texte saisi est signalé ---------- */
+let offreAssemblee = null, cvMesure = null;
+// CV d'exemple : on retient son origine plutôt que de comparer le texte au caractère près, pour qu'une ligne ajoutée
+// ou corrigée ne le rende pas « réel ». cvFictif : le CV en place vient de l'exemple ; fictifMesure : celui de la dernière
+// mesure en venait. Posé par « Utiliser le CV d'exemple », par un collage du CV d'exemple tel quel, ou au retour d'un
+// brouillon qui le contient encore ; levé quand le champ est vidé, quand un fichier est importé, ou quand le texte
+// ne contient plus l'essentiel de l'exemple.
+let cvFictif = false, fictifMesure = false;
+// L'essentiel de l'exemple : la moitié au moins de ses lignes de 20 caractères ou plus (expériences, diplôme…),
+// retrouvées telles quelles. Les intitulés courts (« Formation », le nom) ne comptent pas : un vrai CV les a aussi.
+const lignesExemple = (t) => t.split("\n").map((l) => l.trim()).filter((l) => l.length >= 20);
+function resteExemple(texte) {
+  const t = String(texte ?? "");
+  return !!t.trim() && DOMAINES.some((d) => { const ls = lignesExemple(d.cv); return ls.filter((l) => t.includes(l)).length * 2 >= ls.length; });
+}
+function bandeau(el, etat) {
+  const cle = etat ? etat.join("|") : "";
+  if (el.dataset.etat === cle) return; // pas de nouvelle annonce à chaque frappe
+  el.dataset.etat = cle;
+  el.innerHTML = etat ? `<p><span>${etat[0]}</span> <button type="button" class="bouton-lien lien" data-refaire="${etat[2]}">${etat[1]}</button></p>` : "";
+}
+function majPerime() {
+  const offreChangee = !!profil && $("offre").value.trim() !== offreAssemblee;
+  const cvChange = !!dernier && $("cv").value.trim() !== cvMesure;
+  const OFFRE = ["L'offre a changé.", "Assembler à nouveau", "assembler"], CV = ["Votre CV a changé depuis cette mesure.", "Mesurer à nouveau", "mesurer"];
+  bandeau($("p-perime"), offreChangee ? OFFRE : null);
+  bandeau($("e-perime"), !dernier ? null : offreChangee ? OFFRE : cvChange ? CV : null);
+  $("profil").classList.toggle("perime", offreChangee);
+  $("ecart").classList.toggle("perime", !!dernier && (offreChangee || cvChange));
+  majExemple();
+}
+["offre", "cv"].forEach((id) => $(id).addEventListener("input", majPerime));
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-refaire]"); if (!b) return;
+  if (b.dataset.refaire === "assembler") assembler($("assembler"), true); else mesurer($("mesurer"), true);
+});
+$("corriger").addEventListener("click", versCv);
+
+// Phrase de tête : uniquement des faits comptés, jamais un pronostic. Un éliminatoire absent passe avant tout,
+// même quand le score est déjà sous 49 % (la mention « plafonné » n'apparaît alors pas).
+const POIDS = { obligatoire: 3, souhaitee: 2, atout: 1 };
+const cite = (t) => `« ${t} »`;
+function phraseDeTete(r) {
+  const cs = r.correspondances, elim = cs.filter((c) => c.eliminatoire && c.statut === "absente");
+  const oblig = cs.filter((c) => c.niveau === "obligatoire" && c.statut === "absente").length;
+  if (elim.length === 1) return `Un critère éliminatoire manque : ${cite(elim[0].texte)}. C'est le premier point du plan.`;
+  if (elim.length > 1) return `${elim.length} critères éliminatoires manquent : ${elim.map((c) => cite(c.texte)).join(", ")}. Ce sont les premiers points du plan.`;
+  if (oblig) return `Il manque ${oblig} exigence${oblig > 1 ? "s" : ""} obligatoire${oblig > 1 ? "s" : ""}.`;
+  if (!r.plan.length) return "Toutes les exigences sont visibles dans votre CV.";
+  const n = r.plan.length;
+  // Un éliminatoire seulement « en partie » : rien de rassurant, le seul décompte (il est le premier point du plan).
+  if (cs.some((c) => c.eliminatoire && c.statut === "partielle")) return `${n} point${n > 1 ? "s" : ""} à travailler.`;
+  const autres = r.plan.every((p) => p.niveau !== "obligatoire");
+  return `Aucune exigence obligatoire ne manque. ${n} point${n > 1 ? "s" : ""}${autres ? ` souhaité${n > 1 ? "s" : ""} ou atout${n > 1 ? "s" : ""}` : ""} à travailler.`;
+}
+
+function afficherEcart(r, avant = null) {
   const s = r.score;
   dernier = r; $("e-score").textContent = "0"; compter($("e-score"), s ? s.score : NaN, 1200);
+  // Mesure précédente sur la même offre : une ligne, et « avant : … » là où le statut a changé. Rien n'est stocké.
+  const sAvant = avant?.score;
+  $("e-avant").hidden = !(s && sAvant);
+  $("e-avant").textContent = s && sAvant ? `Mesure précédente : ${sAvant.score} %` : "";
+  const statutAvant = new Map((avant?.correspondances || []).map((c) => [c.id, c.statut]));
+  const etat = (c) => {
+    const st = `<span class="statut ${c.statut}">${STATUT[c.statut]}</span>`, a = statutAvant.get(c.id);
+    return a && a !== c.statut ? `<span class="etat">${st}<small class="avant">avant : ${STATUT[a]}</small></span>` : st;
+  };
   $("e-jauge").style.width = s ? `${s.score}%` : "0";
-  $("e-detail").innerHTML = s
+  $("e-detail").innerHTML = `<strong class="detail-tete">${esc(phraseDeTete(r))}</strong> ` + (s
     ? `${s.presentes} présente${s.presentes > 1 ? "s" : ""}, ${s.partielles} en partie, ${s.absentes} absente${s.absentes > 1 ? "s" : ""} sur ${s.total} exigences.${s.eliminatoires ? ` <b>Score plafonné à 49 %</b> : un critère éliminatoire manque.` : ""}`
-    : "L'offre contient moins de trois exigences claires : le pourcentage ne serait pas fiable, voici seulement le détail.";
-  $("e-jalons").innerHTML = r.correspondances.map((c, i) => `<i data-s="${c.statut}" style="--i:${i}"></i>`).join("");
-  $("e-lignes").innerHTML = r.correspondances.map((c, i) => `<li style="--i:${i}"><span>${esc(c.texte)}</span><span class="statut ${c.statut}">${STATUT[c.statut]}</span>${c.preuve ? `<small>Dans votre CV : « ${esc(c.preuve)} »</small>` : ""}${c.note ? `<small>${esc(c.note)}</small>` : ""}</li>`).join("");
+    : "L'offre contient moins de trois exigences claires : le pourcentage ne serait pas fiable, voici seulement le détail.");
+  // Chaque segment pèse ce que pèse l'exigence dans le calcul : 3, 2 ou 1.
+  $("e-jalons").innerHTML = r.correspondances.map((c, i) => `<i data-s="${c.statut}" style="--i:${i};flex:${POIDS[c.niveau] || 1}"></i>`).join("");
+  $("e-lignes").innerHTML = r.correspondances.map((c, i) => `<li style="--i:${i}"><span>${esc(c.texte)}</span>${etat(c)}${c.preuve ? `<small>Dans votre CV : « ${esc(c.preuve)} »</small>` : ""}${c.note ? `<small>${esc(c.note)}</small>` : ""}</li>`).join("");
+  const commune = phraseCommune(r.plan);
   $("e-plan").innerHTML = r.plan.length
-    ? r.plan.map((p, i) => `<li style="--i:${i}"><h4>${esc(p.texte)} <span class="poids" data-niveau="${p.niveau}">${NIVEAU[p.niveau]}${p.eliminatoire ? " · éliminatoire" : ""}</span></h4><p><b>Déjà fait ?</b> ${esc(p.siDejaFait)}</p><p><b>Sinon :</b> ${esc(p.sinon)}</p></li>`).join("")
-    : `<li><h4>Votre CV couvre tout le profil cible.</h4><p>Vérifiez que chaque ligne est appuyée par un exemple concret, puis postulez.</p></li>`;
+    ? `<p class="plan-commun"><b>Déjà fait ?</b> ${esc(commune)}</p><ol class="plan">${r.plan.map((p, i) =>
+        `<li style="--i:${i}"><h4>${esc(p.texte)} <span class="poids" data-niveau="${p.niveau}">${NIVEAU[p.niveau]}${p.eliminatoire ? " · éliminatoire" : ""}</span></h4>${p.siDejaFait !== commune ? `<p><b>Déjà fait ?</b> ${esc(p.siDejaFait)}</p>` : ""}${p.sinon ? `<p><b>Sinon :</b> ${esc(p.sinon)}</p>` : ""}</li>`).join("")}</ol>`
+    : `<ol class="plan"><li><h4>Votre CV couvre tout le profil cible.</h4><p>Vérifiez que chaque ligne est appuyée par un exemple concret, puis postulez.</p></li></ol>`;
+}
+
+/* ---------- le plan : une seule liste, dans l'ordre du moteur (éliminatoire, obligatoire, souhaitée, atout) ---------- */
+// La phrase « déjà fait ? » la plus fréquente est dite une fois en tête ; un point ne garde la sienne que si elle diffère.
+function phraseCommune(plan) {
+  if (!plan.length) return "";
+  const n = new Map(); plan.forEach((p) => n.set(p.siDejaFait, (n.get(p.siDejaFait) || 0) + 1));
+  return [...n.entries()].sort((a, b) => b[1] - a[1])[0][0];
 }
 
 /* ---------- passerelle vers l'analyse complète (serveur, jury, CV adapté) ---------- */
@@ -134,7 +332,23 @@ function afficherReperes(cv) {
   const r = reperesDansCv(metier, cv);
   const bloc = (titre, liste) => liste.length ? `<h4>${titre}</h4><ul class="reperes-liste">${liste.map((x) => `<li class="${cv ? (x.vu ? "vu" : "absent") : ""}">${esc(x.texte)}${cv ? `<span>${x.vu ? "Déjà visible dans votre CV" : "Pas visible dans votre CV"}</span>` : ""}</li>`).join("")}</ul>` : "";
   $("r-listes").innerHTML = bloc("Savoir-faire au cœur du métier", r.savoirFaire) + bloc("Savoirs et outils", r.savoirs) + bloc("Savoir-être", r.savoirEtre);
+  // Résumé compté sur les termes réellement affichés ; l'état ouvert ou fermé n'est jamais changé ici.
+  const n = $("r-listes").querySelectorAll("li").length, vus = $("r-listes").querySelectorAll("li.vu").length;
+  $("r-compte").textContent = cv
+    ? `${n} terme${n > 1 ? "s" : ""} du référentiel, dont ${vus} déjà visible${vus > 1 ? "s" : ""} dans votre CV`
+    : `Voir les ${n} terme${n > 1 ? "s" : ""} du référentiel`;
 }
+// À l'impression, les repères sont toujours dépliés ; on rend ensuite l'état choisi.
+let repliAvantImpression = false;
+addEventListener("beforeprint", () => { const d = $("p-reperes"); repliAvantImpression = !d.open; d.open = true; });
+addEventListener("afterprint", () => { if (repliAvantImpression) $("p-reperes").open = false; repliAvantImpression = false; });
+
+/* ---------- passer à l'étape suivante sans chercher ---------- */
+function versCv() {
+  $("etape-cv").scrollIntoView({ behavior: calme ? "auto" : "smooth", block: "start" });
+  $("cv").focus({ preventScroll: true });
+}
+$("vers-cv").addEventListener("click", versCv);
 
 /* ---------- fil d'étapes ---------- */
 const boutons = [...document.querySelectorAll("#fil button")];
@@ -162,15 +376,63 @@ function garder() {
 ["offre", "cv"].forEach((id) => $(id).addEventListener("input", garder));
 try {
   const b = JSON.parse(sessionStorage.getItem("juste.atelier") || "null");
-  if (b) { if (b.offre) $("offre").value = b.offre; if (b.cv) $("cv").value = b.cv; if (b.offre) $("aide-offre").textContent = "Votre brouillon a été retrouvé."; }
+  if (b) { if (b.offre) $("offre").value = b.offre; if (b.cv) { $("cv").value = b.cv; cvFictif = resteExemple(b.cv); } if (b.offre) $("aide-offre").textContent = "Votre brouillon a été retrouvé."; }
+  // CV collé sur l'accueil : on le dit dès l'arrivée, avec de quoi le retirer.
+  if (b?.source === "accueil" && b.cv) {
+    $("note-accueil-texte").textContent = "Votre CV collé sur l'accueil est déjà en place à l'étape 3." + (b.offre ? "" : " Il ne manque que l'offre.");
+    $("note-accueil").hidden = false;
+  }
 } catch {}
+$("retirer-cv").addEventListener("click", () => {
+  // Seul le CV part : l'offre gardée reste dans le brouillon.
+  $("cv").value = ""; cvFictif = false; clearTimeout(minuteur);
+  try { sessionStorage.setItem("juste.atelier", JSON.stringify({ offre: $("offre").value.slice(0, 30000), cv: "" })); } catch {}
+  // Le bouton disparaît : le curseur va à l'offre, ce qui manque encore ; la note (role=status) annonce le retrait.
+  $("note-accueil-texte").textContent = "CV retiré."; $("retirer-cv").hidden = true;
+  majPerime(); majExemple(); $("offre").focus();
+});
+
+/* ---------- CV d'exemple : seulement avec une offre d'exemple non modifiée, toujours dit fictif ---------- */
+const offreExemple = () => DOMAINES.find((d) => d.offre === $("offre").value);
+function majExemple() {
+  const d = offreExemple(), cv = $("cv").value.trim();
+  // Le CV reste fictif tant qu'on y retrouve l'essentiel du CV d'exemple ; vidé ou remplacé, il ne l'est plus.
+  if (cvFictif && !resteExemple(cv)) cvFictif = false;
+  else if (!cvFictif && DOMAINES.some((x) => x.cv === cv)) cvFictif = true;
+  // Jamais par-dessus un CV personnel : le bouton ne s'offre que sur un champ vide ou un autre CV d'exemple.
+  $("cv-exemple").hidden = !d || (cv !== "" && !cvFictif) || cv === d.cv;
+  $("cv-fictif").hidden = !cvFictif;
+  // Le quota de l'analyse complète ne se dépense pas sur une personne fictive.
+  $("complet").disabled = cvFictif; $("complet-exemple").hidden = !cvFictif;
+  $("e-fictif").hidden = !(dernier && fictifMesure);
+}
+["offre", "cv"].forEach((id) => $(id).addEventListener("input", majExemple));
+$("cv-exemple").addEventListener("click", () => {
+  const d = offreExemple(); if (!d) return;
+  $("cv").value = d.cv; cvFictif = true; effacerErreur($("cv")); garder();
+  direFichier("CV d'exemple chargé.");
+  majPerime(); majExemple();
+  // Le bouton vient de disparaître : le curseur va à l'étape suivante plutôt que de retomber sur la page.
+  // Sans défilement imposé par le focus : la note « CV d'exemple : une personne fictive » vient sous le fil, bien visible.
+  // Elle entre en glissant (translateY) : on vise sa place finale, pas sa position de départ.
+  $("mesurer").focus({ preventScroll: true });
+  const note = $("cv-fictif"), st = getComputedStyle(note);
+  const decale = st.transform && st.transform !== "none" ? new DOMMatrixReadOnly(st.transform).m42 : 0;
+  scrollTo({ top: note.getBoundingClientRect().top + scrollY - decale - (parseFloat(st.scrollMarginTop) || 0), behavior: calme ? "auto" : "smooth" });
+});
+majExemple();
 
 /* ---------- garder le résultat ---------- */
 function texteDuPlan() {
   if (!dernier) return "";
-  const s = dernier.score, l = [`JusteCV : ${profil.intitule}`, s ? `Profil cible couvert à ${s.score} %` : "Détail par exigence", ""];
+  const s = dernier.score, l = [...(fictifMesure ? ["CV d'exemple : une personne fictive, pour voir le résultat."] : []),
+    `JusteCV : ${profil.intitule}`, s ? `Profil cible couvert à ${s.score} %` : "Détail par exigence", ""];
   dernier.correspondances.forEach((c) => l.push(`[${STATUT[c.statut]}] ${c.texte}`));
-  if (dernier.plan.length) { l.push("", "Le plan"); dernier.plan.forEach((p, i) => l.push(`${i + 1}. ${p.texte}`, `   Déjà fait ? ${p.siDejaFait}`, `   Sinon : ${p.sinon}`)); }
+  if (dernier.plan.length) {
+    const commune = phraseCommune(dernier.plan);
+    l.push("", "Le plan", `Déjà fait ? ${commune}`);
+    dernier.plan.forEach((p, i) => l.push(`${i + 1}. ${p.texte} (${NIVEAU[p.niveau]}${p.eliminatoire ? ", éliminatoire" : ""})`, ...(p.siDejaFait !== commune ? [`   Déjà fait ? ${p.siDejaFait}`] : []), ...(p.sinon ? [`   Sinon : ${p.sinon}`] : [])));
+  }
   return l.join("\n");
 }
 $("copier").addEventListener("click", async () => {
@@ -179,8 +441,8 @@ $("copier").addEventListener("click", async () => {
 });
 $("imprimer").addEventListener("click", () => window.print());
 $("recommencer").addEventListener("click", () => {
-  profil = null; dernier = null; metier = null;
-  $("offre").value = ""; $("exemple").value = ""; garder();
+  profil = null; dernier = null; metier = null; offreAssemblee = null; cvMesure = null;
+  $("offre").value = ""; $("exemple").value = ""; effacerErreur($("offre")); effacerErreur($("cv")); garder(); majPerime();
   ["profil", "etape-cv", "ecart"].forEach((id) => { $(id).hidden = true; });
   $("aide-offre").textContent = "Collez une nouvelle offre. Votre CV est gardé."; $("aide-actions").textContent = "";
   majFil(); $("etape-offre").scrollIntoView({ behavior: calme ? "auto" : "smooth", block: "start" }); $("offre").focus({ preventScroll: true });

@@ -19,9 +19,10 @@
   <div class="cadre">
     <a class="marque" href="./" aria-label="JusteCV, accueil"><span>Juste</span><span class="cv">CV</span></a>
     <nav aria-label="Navigation principale">
-      <a href="./#mouvement">Méthode</a>
-      <a href="atelier.html" aria-current="page">Atelier</a>
       <a href="metiers.html">Métiers</a>
+      <a href="guides.html">Guides</a>
+      <a href="suivi.html">Suivi</a>
+      <a href="atelier.html" aria-current="page">Atelier</a>
       <a href="./#prix">Prix</a>
     </nav>
   </div>
@@ -52,9 +53,11 @@
         <select id="exemple"><option value="">Choisir une offre d'exemple…</option></select>
       </div>
       <div class="etape-droite">
+        <p class="note-accueil" id="note-accueil" hidden><span id="note-accueil-texte" role="status"></span> <button class="bouton-lien lien" id="retirer-cv" type="button">Retirer ce CV</button></p>
         <label class="sr" for="offre">Texte de l'offre</label>
-        <div class="lecteur" id="lecteur-offre"><textarea id="offre" rows="12" placeholder="Collez ici le texte de l'offre d'emploi…"></textarea></div>
+        <div class="lecteur" id="lecteur-offre"><textarea id="offre" rows="12" aria-describedby="aide-offre" placeholder="Collez ici le texte de l'offre d'emploi…"></textarea></div>
         <div class="barre"><button class="btn plein" id="assembler" type="button">Assembler le profil cible</button><span class="aide" id="aide-offre"></span></div>
+        <noscript><p class="aide noscript">L'atelier a besoin de JavaScript pour lire l'offre dans votre navigateur.</p></noscript>
       </div>
     </section>
 
@@ -65,6 +68,7 @@
         <p>Le candidat que l'offre décrit. C'est un gabarit : il ne sera jamais copié dans votre CV.</p>
       </div>
       <div class="etape-droite">
+        <div class="bandeau-perime" id="p-perime" role="status"></div>
         <div class="piece">
           <div class="piece-tete">
             <h3 class="intitule" id="p-intitule"></h3>
@@ -74,12 +78,13 @@
           <div class="pastilles" id="p-pastilles"></div>
         </div>
         <div class="signaux" id="p-signaux" hidden></div>
-        <div class="reperes" id="p-reperes" hidden>
-          <h3 class="petit-titre" id="r-titre"></h3>
+        <details class="reperes" id="p-reperes" hidden>
+          <summary><span class="reperes-sommaire"><span class="petit-titre" id="r-titre"></span><span class="reperes-compte" id="r-compte"></span></span><i class="chevron" aria-hidden="true"></i></summary>
           <p class="aide">D'après le référentiel public ROME de France Travail. Reprenez un terme seulement s'il décrit ce que vous avez vraiment fait.</p>
           <div id="r-listes"></div>
           <p class="aide reperes-suite"><a class="lien" id="r-fiche" href="metiers.html">Voir la fiche complète de ce métier</a></p>
-        </div>
+        </details>
+        <div class="barre continuer"><button class="btn plein" id="vers-cv" type="button">Continuer : comparer avec mon CV</button></div>
       </div>
     </section>
 
@@ -91,12 +96,14 @@
       </div>
       <div class="etape-droite">
         <div class="depot">
-          <input type="file" id="fichier" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain">
+          <input type="file" id="fichier" aria-describedby="aide-fichier" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain">
           <label for="fichier" class="btn">Importer un fichier</label>
-          <span class="aide" id="aide-fichier">PDF, DOCX ou TXT, 15 Mo au plus.</span>
+          <span class="aide" id="aide-fichier" role="status">PDF, DOCX ou TXT, 15 Mo au plus.</span>
+          <button class="bouton-lien lien" id="cv-exemple" type="button" hidden>Utiliser le CV d'exemple</button>
         </div>
+        <p class="note-fictif" id="cv-fictif" hidden>CV d'exemple : une personne fictive, pour voir le résultat.</p>
         <label class="sr" for="cv">Texte du CV</label>
-        <div class="depot-zone lecteur" id="depot-zone"><textarea id="cv" rows="10" placeholder="…ou collez ici le texte de votre CV. Vous pouvez aussi glisser le fichier dans ce cadre."></textarea></div>
+        <div class="depot-zone lecteur" id="depot-zone"><textarea id="cv" rows="10" aria-describedby="aide-cv" placeholder="…ou collez ici le texte de votre CV. Vous pouvez aussi glisser le fichier dans ce cadre."></textarea></div>
         <div class="barre"><button class="btn plein" id="mesurer" type="button">Mesurer l'écart</button><span class="aide" id="aide-cv"></span></div>
       </div>
     </section>
@@ -108,27 +115,31 @@
         <p>Ce que votre CV couvre déjà, avec la ligne qui le prouve, et ce qu'il reste à faire.</p>
       </div>
       <div class="etape-droite">
+        <div class="bandeau-perime" id="e-perime" role="status"></div>
+        <p class="note-fictif" id="e-fictif" hidden>CV d'exemple : une personne fictive, pour voir le résultat.</p>
         <div class="mesure">
-          <div class="mesure-chiffre"><strong id="e-score">–</strong><span>% du profil cible</span></div>
+          <div class="mesure-chiffre"><strong id="e-score">–</strong><span>% du profil cible</span><small class="mesure-avant" id="e-avant" hidden></small></div>
           <div class="mesure-jauge" aria-hidden="true"><span id="e-jauge"></span></div>
           <div class="jalons" id="e-jalons" aria-hidden="true"></div>
           <p class="mesure-detail" id="e-detail"></p>
         </div>
         <ul class="lignes correspondances" id="e-lignes"></ul>
         <h3 class="petit-titre plan-titre">Le plan</h3>
-        <ol class="plan" id="e-plan"></ol>
+        <div class="plan-bloc" id="e-plan"></div>
         <div class="actions-resultat">
+          <button class="btn" id="corriger" type="button">Corriger mon CV et re-mesurer</button>
           <button class="btn" id="copier" type="button">Copier le plan</button>
           <button class="btn" id="imprimer" type="button">Imprimer ou enregistrer en PDF</button>
           <button class="btn" id="recommencer" type="button">Essayer une autre offre</button>
         </div>
         <p class="aide" id="aide-actions" role="status" aria-live="polite"></p>
+        <p class="garde">Rien n'a été ajouté à votre CV. Les lignes ci-dessus sont des pistes : n'écrivez que ce que vous pouvez raconter en entretien.</p>
         <div class="suite">
           <h3 class="petit-titre">Aller plus loin avec l'IA</h3>
           <p>Sept lecteurs simulés (logiciel de tri, recruteur, manager, autre candidat, patron, expert métier, sceptique) notent votre CV. Puis JusteCV le reformule ligne par ligne avec les mots de l'offre, en citant chaque ligne d'origine.</p>
           <div class="barre"><button class="btn plein" id="complet" type="button">Lancer l'analyse complète</button><span class="aide">Votre CV est anonymisé avant l'envoi. Quota gratuit limité.</span></div>
+          <p class="aide complet-exemple" id="complet-exemple" hidden>Avec le CV d'exemple, l'analyse complète reste fermée : mettez votre propre CV à l'étape 3.</p>
         </div>
-        <p class="garde">Rien n'a été ajouté à votre CV. Les lignes ci-dessus sont des pistes : n'écrivez que ce que vous pouvez raconter en entretien.</p>
       </div>
     </section>
   </div>

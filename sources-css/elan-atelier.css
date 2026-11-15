@@ -1,0 +1,130 @@
+/* JusteCV — couche « atelier » : l'outil se lit d'un geste, au pouce comme au bureau.
+   Concaténée après elan.css : elle surcharge sans éditer. Les règles de nuit sont écrites à la main sous html[data-nuit]. */
+
+/* ---------- étape 02 : repères du métier repliables, et la suite à portée de main ---------- */
+.reperes > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 1rem; min-height: 44px; margin: -.3rem -.4rem; padding: .3rem .4rem; border-radius: 14px; }
+.reperes > summary::-webkit-details-marker { display: none; }
+.reperes > summary:focus-visible { outline: 2px solid var(--bleu); outline-offset: 2px; }
+.reperes-sommaire { display: grid; gap: .35rem; flex: 1; min-width: 0; }
+.reperes-sommaire .petit-titre { margin: 0; }
+.reperes-compte { font-size: .9rem; font-weight: 600; color: #2f4a3e; }
+.reperes .chevron { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.7); transition: transform .25s var(--elan), background .25s; }
+.reperes .chevron::before { content: ""; width: 9px; height: 9px; border: solid var(--os); border-width: 0 1.8px 1.8px 0; transform: translateY(-2px) rotate(45deg); }
+.reperes[open] .chevron { transform: rotate(180deg); }
+@media (hover: hover) { .reperes > summary:hover .chevron { background: #fff; } }
+.reperes[open] > summary { margin-bottom: .8rem; }
+.reperes > .aide:first-of-type { margin-top: .2rem; }
+.continuer { margin-top: 1.8rem; }
+/* Le fil collé (84 px + 52 px) ne doit pas recouvrir le haut d'une étape : section[id] imposait 96 px. */
+section.etape, #cv-fictif { scroll-margin-top: 148px; }
+@media print {
+  .reperes > summary .chevron { display: none; }
+  .reperes::details-content { content-visibility: visible; }
+}
+
+/* ---------- au pouce : niveau et statut passent sous le texte ---------- */
+@media (max-width: 620px) {
+  .piece .lignes li, .correspondances li { grid-template-columns: minmax(0, 1fr); gap: .45rem; }
+  .piece .lignes li .poids, .correspondances li .statut { justify-self: start; }
+}
+
+/* ---------- le fil d'étapes est opaque : le texte ne se lit plus au travers ---------- */
+.fil ol { background: #fffaf4; border-color: var(--trait); box-shadow: 0 10px 26px -18px rgba(28,32,64,.45); }
+html[data-nuit] .fil ol { background: #232a5c; border-color: #f7f1e824; box-shadow: 0 12px 28px -18px #000000b3; }
+
+/* ---------- au pouce : une seule barre en haut ---------- */
+@media (max-width: 860px) {
+  .page-atelier .tete { position: absolute; }
+  .fil { top: calc(8px + env(safe-area-inset-top)); }
+  .fil button { min-width: 44px; min-height: 44px; justify-content: center; padding: 0 .9rem; }
+  section.etape, #cv-fictif { scroll-margin-top: 76px; }
+}
+@media (max-width: 620px) { .fil button { padding: 0 .55rem; } .fil button[aria-current="step"] { padding: 0 .9rem 0 .55rem; } }
+
+/* ---------- erreurs : un message distinct, un cadre marqué, jamais un aplat corail ---------- */
+/* Le pictogramme « ! » est décoratif (texte de remplacement vide) : le message seul est lu. */
+/* --corail-texte : 5,0:1 sur la crème le jour, 6,0:1 sur #232a5c la nuit. */
+.aide { transition: color .2s; }
+.aide.erreur { color: var(--corail-texte); font-weight: 600; display: inline-flex; align-items: flex-start; gap: .5rem; }
+.aide.erreur::before { content: "!"; content: "!" / ""; flex: none; display: grid; place-items: center; width: 1.25em; height: 1.25em; margin-top: .05em; border-radius: 50%; background: var(--corail-texte); color: var(--carbone); font: 700 .8em/1 var(--texte); }
+.lecteur { transition: box-shadow .2s; }
+.lecteur.invalide { box-shadow: 0 0 0 2px var(--corail-texte); }
+.depot-zone.invalide { border-color: var(--corail-texte); border-style: solid; border-width: 2px; box-shadow: none; }
+.noscript { margin: 1rem 0 0; color: var(--os); font-weight: 600; }
+
+/* ---------- où l'on écrit : un indicateur de focus visible (.lecteur rogne tout ce qui dépasse) ---------- */
+textarea:focus-visible { outline: 2px solid var(--bleu); outline-offset: -2px; }
+.depot-zone textarea:focus-visible { outline: 0; }
+.depot-zone:focus-within { border-color: var(--bleu); border-style: solid; }
+.depot-zone.invalide:focus-within { border-color: var(--corail-texte); }
+.lecteur.invalide textarea:focus-visible { outline-color: var(--corail-texte); }
+
+@media (max-width: 860px) {
+  #etape-offre .barre .aide, #etape-cv .barre .aide { order: -1; flex-basis: 100%; }
+  #etape-offre .barre .aide:empty, #etape-cv .barre .aide:empty { display: none; }
+}
+
+/* ---------- lecture : les phrases retenues se surlignent au passage de la bande ---------- */
+.lecteur-lecture { position: absolute; margin: 0; box-sizing: border-box; overflow: hidden; white-space: pre-wrap; overflow-wrap: break-word; word-break: normal; pointer-events: none; text-align: start; }
+.lecteur-lecture mark { color: inherit; border-radius: 3px; padding-block: .06em;
+  background: linear-gradient(var(--marque), var(--marque)) no-repeat 0 0 / 0% 100%; transition: background-size .35s var(--elan-io); }
+.lecteur-lecture mark.vu { background-size: 100% 100%; }
+.lecteur-lecture[data-teinte="offre"] { --marque: color-mix(in srgb, var(--soleil) 85%, #fff); }
+.lecteur-lecture[data-teinte="cv"] { --marque: #b9ecd2; }
+html[data-nuit] .lecteur-lecture[data-teinte="offre"] { --marque: #6f5c1d; }
+html[data-nuit] .lecteur-lecture[data-teinte="cv"] { --marque: #1f5c47; }
+
+/* ---------- le plan : une seule liste ; la phrase « déjà fait ? » commune est dite une fois en tête ---------- */
+.plan-commun { max-width: none; margin: 1rem 0 0; padding: .8rem 1rem; border-radius: 14px; background: rgba(28,32,64,.045); color: var(--acier); font-size: .95rem; animation: monte .7s var(--elan) both; animation-delay: .2s; }
+.plan-commun b { color: var(--os); font-weight: 600; }
+.plan-commun + .plan { margin-top: .4rem; }
+
+/* ---------- résultat périmé : un bandeau et un cadre pointillé, le texte reste lisible ---------- */
+.bandeau-perime:empty { display: none; }
+.bandeau-perime p { max-width: none; margin: 0 0 1.4rem; padding: .85rem 1.1rem; border-radius: 16px; background: var(--soleil); color: var(--os); font-weight: 600; display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .9rem; animation: monte .5s var(--elan) both; }
+.bandeau-perime .bouton-lien { min-height: 44px; font-weight: 600; text-decoration: underline; text-decoration-color: var(--corail-texte); text-underline-offset: .3em; text-decoration-thickness: 2px; }
+.bandeau-perime .bouton-lien:focus-visible { outline: 2px solid var(--bleu); outline-offset: 3px; border-radius: 4px; }
+#ecart.perime .mesure { outline: 1.5px dashed var(--acier); outline-offset: 14px; border-radius: 18px; }
+@media (max-width: 620px) { #ecart.perime .mesure { outline-offset: 8px; } }
+.mesure-avant { display: block; margin-top: .45rem; color: var(--acier); font-size: .85rem; }
+.correspondances .etat { display: flex; flex-direction: column; align-items: flex-end; gap: .3rem; }
+.correspondances .etat .avant { color: var(--acier); font-size: .78rem; white-space: nowrap; }
+@media (max-width: 620px) { .correspondances .etat { flex-direction: row; align-items: baseline; gap: .8rem; justify-self: start; } }
+@media print { .bandeau-perime .bouton-lien { display: none; } }
+html[data-nuit] .bandeau-perime p { background: #4b4122; color: #ffe9a8; }
+
+/* ---------- CV d'exemple (toujours dit fictif) et CV repris de l'accueil ---------- */
+.depot .bouton-lien, .note-accueil .bouton-lien { min-height: 44px; font-weight: 600; text-decoration: underline; text-decoration-color: var(--corail); text-underline-offset: .3em; }
+.depot .bouton-lien:focus-visible, .note-accueil .bouton-lien:focus-visible { outline: 2px solid var(--bleu); outline-offset: 3px; border-radius: 4px; }
+.note-fictif, .note-accueil { max-width: none; margin: 0 0 1rem; padding: .7rem 1rem; border-radius: 14px; background: var(--lilas); color: var(--os); font-size: .92rem; font-weight: 600; }
+.note-fictif::before { content: "Exemple"; display: inline-block; margin-right: .6rem; padding: .15rem .55rem; border-radius: 999px; background: var(--os); color: var(--carbone); font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; vertical-align: .1em; }
+.note-accueil { background: var(--menthe); display: flex; flex-wrap: wrap; align-items: center; gap: 0 .9rem; padding-block: .3rem; }
+.complet-exemple { margin: .8rem 0 0; color: #343a58; font-weight: 600; }
+@media print { .note-fictif { border: 1px solid #999; background: #fff; break-after: avoid; page-break-after: avoid; } }
+html[data-nuit] .complet-exemple { color: var(--os); }
+
+/* ---------- l'écart : la phrase de tête dit d'abord ce qui bloque ---------- */
+.mesure-detail .detail-tete { display: block; margin-bottom: .35rem; color: var(--os); font-weight: 600; font-size: 1.05rem; line-height: 1.45; }
+
+/* ---------- nuit ---------- */
+html[data-nuit] .plan-commun { background: #f7f1e80f; }
+html[data-nuit] .reperes-compte { color: var(--vert); }
+html[data-nuit] .reperes .chevron { background: #f7f1e814; }
+html[data-nuit] .reperes .chevron::before { border-color: var(--os); }
+@media (hover: hover) { html[data-nuit] .reperes > summary:hover .chevron { background: #f7f1e826; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .reperes .chevron { transition: none; }
+}
+
+/* Impression du plan : le titre et la phrase commune ne restent pas seuls en bas de page, un point ne se coupe pas. */
+@media print {
+  .plan-titre, .plan-commun { break-after: avoid; page-break-after: avoid; }
+  .plan-commun { break-inside: avoid; page-break-inside: avoid; }
+  .plan li { break-inside: avoid; page-break-inside: avoid; }
+  /* L'étape 04 dépasse une page : « break-inside: avoid-page » sur .etape (feuille d'origine) y annulait tous les
+     « avoid » intérieurs. On le lève pour l'écart ; le premier point refuse aussi la coupure avant lui. */
+  #ecart.etape { break-inside: auto; page-break-inside: auto; }
+  #ecart > .etape-gauche, #ecart .mesure { break-inside: avoid; break-after: avoid; page-break-after: avoid; }
+  .plan > li:first-child { break-before: avoid; page-break-before: avoid; }
+}

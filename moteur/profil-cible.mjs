@@ -83,6 +83,9 @@ function categorie(t) {
   if (/\b\d+\s*(a\s*\d+\s*)?ans?\b/.test(t) && /experience/.test(t)) return "experience";
   if (/\bexperience\b/.test(t)) return "experience";
   if (LANGUES.some((l) => t.includes(l))) return "langue";
+  // Un permis de conduire n'est pas une habilitation : il n'en prend ni la durée ni le financement.
+  // Ligne mixte (« CACES ou permis B ») : on reste sur « habilitation », avec une piste neutre.
+  if (PERMIS.test(t) && !HABILITATION.test(t)) return "permis";
   if (PERMIS.test(t) || HABILITATION.test(t)) return "habilitation";
   if (OUTILS.some((o) => new RegExp(`\\b${o}\\b`).test(t))) return "outil";
   if (SAVOIR_ETRE.some(([, re]) => re.test(t)) && words(t).length <= 6) return "savoir-etre";
@@ -131,7 +134,7 @@ export function profilCible(texte) {
       vus.add(cle);
       const niveau = niveauDe(f, true);
       const cat = categorie(f);
-      const eliminatoire = niveau === "obligatoire" && (cat === "diplome" || cat === "habilitation");
+      const eliminatoire = niveau === "obligatoire" && (cat === "diplome" || cat === "habilitation" || cat === "permis");
       exigences.push({ id: `e${exigences.length + 1}`, texte: part.replace(/[.;,]$/, ""), niveau, categorie: cat, eliminatoire });
       if (exigences.length >= 16) break;
     }
@@ -242,9 +245,7 @@ export function ecart(profil, cvTexte) {
   const score = matchScore(correspondances);
   const plan = correspondances.filter((c) => c.statut !== "presente").map((c) => ({
     id: c.id, texte: c.texte, statut: c.statut, niveau: c.niveau, eliminatoire: c.eliminatoire,
-    siDejaFait: c.statut === "partielle"
-      ? "Si c'est vrai, reprenez les mots de l'offre dans la ligne qui en parle, avec un exemple concret."
-      : "Si vous l'avez déjà fait (stage, job, projet, bénévolat), ajoutez-le avec un exemple réel et daté.",
+    siDejaFait: dejaFait(c),
     sinon: piste(c),
   }));
   const poids = { obligatoire: 0, souhaitee: 1, atout: 2 };
@@ -252,12 +253,34 @@ export function ecart(profil, cvTexte) {
   return { correspondances, score, plan, anneesCV: ansCV, niveauCV: nivCV };
 }
 
+/** Phrases « déjà fait ? » : celles qui se répètent d'un point à l'autre sont exportées pour être dites une seule fois. */
+export const DEJA_FAIT = {
+  partielle: "Si c'est vrai, reprenez les mots de l'offre dans la ligne qui en parle, avec un exemple concret.",
+  absente: "Si vous l'avez déjà fait (stage, job, projet, bénévolat), ajoutez-le avec un exemple réel et daté.",
+};
+const parleVehicule = (c) => /\bvehicule/.test(fold(c.texte));
+
+function dejaFait(c) {
+  if (c.statut === "partielle") return DEJA_FAIT.partielle;
+  // Un titre se possède, il ne « se fait » pas : on l'écrit tel quel, daté.
+  if (c.categorie === "diplome" || c.categorie === "habilitation" || (c.categorie === "permis" && !parleVehicule(c))) return "Si vous l'avez, écrivez-le en toutes lettres avec l'année d'obtention.";
+  if (c.categorie === "permis" || c.categorie === "langue") return "Si vous l'avez, écrivez-le en toutes lettres.";
+  return DEJA_FAIT.absente;
+}
+
 function piste(c) {
   switch (c.categorie) {
     case "diplome": return "Regardez la VAE (validation des acquis) ou une formation certifiante. Vous pouvez aussi postuler en expliquant l'équivalent de votre parcours.";
     case "experience": return "Mettez en avant les missions qui s'en approchent (stages, jobs, alternance), sans gonfler les durées.";
     case "langue": return "Passez un test reconnu (TOEIC, Linguaskill, DELE…) pour pouvoir écrire un niveau vérifiable.";
-    case "habilitation": return "C'est souvent une formation courte (quelques jours). Vérifiez si l'employeur la finance après l'embauche.";
+    // Véhicule exigé : chercher un poste « sans voiture » contredirait l'offre ; pas de piste.
+    case "permis": if (parleVehicule(c) && c.niveau === "obligatoire") return null;
+      return parleVehicule(c)
+      ? "Regardez si le poste est accessible sans voiture et dites-le dans votre candidature."
+      : "Si vous le préparez, écrivez où vous en êtes (code obtenu, examen prévu). Sinon, regardez si le poste est accessible sans voiture et dites-le dans votre candidature.";
+    case "habilitation": return PERMIS.test(fold(c.texte))
+      ? "Renseignez-vous sur la formation correspondante et sur son financement."
+      : "C'est souvent une formation courte. Vérifiez si l'employeur la finance après l'embauche.";
     case "outil": return "Un projet personnel ou un tutoriel certifiant suffit souvent à pouvoir l'écrire honnêtement.";
     case "savoir-etre": return "Ne l'écrivez pas comme un mot-clé : racontez une situation où vous l'avez montré.";
     default: return "Cherchez une mission, un projet ou une formation courte qui vous permettra de l'écrire honnêtement.";
