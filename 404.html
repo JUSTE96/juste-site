@@ -9,9 +9,9 @@
 <link rel="icon" href="/favicon-32.png" type="image/png">
 <link rel="preload" href="/fonts/schibsted-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/lora-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/pages.css">
-<link rel="stylesheet" href="nuit.css?v=3">
-<script src="nuit.js?v=1"></script>
+<link rel="stylesheet" href="/pages.css?v=3">
+<link rel="stylesheet" href="/nuit.css?v=3">
+<script src="/nuit.js?v=1"></script>
 </head>
 <body><a class="sr-lien" href="#contenu">Aller au contenu</a>
 <header class="nav"><div class="wrap">
@@ -24,11 +24,28 @@
   <p class="eyebrow">Erreur 404</p>
   <h1>Cette page n'existe pas.</h1>
   <p class="lede">L'adresse a peut-être changé avec la nouvelle version du site. Tout le reste est à sa place.</p>
+  <form class="search" id="cherche" action="/metiers.html" role="search"><label class="sr" for="q404">Chercher un métier</label><input id="q404" type="search" placeholder="Chercher un métier : cariste, aide-soignant, serveur…" autocomplete="off"><button class="btn btn-primary" type="submit">Chercher</button></form>
   <div class="chips"><a class="btn btn-primary" href="/atelier.html">Essayer avec une offre</a> <a class="btn btn-ghost" href="/metiers.html">Voir les fiches métier</a> <a class="btn btn-ghost" href="/">Retour à l'accueil</a></div>
 </div></div></main>
 <footer><div class="wrap">
   <a href="/">Accueil</a><a href="/atelier.html">Atelier</a><a href="/app/">Analyse complète</a><a href="/metiers.html">Métiers</a><a href="/guides.html">Guides</a><a href="/suivi.html">Suivi des candidatures</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a><a href="/mentions-legales.html">Mentions légales</a><a href="/cgv.html">CGV</a><a href="/confidentialite.html">Confidentialité</a><a href="mailto:contact@justecv.fr">contact@justecv.fr</a>
 </div></footer>
-<script src="passage.js?v=4" defer></script>
+<script>
+(function () {
+  var f = document.getElementById("cherche"), q = document.getElementById("q404");
+  // Ancienne adresse de fiche (/metiers/agent-d-entretien.html) : on pré-remplit la recherche avec son nom.
+  var m = location.pathname.match(/^\/metiers\/(?:[^\/]*\/)*([^\/]+?)(?:\.html?)?\/?$/i);
+  if (m) {
+    var s = m[1]; try { s = decodeURIComponent(s); } catch (e) {}
+    q.value = s.replace(/[-_+]+/g, " ").replace(/(^| )([dl]) (?=\S)/gi, "$1$2'").replace(/\s+/g, " ").trim();
+  }
+  f.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var v = q.value.trim();
+    location.href = "/metiers.html" + (v ? "#" + encodeURIComponent(v) : "");
+  });
+})();
+</script>
+<script src="/passage.js?v=4" defer></script>
 </body>
 </html>

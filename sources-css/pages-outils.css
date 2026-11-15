@@ -1,0 +1,131 @@
+/* JusteCV — couche « pages-outils » : suivi des candidatures, page 404, page merci.
+   Vient après pages-elan.css (voir assembler.py) : on surcharge, on n'édite pas les couches d'avant.
+   Sans script et sous prefers-reduced-motion: reduce, tout est à sa place finale. */
+
+/* ---------- suivi : le statut se change dans la liste, en pastille ---------- */
+select.statut { width: auto; min-height: 36px; padding: .3rem 2rem .3rem .8rem; border: 1px solid transparent; border-radius: 999px;
+  font: 600 .85rem/1.2 var(--body); cursor: pointer; white-space: nowrap;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231c2040' stroke-opacity='.6' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .7rem center; background-size: .8rem;
+  transition: border-color .2s, box-shadow .3s var(--elan); }
+select.statut:hover { border-color: color-mix(in srgb, currentColor 40%, transparent); }
+select.statut:focus { border-color: transparent; outline: 2px solid var(--fg); outline-offset: 2px; }
+select.statut option { color: #1c2040; background: #fff; font-weight: 500; }
+html[data-nuit] select.statut { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f7f1e8' stroke-opacity='.75' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .7rem center; background-size: .8rem; }
+html[data-nuit] select.statut option { color: #f7f1e8; background: #1f2550; }
+
+/* cellules : lieu et durée sous leur ligne principale (ordinateur) */
+#table .lieu, #table .ecoule { display: block; }
+#table .relancer { color: var(--ambre); font-weight: 600; }
+#table tr { scroll-margin: 6.5rem 0 5rem; }
+/* la cellule d'actions reste une cellule : son filet s'aligne sur ceux de la ligne */
+@media (min-width: 701px) {
+  #table td.row-actions { display: table-cell; text-align: right; white-space: normal; }
+  #table td.row-actions button { margin: 0 0 .35rem .35rem; }
+}
+#table tr:focus { outline: none; }
+#table tr:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+
+/* annonce sous le bouton : ce qui vient d'être fait, et où le voir */
+.annonce { margin: 0; }
+.annonce:not(:empty) { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0 .7rem; margin-top: 1rem; padding: .3rem .5rem .3rem .9rem; min-height: 50px;
+  border-radius: 14px; background: var(--menthe); color: #0f5c36; font-weight: 500; line-height: 1.4; }
+.annonce:not(:empty)::before { content: ""; width: 1.15rem; height: 1.15rem; border-radius: 50%; background: #18804d url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 12.5 4 4L18 8.5'/%3E%3C/svg%3E") center / 72% no-repeat; }
+.annonce span { padding-block: .45rem; }
+.annonce a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .45rem; color: inherit; font-weight: 650; white-space: nowrap;
+  text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; border-radius: 8px; }
+@media (max-width: 520px) {
+  .annonce:not(:empty) { grid-template-columns: auto minmax(0, 1fr); padding-bottom: .1rem; align-items: start; }
+  .annonce:not(:empty)::before { margin-top: .62rem; }
+  .annonce a { grid-column: 2; justify-self: start; margin: -.35rem 0 0 -.45rem; }
+}
+.annonce a:hover { text-decoration-color: var(--corail); }
+/* lien périmé (ligne disparue) : message neutre, sans coche de réussite */
+.annonce.perimee:not(:empty) { grid-template-columns: minmax(0, 1fr); padding-left: .9rem; background: var(--surface); color: var(--muted);
+  box-shadow: inset 0 0 0 1px var(--line); }
+.annonce.perimee:not(:empty)::before { content: none; }
+html[data-nuit] .annonce.perimee:not(:empty) { background: var(--surface); color: var(--muted); }
+.annonce:focus { outline: none; }
+.annonce:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+html[data-nuit] .annonce:not(:empty) { background: rgba(127,214,176,.14); color: #c6f0dc; }
+/* la même annonce, en tête de liste : quand un changement de statut fait sortir la ligne du filtre */
+.annonce-liste:not(:empty) { margin: 0 0 1rem; }
+.suivi-liste .liste-head { scroll-margin-top: 5.5rem; }
+.vide-filtre { margin: 0; padding: 1.4rem 1rem 1rem; text-align: center; }
+.vide-filtre[hidden] { display: none; }
+html[data-nuit] .annonce:not(:empty)::before { background-color: #2f9e6c; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .annonce.vient { animation: annonce-vient .55s var(--elan) both; }
+  @keyframes annonce-vient { from { opacity: 0; transform: translateY(8px); } }
+  /* la ligne qu'on vient d'ajouter ou de modifier : un coup de surligneur qui s'efface */
+  #table tr.neuve { animation: ligne-neuve 1.4s ease-out; }
+  @keyframes ligne-neuve { from { background-color: color-mix(in srgb, var(--mark) 75%, transparent); } }
+  html[data-nuit] #table tr.neuve { animation-name: ligne-neuve-nuit; }
+  @keyframes ligne-neuve-nuit { from { background-color: rgba(255,226,122,.26); } }
+}
+
+/* ---------- suivi sur téléphone : le tableau devient une liste de cartes ---------- */
+@media (max-width: 700px) {
+  .suivi-liste .table-scroll { overflow: visible; margin: 0; }
+  #table, #table tbody { display: block; }
+  #table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  #table tr { display: grid; grid-template-columns: fit-content(62%) minmax(0, 1fr) auto; column-gap: .45rem; row-gap: .3rem; align-items: start;
+    padding: 1rem 1rem .9rem; margin: 0 0 .7rem; border: 1px solid var(--line); border-radius: 16px; background: var(--bg); }
+  #table tr:last-child { margin-bottom: 0; }
+  #table td { display: block; padding: 0; border: 0; min-width: 0; }
+  #table tbody tr:hover td { background: none; }
+  #table td.poste { grid-column: 1 / 3; grid-row: 1; align-self: center; padding-right: .3rem; font-size: 1.05rem; line-height: 1.3; overflow-wrap: anywhere; }
+  #table td.poste .lieu { margin-top: .1rem; font-size: .88rem; }
+  #table td.statut-cell { grid-column: 3; grid-row: 1; justify-self: end; }
+  /* entreprise sur sa ligne, puis « date · il y a N j » : chaque morceau reste entier et passe à la ligne au besoin, jamais rogné */
+  #table td.entreprise, #table td.quand { grid-column: 1 / -1; font-size: .9rem; line-height: 1.4; }
+  #table td.entreprise { grid-row: 2; padding-top: .35rem; font-weight: 600; overflow-wrap: anywhere; }
+  #table td.entreprise:empty { display: none; }
+  /* le « · » est porté par la durée, dans l'espace qui la précède : si elle passe à la ligne, il tombe hors de la cellule
+     (overflow) et disparaît ; aucun point ne reste seul en fin ou en début de ligne */
+  #table td.quand { grid-row: 3; display: flex; flex-wrap: wrap; column-gap: 1.1rem; overflow: hidden; padding-top: .05rem; color: var(--muted); }
+  #table td.quand:empty { display: none; }
+  #table td.quand .date, #table td.quand .ecoule { display: inline; font-size: inherit; white-space: nowrap; }
+  #table td.quand .date ~ .ecoule { position: relative; }
+  #table td.quand .date ~ .ecoule::before { content: "·"; content: "·" / ""; position: absolute; top: 0; right: 100%; width: 1.1rem; text-align: center;
+    color: var(--faint); font-weight: 400; }
+  #table td.notes { grid-column: 1 / -1; padding-top: .35rem; color: var(--muted); line-height: 1.45; }
+  #table td.notes:empty { display: none; }
+  #table td.row-actions { grid-column: 1 / -1; display: flex; gap: .5rem; margin-top: .55rem; padding-top: .75rem; border-top: 1px solid var(--line); }
+  #table td.row-actions button { flex: 1 1 0; min-height: 44px; border-radius: 12px; font: 600 .92rem/1 var(--body); color: var(--fg); background: var(--surface); border-color: var(--line); }
+  #table td.row-actions button[data-act="del"]:hover { color: var(--red); border-color: currentColor; }
+  /* au doigt : 44 px de haut, et 16 px de texte pour qu'iOS ne zoome pas à l'ouverture */
+  select.statut { min-height: 44px; padding: .5rem 2.1rem .5rem .9rem; font-size: 1rem; background-position: right .8rem center; }
+  html[data-nuit] select.statut { background-position: right .8rem center; }
+}
+/* petits téléphones : le statut laisse toute la largeur au titre et passe juste dessous, aligné à gauche */
+@media (max-width: 380px) {
+  #table tr { grid-template-columns: minmax(0, 1fr); }
+  #table td.poste { grid-column: 1; padding-right: 0; }
+  #table td.statut-cell { grid-column: 1; grid-row: 2; justify-self: start; margin-top: .3rem; }
+  #table td.entreprise { grid-row: 3; }
+  #table td.quand { grid-row: 4; }
+}
+
+/* ---------- 404 et merci : une même entrée, qui pose la page élément par élément ---------- */
+.merci .search { justify-self: stretch; align-items: stretch; width: 100%; max-width: 34rem; margin: 1.1rem 0 .4rem; gap: .6rem; }
+.merci .search input { flex: 1 1 auto; min-width: 0; }
+/* la recherche est l'action de la page : bouton à l'encre, pour ne pas doubler le corail de « Essayer avec une offre » */
+.merci .search .btn { flex: none; justify-content: center; min-height: 50px; background: var(--fg); border-color: var(--fg); color: var(--bg); box-shadow: 0 12px 24px -16px rgba(28,32,64,.7); }
+.merci .search .btn:hover { background: color-mix(in srgb, var(--fg) 86%, var(--corail)); border-color: transparent; }
+@media (max-width: 520px) {
+  .merci .search { flex-wrap: wrap; }
+  .merci .search input, .merci .search .btn { flex: 1 1 100%; }
+}
+.merci .conseils { margin: .5rem 0 0; max-width: 36rem; padding-left: 1.6em; gap: .7rem; color: var(--fg); }
+.merci .conseils li { padding-left: .35em; line-height: 1.55; }
+.merci .conseils li::marker { font: 600 1.02rem var(--display); color: var(--sapin); }
+@media (prefers-reduced-motion: no-preference) {
+  .merci > * { animation: pose .8s var(--elan) both; }
+  .merci > :nth-child(2) { animation-delay: .08s; }
+  .merci > :nth-child(3) { animation-delay: .16s; }
+  .merci > :nth-child(4) { animation-delay: .24s; }
+  .merci > :nth-child(n+5) { animation-delay: .32s; }
+}
