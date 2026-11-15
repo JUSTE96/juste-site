@@ -1,0 +1,156 @@
+/* JusteCV — couche « élan · héros et cadran ». Assemblée après elan.css : elle surcharge, elle n'efface rien.
+   Héros : l'action principale arrive vite, la lecture se joue une fois, un seul bouton pause pour tout ce qui bouge.
+   Cadran : le calcul du score de l'offre du héros, en quatre temps pilotés par le défilement. */
+
+/* ---------- héros : l'action d'abord, la carte posée tout de suite ---------- */
+.js .heros-texte .ref, .js .heros-bas { transition: opacity .45s .1s; }
+.lecture { transition: translate .9s var(--elan), opacity .5s ease .2s, scale .9s var(--elan) .2s; }
+/* pause : tout se fige d'un coup, sans transition */
+.lecture.figee *, .lecture.figee ol { transition: none !important; }
+
+/* ---------- héros : bouton pause commun (vidéo, lecture, fond) ---------- */
+.heros.plein .pause { width: 44px; height: 44px; z-index: 3; }
+/* Le cadre du texte couvre toute la largeur, par-dessus le cadre vidéo : il laisse passer les clics vers le bouton pause. */
+.heros.plein .heros-texte { pointer-events: none; }
+.heros.plein .heros-texte > * { pointer-events: auto; }
+.pause .i-lecture, .pause[aria-pressed="true"] .i-pause { display: none; }
+.pause[aria-pressed="true"] .i-lecture { display: inline; }
+.heros.en-pause::before, .heros.en-pause .puce, .heros.en-pause .lecture-tete i, .heros.en-pause .lecture-tete i::after { animation-play-state: paused !important; }
+
+/* ---------- héros mobile : la lecture en direct au-dessus de la ligne de flottaison ----------
+   Titre, chapô, deux boutons côte à côte, puis une vignette de 260 px dont la carte occupe le bas :
+   la bande de photo du haut garde le bouton pause visible et touchable. */
+@media (max-width: 900px) {
+  .heros.plein { padding-top: 84px; min-height: 0; }
+  .heros.plein .heros-texte { padding-bottom: 18px; }
+  .heros-texte .ref { display: none; }
+  .heros-bas { margin-top: .9rem; padding-top: .9rem; gap: .9rem; }
+  .heros-bas .chapo { font-size: 1rem; line-height: 1.45; }
+  .heros .actions { flex-wrap: nowrap; gap: .5rem; width: 100%; max-width: 30rem; }
+  .heros .actions .btn { flex: 1 1 0; min-width: 0; padding-inline: .5rem; font-size: .92rem; white-space: nowrap; justify-content: center; }
+  .heros.plein .heros-media { aspect-ratio: auto; height: 260px; margin-bottom: 28px; }
+  .lecture { top: auto; bottom: 12px; }
+  .heros.plein .pause { top: 12px; right: 12px; }
+}
+@media (max-width: 359px) {
+  /* le bouton du ciel (fixe, en bas à droite) couvrirait la pause : elle passe en haut à gauche de la vignette */
+  .heros.plein .pause { right: auto; left: 12px; }
+  .heros .actions { flex-direction: column; }
+  .heros .actions .btn { flex: none; white-space: normal; }
+}
+
+/* ---------- cadran : le calcul du score, segment par segment ----------
+   Un segment par exigence de l'offre du héros. Mêmes couleurs que partout ailleurs :
+   niveau (obligatoire corail-texte, souhaitée bleu, atout contour seul), puis résultat (vert présent, ambre en partie, corail-texte absent). */
+.cadran .anneau { stroke: var(--trait); }
+.cadran .seg { opacity: 0; transition: opacity .35s ease; }
+.cadran .seg.lu { opacity: var(--o, 1); }
+.cadran .seg path { stroke-width: 2; stroke-linejoin: round; transition: fill .45s ease, stroke .45s ease; }
+.cadran .seg-fond { fill: var(--os); stroke: transparent; }
+.cadran .seg-plein { fill: transparent; stroke: none; }
+/* 2. profil cible : la couleur du niveau */
+.cadran svg:not([data-temps="0"]) .seg[data-n="obligatoire"] .seg-fond { fill: var(--corail-texte); }
+.cadran svg:not([data-temps="0"]) .seg[data-n="souhaitee"] .seg-fond { fill: var(--bleu); }
+.cadran svg:not([data-temps="0"]) .seg[data-n="atout"] .seg-fond { fill: transparent; stroke: var(--acier); }
+/* 3. écart : le segment jugé devient une piste, remplie à son crédit ; absent, il ne garde qu'un contour pointillé */
+.cadran svg .seg.juge[data-n] .seg-fond { fill: var(--trait); stroke: transparent; }
+.cadran svg .seg.juge[data-n][data-s="absente"] .seg-fond { fill: transparent; stroke: var(--corail-texte); stroke-width: 3; stroke-dasharray: 6 5; }
+.cadran .seg[data-s="presente"] .seg-plein { fill: var(--vert); }
+.cadran .seg[data-s="partielle"] .seg-plein { fill: var(--ambre); }
+/* 4. plan : ce qui est couvert s'efface, les écarts restent (opacité --o posée par elan.js, une exigence après l'autre) */
+.cadran .seg { transition: opacity .3s ease; }
+/* la scène est plus courte : plus de long palier immobile après le dernier temps */
+@media (prefers-reduced-motion: no-preference) { .js .scene { height: 380vh; } }
+/* le centre */
+.cadran .valeur span { max-width: 15ch; }
+.cadran .valeur [class^="niv-"] { white-space: nowrap; }
+.cadran .valeur .niv-obligatoire { color: var(--corail-texte); font-weight: 600; }
+.cadran .valeur .niv-souhaitee { color: var(--bleu); font-weight: 600; }
+.cadran .valeur .niv-atout { color: var(--acier); font-weight: 600; }
+.cadran #valeur-label.exigence { max-width: 17ch; font: italic 400 1.02rem/1.3 var(--titre); color: var(--os);
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.cadran #valeur { font-variant-numeric: tabular-nums; }
+
+/* ---------- scène à plat : sans script, et sous animations réduites ----------
+   Plus de 4,4 écrans épinglés : les quatre temps se lisent d'un trait, le cadran montre son état final (score). */
+html:not(.js) .scene { height: auto; }
+html:not(.js) .scene-fixe { position: static; height: auto; overflow: visible; padding-block: clamp(64px, 9vw, 120px); }
+html:not(.js) .scene .temps { gap: 2.2rem; }
+html:not(.js) .scene .temps li { grid-area: auto; opacity: 1; transform: none; pointer-events: auto; }
+html:not(.js) .scene .temps .num { font-size: clamp(2.4rem, 4vw, 3.4rem); margin-bottom: .6rem; }
+html:not(.js) .scene-barre, html:not(.js) .scene-rail { display: none; }
+html:not(.js) .scene-grille { align-items: start; }
+html:not(.js) .scene .cadran { position: sticky; top: 110px; }
+@media (prefers-reduced-motion: reduce) {
+  .scene { height: auto; }
+  .scene-fixe { position: static; height: auto; overflow: visible; padding-block: clamp(64px, 9vw, 120px); }
+  .scene .temps { gap: 2.2rem; }
+  .scene .temps li { grid-area: auto; opacity: 1; transform: none; pointer-events: auto; }
+  .scene .temps .num { font-size: clamp(2.4rem, 4vw, 3.4rem); margin-bottom: .6rem; }
+  .scene-barre, .scene-rail { display: none; }
+  .scene-grille { align-items: start; }
+  .scene .cadran { position: sticky; top: 110px; }
+}
+/* sur mobile, à plat : on lit les quatre temps, puis le résultat */
+@media (max-width: 860px) {
+  html:not(.js) .scene .cadran { position: relative; top: auto; order: 0; margin-top: 1.4rem; }
+}
+@media (max-width: 860px) and (prefers-reduced-motion: reduce) {
+  .scene .cadran { position: relative; top: auto; order: 0; margin-top: 1.4rem; }
+}
+
+/* ---------- fiche technique : la légende du cadran, en deux groupes ----------
+   Placée juste après la scène : « Le calcul » (ce que le cadran vient de montrer), « Les garanties ». */
+.fiche { padding-block: clamp(2rem, 4vw, 3.2rem); }
+.fiche-groupes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem clamp(2rem, 5vw, 5rem); align-items: start; }
+.fiche-titre { margin: 0 0 .2rem; font: 600 .72rem/1.2 var(--texte); letter-spacing: .14em; text-transform: uppercase; color: var(--os); }
+.fiche .fiche-groupe dl { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.fiche .fiche-groupe dl > div { padding-block: 1rem 1.1rem; display: flex; flex-direction: column; justify-content: space-between; }
+.fiche .fiche-groupe dl > div:nth-child(3n) { border-right: 0; }
+.fiche .fiche-groupe dl > div:nth-child(n+4) { border-top: 0; }
+.fiche .fiche-groupe dl > div:nth-child(3n+1) { padding-left: 0; }
+.fiche-groupe > .lien { display: inline-flex; align-items: center; min-height: 44px; margin-top: .1rem; font-size: .95rem; color: var(--os); }
+/* côte à côte : titres, définitions et lien sur des rangées communes, les valeurs alignées en bas de chaque case */
+@media (min-width: 1001px) {
+  .fiche-groupes { grid-template-rows: auto auto auto; row-gap: 0; }
+  .fiche-groupe { display: grid; grid-row: span 3; grid-template-rows: subgrid; align-content: start; }
+  .fiche-groupe > .lien { justify-self: start; align-self: start; }
+}
+@media (max-width: 1000px) { .fiche-groupes { grid-template-columns: 1fr; } }
+/* mobile : la grille à deux colonnes d'origine, par groupe */
+@media (max-width: 560px) {
+  .fiche .fiche-groupe dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fiche .fiche-groupe dl > div:nth-child(3) { grid-column: 1 / -1; border-right: 0 !important; }
+}
+html[data-nuit] .fiche-titre { color: var(--os); }
+
+/* ---------- titres : des coupes de ligne décidées ----------
+   Héros : deux lignes à toutes les largeurs d'ordinateur (plus de « cherche » ni de « Voyez » orphelins).
+   Fin : trois temps, un par ligne. */
+@media (min-width: 901px) {
+  .heros-texte .geant { max-width: none; width: max-content; font-size: clamp(2.4rem, 5vw, 4.5rem); }
+  .heros-texte .geant .ligne { white-space: nowrap; }
+}
+.fin .geant .l { display: block; white-space: nowrap; }
+
+/* ---------- la page se repose : pouls en transform/opacity, animations en pause hors champ ----------
+   Les pouls en box-shadow forçaient un recalcul de style à chaque image, même hors écran :
+   une onde (disque qui grandit et s'efface) les remplace. Elle s'arrête quand la lecture est finie. */
+@keyframes onde { from { transform: scale(1); opacity: .55; } to { transform: scale(3.2); opacity: 0; } }
+.lecture-tete i { position: relative; }
+.lecture.vive .lecture-tete i { animation: none; }
+.lecture.vive .lecture-tete i::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--corail); animation: onde 1.8s ease-out infinite; }
+.lecture.finie .lecture-tete i::after { content: none; animation: none; }
+/* prix : l'onde est un élément du même flux, posée exactement sur le point : ordre -1, marge négative = largeur + écart */
+.etat-prix.ouvert::before { animation: none; }
+.etat-prix.ouvert::after { content: ""; order: -1; flex: none; width: 7px; height: 7px; margin-right: calc(-7px - .5rem); border-radius: 50%; background: var(--vert); animation: onde 2.2s ease-out infinite; }
+/* hors champ : héros, bandeau et prix mettent en pause tout ce qui boucle */
+.hors-champ, .hors-champ::before, .hors-champ::after, .hors-champ *, .hors-champ *::before, .hors-champ *::after { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) {
+  .lecture-tete i::after, .etat-prix.ouvert::after { content: none; animation: none !important; }
+}
+
+/* ---------- nuit : les images ne doivent plus éblouir à côté du texte ----------
+   Vidéos du héros et de la fin baissées ; un voile sur les aperçus, sous la carte de lecture. */
+html[data-nuit] #film, html[data-nuit] .fin-clip video { filter: brightness(.8) saturate(.92); }
+html[data-nuit] .heros-media, html[data-nuit] .fin-clip { box-shadow: inset 0 0 0 100vmax rgba(20,25,54,.26), 0 30px 60px -30px #00000059; }

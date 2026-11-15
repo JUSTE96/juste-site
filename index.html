@@ -31,8 +31,6 @@
 <div class="progression" aria-hidden="true"></div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="verre" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.006 0.009" numOctaves="2" seed="11" result="bruit"/><feGaussianBlur in="bruit" stdDeviation="3" result="doux"/><feDisplacementMap in="SourceGraphic" in2="doux" scale="46" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 
-<div class="rideau" id="rideau" aria-hidden="true"><span class="rideau-marque">JusteCV</span><span class="rideau-compte" id="rideau-compte">000</span></div>
-
 <header class="tete" id="tete">
   <div class="cadre">
     <a class="marque" href="./" aria-label="JusteCV, accueil"><span>Juste</span><span class="cv">CV</span></a>
@@ -60,9 +58,9 @@
 <section class="heros plein" aria-labelledby="titre-heros">
   <div class="heros-media" style="background-image:url(assets/cine/flou-grand-age.jpg)">
     <video id="film" class="clip" muted playsinline preload="metadata" aria-hidden="true" data-clip="grand-age" loop></video>
-    <button class="pause" id="pause-film" type="button" aria-label="Mettre la vidéo en pause" aria-pressed="false" hidden>
-    <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="1" width="2.5" height="10" fill="currentColor"/><rect x="7.5" y="1" width="2.5" height="10" fill="currentColor"/></svg>
-  </button>
+    <button class="pause" id="pause-film" type="button" aria-label="Mettre l'animation en pause" aria-pressed="false" hidden>
+      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><g class="i-pause"><rect x="2" y="1" width="2.5" height="10" fill="currentColor"/><rect x="7.5" y="1" width="2.5" height="10" fill="currentColor"/></g><path class="i-lecture" d="M3 1.2v9.6L10.6 6z" fill="currentColor"/></svg>
+    </button>
     <div class="puce puce-2" aria-hidden="true"><b id="puce-lues">6</b> exigences lues dans l'offre</div>
     <div class="lecture" id="lecture" aria-hidden="true">
       <p class="lecture-tete"><i></i>Lecture de l'offre<span id="lecture-compte">6 / 6</span></p>
@@ -88,6 +86,7 @@
         <a class="btn" href="#mouvement">Voir la méthode</a>
       </div>
     </div>
+    <p class="sr">Exemple affiché : une offre d'aide-soignant, 6 exigences lues, 68 % du profil déjà couvert.</p>
   </div>
 </section>
 
@@ -109,19 +108,6 @@
   </div>
 </section>
 
-<section class="fiche" aria-label="Fiche technique">
-  <div class="cadre">
-    <dl class="elan">
-      <div><dt>Niveaux d'exigence</dt><dd>3</dd></div>
-      <div><dt>Poids des exigences</dt><dd>3 · 2 · 1</dd></div>
-      <div><dt>Plafond si éliminatoire absent</dt><dd>49 %</dd></div>
-      <div><dt>Lecture de l'offre</dt><dd>Dans votre navigateur</dd></div>
-      <div><dt>Compte nécessaire</dt><dd>Aucun</dd></div>
-      <div><dt>Ligne inventée</dt><dd>0</dd></div>
-    </dl>
-  </div>
-</section>
-
 <section class="scene" id="mouvement" aria-labelledby="titre-mouvement">
   <div class="scene-fixe">
     <div class="cadre scene-grille">
@@ -136,17 +122,43 @@
         <div class="scene-barre" aria-hidden="true"><span id="scene-barre"></span></div>
       </div>
       <div class="cadran" id="cadran">
-        <svg viewBox="0 0 600 600" role="img" aria-labelledby="cadran-desc">
-          <desc id="cadran-desc">Cadran piloté par le défilement. Douze index représentent les exigences d'une offre. Ils s'allument à la lecture, puis l'aiguille indique la part du profil cible que couvre le CV : 68 %. Les quatre exigences restantes forment le plan.</desc>
+        <svg viewBox="0 0 600 600" role="img" aria-labelledby="cadran-desc" data-temps="2">
+          <desc id="cadran-desc">Cadran calculé sur l'offre lue plus haut : 6 exigences, qui pèsent 3 si elles sont obligatoires, 2 si elles sont souhaitées, 1 si c'est un atout. 3 présentes, 2 en partie, 1 absente : le CV couvre 68 % du profil cible. 3 écarts forment le plan.</desc>
           <circle class="anneau" cx="300" cy="300" r="286"/>
-          <g id="minutes"></g>
-          <g id="index"></g>
-          <circle class="arc" id="arc" cx="300" cy="300" r="252" transform="rotate(-90 300 300)"/>
-          <circle class="anneau tourne" cx="300" cy="300" r="190" stroke-dasharray="2 6"/>
-          <g class="aiguille" id="aiguille"><line x1="300" y1="118" x2="300" y2="34" stroke="#ff6b4a" stroke-width="3"/><circle cx="300" cy="118" r="4" fill="#ff6b4a"/></g>
+          <g id="segments">
+            <g class="seg lu juge" data-n="obligatoire" data-s="presente"><path class="seg-fond" d="M308.93 44.16A256 256 0 0 1 546.08 229.44L517.25 237.71A226 226 0 0 0 307.89 74.14Z"/><path class="seg-plein" d="M308.93 44.16A256 256 0 0 1 546.08 229.44L517.25 237.71A226 226 0 0 0 307.89 74.14Z"/></g>
+            <g class="seg lu juge" data-n="obligatoire" data-s="partielle"><path class="seg-fond" d="M550.41 246.77A256 256 0 0 1 428.00 521.70L413.00 495.72A226 226 0 0 0 521.06 253.01Z"/><path class="seg-plein" d="M550.41 246.77A256 256 0 0 1 533.87 404.12L506.46 391.92A226 226 0 0 0 521.06 253.01Z"/></g>
+            <g class="seg lu juge" data-n="souhaitee" data-s="presente"><path class="seg-fond" d="M412.22 530.09A256 256 0 0 1 204.10 537.36L215.34 509.54A226 226 0 0 0 399.07 503.13Z"/><path class="seg-plein" d="M412.22 530.09A256 256 0 0 1 204.10 537.36L215.34 509.54A226 226 0 0 0 399.07 503.13Z"/></g>
+            <g class="seg lu juge" data-n="souhaitee" data-s="presente"><path class="seg-fond" d="M187.78 530.09A256 256 0 0 1 53.92 370.56L82.75 362.29A226 226 0 0 0 200.93 503.13Z"/><path class="seg-plein" d="M187.78 530.09A256 256 0 0 1 53.92 370.56L82.75 362.29A226 226 0 0 0 200.93 503.13Z"/></g>
+            <g class="seg lu juge" data-n="souhaitee" data-s="partielle"><path class="seg-fond" d="M49.59 353.23A256 256 0 0 1 92.89 149.53L117.16 167.16A226 226 0 0 0 78.94 346.99Z"/><path class="seg-plein" d="M49.59 353.23A256 256 0 0 1 49.59 246.77L78.94 253.01A226 226 0 0 0 78.94 346.99Z"/></g>
+            <g class="seg lu juge" data-n="souhaitee" data-s="absente"><path class="seg-fond" d="M103.89 135.45A256 256 0 0 1 291.07 44.16L292.11 74.14A226 226 0 0 0 126.87 154.73Z"/><path class="seg-plein" d=""/></g>
+          </g>
         </svg>
-        <div class="valeur" aria-hidden="true"><strong id="valeur">0</strong><span id="valeur-label">exigences lues</span></div>
+        <div class="valeur" aria-hidden="true"><strong id="valeur">68</strong><span id="valeur-label">% du profil cible</span></div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="fiche" aria-labelledby="titre-fiche">
+  <h2 class="sr" id="titre-fiche">Fiche technique</h2>
+  <div class="cadre fiche-groupes">
+    <div class="fiche-groupe">
+      <h3 class="fiche-titre">Le calcul</h3>
+      <dl class="elan">
+        <div><dt>Niveaux d'exigence : obligatoire, souhaitée, atout</dt><dd>3</dd></div>
+        <div><dt>Poids de chaque niveau</dt><dd>3 · 2 · 1</dd></div>
+        <div><dt>Score maximum s'il manque un critère éliminatoire</dt><dd>49 %</dd></div>
+      </dl>
+      <a class="lien" href="#faq">Comment le score est calculé</a>
+    </div>
+    <div class="fiche-groupe">
+      <h3 class="fiche-titre">Les garanties</h3>
+      <dl class="elan">
+        <div><dt>Ligne inventée</dt><dd><span class="surligne">0</span></dd></div>
+        <div><dt>Compte nécessaire</dt><dd>Aucun</dd></div>
+        <div><dt>Lecture de l'offre</dt><dd>Dans votre navigateur</dd></div>
+      </dl>
     </div>
   </div>
 </section>
@@ -305,9 +317,9 @@
 <section class="bloc fin" aria-labelledby="titre-fin">
   <div class="cadre fin-grille">
     <div>
-      <h2 class="geant apparait" id="titre-fin">Une offre. Votre CV. Deux minutes.</h2>
+      <h2 class="geant apparait" id="titre-fin"><span class="l">Une offre.</span> <span class="l">Votre CV.</span> <span class="l">Deux minutes.</span></h2>
       <p class="chapo apparait">La prochaine bonne nouvelle peut être la vôtre.</p>
-      <div class="actions apparait"><a class="btn plein" href="atelier.html">Essayez vous aussi</a><a class="btn" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a></div>
+      <div class="actions apparait"><a class="btn plein" href="atelier.html">Mesurer une offre</a><a class="btn" href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Ajouter à Chrome</a></div>
       <p class="fin-note apparait">L'extension lit l'offre là où vous la consultez : Indeed, HelloWork, France Travail, Welcome to the Jungle.</p>
     </div>
     <figure class="fin-clip apparait" style="background-image:url(assets/cine/flou-bureau.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="bureau" aria-hidden="true"></video></figure>
