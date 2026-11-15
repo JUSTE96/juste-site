@@ -28,7 +28,9 @@
   <p class="eyebrow">Repères par métier</p>
   <h1>Ce que les recruteurs attendent, <span class="hl">métier par métier</span>.</h1>
   <p class="lede">Pas de modèle à remplir ni de phrases toutes faites : pour 94 métiers, les savoir-faire, savoirs et certifications que décrit le référentiel public ROME 4.0, et la façon de les écrire dans votre CV. Reprenez les mots exacts, seulement s'ils correspondent à ce que vous avez fait.</p>
-  <div class="search"><label for="q" class="sr">Chercher un métier</label><input id="q" type="search" placeholder="Chercher un métier : cariste, aide-soignant, serveur…" autocomplete="off"><span class="muted small" id="qn"></span></div>
+  <div class="search"><label for="q" class="sr">Chercher un métier</label><input id="q" type="search" placeholder="Chercher un métier : cariste, aide-soignant, serveur…" autocomplete="off"><span class="muted small" id="qn" role="status"></span></div>
+  <div class="empty" id="vide" hidden><p>Aucun métier ne correspond. <a href="mailto:contact@justecv.fr?subject=Demande%20de%20m%C3%A9tier">Demandez-le</a> : nous l'ajoutons à partir de sa fiche ROME.</p><button type="button" class="btn btn-ghost btn-sm" id="effacer">Effacer la recherche</button></div>
+  <div id="resultats" class="mgrid" hidden></div>
   <nav class="toc" aria-label="Familles de métiers"><a href="#logistique">Logistique et transport</a><a href="#commerce">Commerce, vente et métiers de bouche</a><a href="#restauration">Hôtellerie et restauration</a><a href="#sante">Santé, social et éducation</a><a href="#administratif">Administratif, gestion et RH</a><a href="#numerique">Numérique et communication</a><a href="#batiment">Bâtiment et travaux</a><a href="#industrie">Industrie et maintenance</a><a href="#services">Services, propreté, sécurité et espaces verts</a></nav>
   <section class="famille" id="logistique" data-n="10">
   <h2><svg class="ico" aria-hidden="true"><use href="assets/icones.svg#camion"></use></svg>Logistique et transport <span class="muted small">10 métiers</span></h2>
@@ -528,7 +530,6 @@
   <span class="more">Voir les repères →</span>
 </a></div>
 </section>
-  <p class="empty" id="vide" hidden>Aucun métier ne correspond. <a href="mailto:contact@justecv.fr?subject=Demande%20de%20m%C3%A9tier">Demandez-le</a> : nous l'ajoutons à partir de sa fiche ROME.</p>
   <div class="cta">
     <h2>Votre métier n'est pas là ?</h2>
     <p class="muted">JusteCV lit n'importe quelle offre et compare chaque exigence à votre CV, quel que soit le métier. Les repères s'ajoutent au fil des mois ; écrivez-nous pour demander le vôtre.</p>
@@ -537,20 +538,87 @@
 </div></main>
 <script>
 (function () {
+  /* Recherche : les résultats s'affichent juste sous le champ, dans #resultats (copies des cartes), intitulés d'abord.
+     Pendant la recherche, le sommaire des familles et les familles sont masqués ; champ vidé, la page redevient la liste par famille. */
   var q = document.getElementById("q"), n = document.getElementById("qn"), vide = document.getElementById("vide");
-  var cartes = [].slice.call(document.querySelectorAll(".mcard")), familles = [].slice.call(document.querySelectorAll(".famille"));
+  var res = document.getElementById("resultats"), toc = document.querySelector(".search ~ .toc"), effacer = document.getElementById("effacer");
+  var familles = [].slice.call(document.querySelectorAll(".famille"));
   function fold(s) { return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
-  var index = cartes.map(function (c) { return " " + fold(c.getAttribute("data-s") + " " + c.textContent) + " "; });
-  function filtre() {
-    var mots = fold(q.value).split(" ").filter(Boolean), total = 0;
-    cartes.forEach(function (c, i) { var ok = mots.every(function (m) { return index[i].indexOf(m) > -1; }); c.hidden = !ok; if (ok) total++; });
-    var v = mots.length;
-    familles.forEach(function (f) { f.hidden = !f.querySelector(".mcard:not([hidden])"); });
-    n.textContent = v ? total + " métier" + (total > 1 ? "s" : "") : "";
-    vide.hidden = total > 0;
+  var fiches = [].slice.call(document.querySelectorAll(".famille .mcard")).map(function (c) {
+    var titre = fold(c.querySelector("strong").textContent), code = c.querySelector(".mono");
+    return { carte: c, copie: null, vue: false, titre: titre,
+      court: " " + titre + " " + fold(code ? code.textContent : "") + " ",
+      s: " " + fold(c.getAttribute("data-s") || "") + " ",
+      tout: " " + fold((c.getAttribute("data-s") || "") + " " + c.textContent) + " " };
+  });
+  var calme = matchMedia("(prefers-reduced-motion: reduce)"), etroit = matchMedia("(max-width: 760px)");
+  function separateur(texte) { var p = document.createElement("p"); p.className = "muted small resultats-sep"; p.textContent = texte; return p; }
+  function filtre(premier) {
+    var brut = q.value.trim(), qf = fold(brut), mots = qf.split(" ").filter(Boolean);
+    function tous(txt) { return mots.every(function (m) { return txt.indexOf(m) > -1; }); }
+    fiches.forEach(function (f) { if (f.copie) f.copie.classList.remove("arrive"); });
+    res.textContent = "";
+    if (!mots.length) {
+      fiches.forEach(function (f) { f.vue = false; });
+      res.hidden = true; toc.hidden = false; vide.hidden = true; n.textContent = "";
+      familles.forEach(function (f) { f.hidden = false; });
+      return;
+    }
+    /* 0 : l'intitulé commence par la requête ; 1 : l'intitulé (ou le code) la contient ; 2 : une appellation ; 3 : la description ou les savoir-faire */
+    var groupes = [[], [], [], []];
+    fiches.forEach(function (f) {
+      if (tous(f.tout)) groupes[f.titre.indexOf(qf) === 0 ? 0 : tous(f.court) ? 1 : tous(f.s) ? 2 : 3].push(f);
+      else f.vue = false;
+    });
+    var frag = document.createDocumentFragment(), total = 0, nouvelles = 0;
+    groupes.forEach(function (g, i) {
+      if (!g.length) return;
+      if (i === 2 && total) frag.appendChild(separateur("Autres métiers dont une appellation contient «\u00a0" + brut + "\u00a0»"));
+      if (i === 3 && total) frag.appendChild(separateur("Autres métiers dont la description ou les savoir-faire contiennent «\u00a0" + brut + "\u00a0»"));
+      g.forEach(function (f) {
+        if (!f.copie) { f.copie = f.carte.cloneNode(true); f.copie.addEventListener("animationend", function () { this.classList.remove("arrive"); }); }
+        if (!f.vue) { f.copie.classList.add("arrive"); f.copie.style.setProperty("--i", Math.min(nouvelles++, 8)); f.vue = true; }
+        frag.appendChild(f.copie); total++;
+      });
+    });
+    res.appendChild(frag);
+    res.hidden = !total; toc.hidden = true; vide.hidden = total > 0;
+    familles.forEach(function (f) { f.hidden = true; });
+    n.textContent = total + " métier" + (total > 1 ? "s" : "");
+    /* sur téléphone, au premier caractère : remonter le champ sous l'en-tête si la première carte risque d'être cachée (clavier ouvert) */
+    if (premier && etroit.matches) {
+      var bas = q.getBoundingClientRect().bottom, haut = window.visualViewport ? visualViewport.height : innerHeight;
+      if (bas + 140 > haut) q.parentNode.scrollIntoView({ block: "start", behavior: calme.matches ? "auto" : "smooth" });
+    }
+    /* aucun résultat : le message et le bouton « Effacer la recherche » restent entiers à l'écran */
+    if (!total) {
+      var hautV = window.visualViewport ? visualViewport.height : innerHeight;
+      if (vide.getBoundingClientRect().bottom > hautV) vide.scrollIntoView({ block: "nearest", behavior: calme.matches ? "auto" : "smooth" });
+    }
   }
-  q.addEventListener("input", filtre);
-  if (location.hash && location.hash.length > 2 && !document.getElementById(location.hash.slice(1))) { q.value = decodeURIComponent(location.hash.slice(1)); filtre(); }
+  var avant = "";
+  q.addEventListener("input", function () { var v = fold(q.value); filtre(!avant && !!v); avant = v; reperer(); });
+  effacer.addEventListener("click", function () { q.value = ""; avant = ""; filtre(false); reperer(); q.focus(); });
+  if (location.hash && location.hash.length > 2 && !document.getElementById(location.hash.slice(1))) { q.value = decodeURIComponent(location.hash.slice(1)); avant = fold(q.value); filtre(false); }
+  /* Famille en cours de lecture : marquée dans le sommaire ; sur téléphone, le bandeau collant se décale pour la garder visible. */
+  var courant = null, bandeau = matchMedia("(max-width: 640px)"), attente = 0;
+  function reperer() {
+    attente = 0;
+    var actif = null, lien = null;
+    if (!toc.hidden) familles.forEach(function (f) { if (f.getBoundingClientRect().top < 170) actif = f; });
+    if (actif && actif.getBoundingClientRect().bottom > 170) lien = toc.querySelector('a[href="#' + actif.id + '"]');
+    if (lien === courant) return;
+    if (courant) courant.removeAttribute("aria-current");
+    courant = lien;
+    if (!lien) return;
+    lien.setAttribute("aria-current", "location");
+    if (bandeau.matches) {
+      var g = lien.offsetLeft - 16, d = lien.offsetLeft + lien.offsetWidth + 48 - toc.clientWidth, x = toc.scrollLeft;
+      if (x > g || x < d) toc.scrollTo({ left: x > g ? g : d, behavior: calme.matches ? "auto" : "smooth" });
+    }
+  }
+  addEventListener("scroll", function () { if (!attente) attente = requestAnimationFrame(reperer); }, { passive: true });
+  reperer();
 })();
 </script>
 <footer><div class="wrap">

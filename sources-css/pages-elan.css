@@ -22,11 +22,12 @@
 @media (prefers-reduced-motion: no-preference) {
   /* tête de page : l'étiquette, le titre, le chapeau se posent l'un après l'autre ; le surlignage se tire ensuite */
   main > .wrap:first-child > .crumbs, main > .wrap:first-child > .eyebrow, main > .wrap:first-child > h1, main > .wrap:first-child > .badges,
-  main > .wrap:first-child > .lede, main > .wrap:first-child > .search, main > .wrap:first-child > .toc { animation: pose .9s var(--elan) both; }
+  main > .wrap:first-child > .lede, main > .wrap:first-child > .search, main > .wrap:first-child > .toc,
+  main > .wrap:first-child > .guides-corps > .toc { animation: pose .9s var(--elan) both; }
   main > .wrap:first-child > h1 { animation-delay: .07s; }
   main > .wrap:first-child > .badges { animation-delay: .12s; }
   main > .wrap:first-child > .lede { animation-delay: .16s; }
-  main > .wrap:first-child > .search, main > .wrap:first-child > .toc { animation-delay: .24s; }
+  main > .wrap:first-child > .search, main > .wrap:first-child > .toc, main > .wrap:first-child > .guides-corps > .toc { animation-delay: .24s; }
   @keyframes pose { from { opacity: 0; transform: translateY(18px); } }
   h1 .hl { background-repeat: no-repeat; animation: surligne 1s var(--elan-io) .55s both; }
   @keyframes surligne { from { background-size: 0% 100%; } to { background-size: 100% 100%; } }
@@ -40,6 +41,77 @@
 }
 @media print { *, *::before, *::after { animation: none !important; } }
 
+/* ---------- metiers.html : la recherche montre ses résultats juste sous le champ ---------- */
+#resultats { margin: .3rem 0 2.5rem; }
+.resultats-sep { grid-column: 1 / -1; margin: 1.1rem 0 -.1rem; padding-top: 1rem; border-top: 1px solid var(--line); max-width: 46rem; }
+#vide { display: block; justify-items: start; text-align: left; padding: 1rem 0 1.5rem; }
+#vide p { margin: 0 0 .9rem; max-width: 40rem; color: var(--muted); }
+#vide p a { color: var(--fg); text-decoration-color: var(--corail); }
+#vide .btn { min-height: 44px; }
+/* les copies ne suivent pas l'animation liée au défilement des cartes d'origine : sinon elles restent pâles */
+#resultats .mcard { animation: none; }
+@media (prefers-reduced-motion: no-preference) {
+  #resultats .mcard.arrive { animation: pose .35s var(--elan) both; animation-timeline: auto; animation-range: normal; animation-delay: calc(var(--i, 0) * 30ms); }
+}
+
+/* ---------- metiers.html sur téléphone : familles en bandeau collant sous l'en-tête, cartes compactes ----------
+   Le bandeau défile à l'horizontale ; le fondu à droite signale qu'il continue. La recherche reste au-dessus.
+   Les trois savoir-faire des cartes sont masqués ici seulement : la fiche les détaille. */
+@media (max-width: 640px) {
+  .search ~ .toc { position: sticky; top: 72px; z-index: 5; display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; overscroll-behavior-x: contain;
+    margin: .4rem -16px 1.2rem; padding: 8px 48px 8px 16px; scroll-padding-inline: 16px 48px;
+    background: rgba(255,250,244,.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line);
+    scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
+  .search ~ .toc::-webkit-scrollbar { display: none; }
+  .search ~ .toc a { flex: none; white-space: nowrap; min-height: 44px; display: inline-flex; align-items: center; }
+  .famille { scroll-margin-top: 2.6rem; margin: 1.8rem 0; }
+  .mcard .chips { display: none; }
+  .mcard > .muted.small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .mcard { gap: .4rem; padding: 1rem 1.1rem; }
+  .mcard .more { padding-top: .2rem; }
+}
+
+/* sommaires (familles de métiers, guides) : l'entrée en cours de lecture, posée par script ; fond doux et filet corail, sans déplacement */
+.toc a { transition: border-color .25s ease, background-color .25s ease, color .25s ease, transform .4s var(--elan); }
+.toc a[aria-current] { border-color: var(--corail); background: #fff0e9; color: var(--fg); }
+html[data-nuit] .toc a[aria-current] { border-color: #ff8f73; background: rgba(255,143,115,.16); }
+@media (prefers-reduced-motion: reduce) { .toc a { transition: none; } }
+
+/* ---------- fiches métier : les mots-clés se lisent comme une liste ----------
+   Des phrases de 40 à 100 caractères, pas des étiquettes : une ligne par terme, filet fin entre deux, l'étoile des termes
+   essentiels en repère de marge. Deux colonnes à partir de 700 px. Seule la carte #mots-cles est visée : la rangée de
+   liens .chips de la carte « Avec JusteCV » reste intacte. */
+#mots-cles.card .chips { --pas: .42rem; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin: 0 0 .6rem; }
+#mots-cles.card .chips span { position: relative; background: none; border: 0; border-top: 1px solid var(--line); border-radius: 0;
+  padding: var(--pas) 0 var(--pas) 1.45rem; font-size: .9rem; line-height: 1.4; color: var(--fg); }
+#mots-cles.card .chips span:first-child { border-top: 0; }
+/* tiret fin : un filet de bordure (calé au pixel) plutôt qu'un fond de 1,5 px, pour la même épaisseur à chaque ligne */
+#mots-cles.card .chips span::before { content: ""; position: absolute; left: .1rem; top: calc(var(--pas) + .7em); width: .55rem; height: 0; border-top: 1px solid currentColor; color: var(--muted); opacity: .7; }
+#mots-cles.card .chips span.core { background: none; border-color: var(--line); font-weight: 500; }
+#mots-cles.card .chips span.core::before { content: "★"; top: var(--pas); left: 0; width: auto; height: auto; background: none; border-top: 0; opacity: 1; color: var(--ambre); font-size: .9em; line-height: 1.58; }
+@media (min-width: 700px) {
+  /* en deux colonnes, des lignes un peu plus serrées : une fiche à listes courtes ne grandit pas */
+  #mots-cles.card .chips { --pas: .36rem; display: block; columns: 2; column-gap: 2rem; margin-bottom: .2rem; }
+  #mots-cles.card .chips span { display: block; break-inside: avoid; border-top: 0; border-bottom: 1px solid var(--line); }
+}
+html[data-nuit] #mots-cles.card .chips span { background: none; border-color: rgba(247,241,232,.12); }
+html[data-nuit] #mots-cles.card .chips span.core::before { color: #ffd479; }
+/* la colonne collante se lit pendant le défilement : elle ne s'estompe pas avec lui */
+.layout .side .card { animation: none; }
+
+/* ---------- guides.html : à partir de 1100 px, le sommaire se tient à droite des articles pendant la lecture ----------
+   En dessous, il reste où il est, en pastilles, sans rien de collant. Le guide en cours est marqué par un script en ligne. */
+@media (min-width: 1100px) {
+  .guides-corps { display: grid; grid-template-columns: minmax(0, 46rem) 15rem; justify-content: space-between; column-gap: 4rem; align-items: start; margin-top: 2.6rem; }
+  .guides-corps > * { grid-column: 1; min-width: 0; }
+  .guides-corps > .toc { grid-column: 2; grid-row: 1 / span 7; position: sticky; top: 6.5rem; display: grid; gap: .1rem; margin: .3rem 0 0; padding: 0; border-left: 1px solid var(--line); }
+  .guides-corps > .toc a { display: flex; align-items: center; min-height: 44px; margin-left: -1px; padding: .45rem .8rem .45rem .95rem; border: 0; border-left: 2px solid transparent; border-radius: 0 10px 10px 0; background: none; color: var(--muted); font-size: .9rem; line-height: 1.3; }
+  .guides-corps > .toc a:hover { transform: none; background: var(--surface-2); color: var(--fg); }
+  .guides-corps > .toc a[aria-current] { border-left-color: var(--corail); background: #fff0e9; color: var(--fg); }
+  html[data-nuit] .guides-corps > .toc a:hover { background: rgba(247,241,232,.06); }
+  html[data-nuit] .guides-corps > .toc a[aria-current] { border-left-color: #ff8f73; background: rgba(255,143,115,.14); }
+}
+
 /* ---------- mode nuit : statuts du suivi et sources lisibles ---------- */
 html[data-nuit] .statut-relance { background: rgba(255,226,122,.16); color: #ffe27a; }
 html[data-nuit] .statut-offre { background: rgba(127,214,176,.18); color: #7fd6b0; }
@@ -48,3 +120,4 @@ html[data-nuit] .statut-envoyee { color: #9db8ff; }
 html[data-nuit] .stat.is-warn { border-color: rgba(255,226,122,.45); }
 html[data-nuit] .stat.is-warn strong { color: #ffe27a; }
 html[data-nuit] footer .src { color: #a9aecd; }
+@media (max-width: 640px) { html[data-nuit] .search ~ .toc { background: rgba(20,25,54,.9); } }
