@@ -22,11 +22,12 @@
 @media (prefers-reduced-motion: no-preference) {
   /* tête de page : l'étiquette, le titre, le chapeau se posent l'un après l'autre ; le surlignage se tire ensuite */
   main > .wrap:first-child > .crumbs, main > .wrap:first-child > .eyebrow, main > .wrap:first-child > h1, main > .wrap:first-child > .badges,
-  main > .wrap:first-child > .lede, main > .wrap:first-child > .search, main > .wrap:first-child > .toc { animation: pose .9s var(--elan) both; }
+  main > .wrap:first-child > .lede, main > .wrap:first-child > .search, main > .wrap:first-child > .toc,
+  main > .wrap:first-child > .guides-corps > .toc { animation: pose .9s var(--elan) both; }
   main > .wrap:first-child > h1 { animation-delay: .07s; }
   main > .wrap:first-child > .badges { animation-delay: .12s; }
   main > .wrap:first-child > .lede { animation-delay: .16s; }
-  main > .wrap:first-child > .search, main > .wrap:first-child > .toc { animation-delay: .24s; }
+  main > .wrap:first-child > .search, main > .wrap:first-child > .toc, main > .wrap:first-child > .guides-corps > .toc { animation-delay: .24s; }
   @keyframes pose { from { opacity: 0; transform: translateY(18px); } }
   h1 .hl { background-repeat: no-repeat; animation: surligne 1s var(--elan-io) .55s both; }
   @keyframes surligne { from { background-size: 0% 100%; } to { background-size: 100% 100%; } }
@@ -95,6 +96,19 @@ html[data-nuit] #mots-cles.card .chips span { background: none; border-color: rg
 html[data-nuit] #mots-cles.card .chips span.core::before { color: #ffd479; }
 /* la colonne collante se lit pendant le défilement : elle ne s'estompe pas avec lui */
 .layout .side .card { animation: none; }
+
+/* ---------- guides.html : à partir de 1100 px, le sommaire se tient à droite des articles pendant la lecture ----------
+   En dessous, il reste où il est, en pastilles, sans rien de collant. Le guide en cours est marqué par un script en ligne. */
+@media (min-width: 1100px) {
+  .guides-corps { display: grid; grid-template-columns: minmax(0, 46rem) 15rem; justify-content: space-between; column-gap: 4rem; align-items: start; margin-top: 2.6rem; }
+  .guides-corps > * { grid-column: 1; min-width: 0; }
+  .guides-corps > .toc { grid-column: 2; grid-row: 1 / span 7; position: sticky; top: 6.5rem; display: grid; gap: .1rem; margin: .3rem 0 0; padding: 0; border-left: 1px solid var(--line); }
+  .guides-corps > .toc a { display: flex; align-items: center; min-height: 44px; margin-left: -1px; padding: .45rem .8rem .45rem .95rem; border: 0; border-left: 2px solid transparent; border-radius: 0 10px 10px 0; background: none; color: var(--muted); font-size: .9rem; line-height: 1.3; }
+  .guides-corps > .toc a:hover { transform: none; background: var(--surface-2); color: var(--fg); }
+  .guides-corps > .toc a[aria-current] { border-left-color: var(--corail); background: #fff0e9; color: var(--fg); }
+  html[data-nuit] .guides-corps > .toc a:hover { background: rgba(247,241,232,.06); }
+  html[data-nuit] .guides-corps > .toc a[aria-current] { border-left-color: #ff8f73; background: rgba(255,143,115,.14); }
+}
 
 /* ---------- mode nuit : statuts du suivi et sources lisibles ---------- */
 html[data-nuit] .statut-relance { background: rgba(255,226,122,.16); color: #ffe27a; }
