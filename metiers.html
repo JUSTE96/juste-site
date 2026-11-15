@@ -592,9 +592,28 @@
     }
   }
   var avant = "";
-  q.addEventListener("input", function () { var v = fold(q.value); filtre(!avant && !!v); avant = v; });
-  effacer.addEventListener("click", function () { q.value = ""; avant = ""; filtre(false); q.focus(); });
+  q.addEventListener("input", function () { var v = fold(q.value); filtre(!avant && !!v); avant = v; reperer(); });
+  effacer.addEventListener("click", function () { q.value = ""; avant = ""; filtre(false); reperer(); q.focus(); });
   if (location.hash && location.hash.length > 2 && !document.getElementById(location.hash.slice(1))) { q.value = decodeURIComponent(location.hash.slice(1)); avant = fold(q.value); filtre(false); }
+  /* Famille en cours de lecture : marquée dans le sommaire ; sur téléphone, le bandeau collant se décale pour la garder visible. */
+  var courant = null, bandeau = matchMedia("(max-width: 640px)"), attente = 0;
+  function reperer() {
+    attente = 0;
+    var actif = null, lien = null;
+    if (!toc.hidden) familles.forEach(function (f) { if (f.getBoundingClientRect().top < 170) actif = f; });
+    if (actif && actif.getBoundingClientRect().bottom > 170) lien = toc.querySelector('a[href="#' + actif.id + '"]');
+    if (lien === courant) return;
+    if (courant) courant.removeAttribute("aria-current");
+    courant = lien;
+    if (!lien) return;
+    lien.setAttribute("aria-current", "location");
+    if (bandeau.matches) {
+      var g = lien.offsetLeft - 16, d = lien.offsetLeft + lien.offsetWidth + 48 - toc.clientWidth, x = toc.scrollLeft;
+      if (x > g || x < d) toc.scrollTo({ left: x > g ? g : d, behavior: calme.matches ? "auto" : "smooth" });
+    }
+  }
+  addEventListener("scroll", function () { if (!attente) attente = requestAnimationFrame(reperer); }, { passive: true });
+  reperer();
 })();
 </script>
 <footer><div class="wrap">

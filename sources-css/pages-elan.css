@@ -53,6 +53,29 @@
   #resultats .mcard.arrive { animation: pose .35s var(--elan) both; animation-timeline: auto; animation-range: normal; animation-delay: calc(var(--i, 0) * 30ms); }
 }
 
+/* ---------- metiers.html sur téléphone : familles en bandeau collant sous l'en-tête, cartes compactes ----------
+   Le bandeau défile à l'horizontale ; le fondu à droite signale qu'il continue. La recherche reste au-dessus.
+   Les trois savoir-faire des cartes sont masqués ici seulement : la fiche les détaille. */
+@media (max-width: 640px) {
+  .search ~ .toc { position: sticky; top: 72px; z-index: 5; display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; overscroll-behavior-x: contain;
+    margin: .4rem -16px 1.2rem; padding: 8px 48px 8px 16px; scroll-padding-inline: 16px 48px;
+    background: rgba(255,250,244,.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line);
+    scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
+  .search ~ .toc::-webkit-scrollbar { display: none; }
+  .search ~ .toc a { flex: none; white-space: nowrap; min-height: 44px; display: inline-flex; align-items: center; }
+  .famille { scroll-margin-top: 2.6rem; margin: 1.8rem 0; }
+  .mcard .chips { display: none; }
+  .mcard > .muted.small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .mcard { gap: .4rem; padding: 1rem 1.1rem; }
+  .mcard .more { padding-top: .2rem; }
+}
+
+/* sommaires (familles de métiers, guides) : l'entrée en cours de lecture, posée par script ; fond doux et filet corail, sans déplacement */
+.toc a { transition: border-color .25s ease, background-color .25s ease, color .25s ease, transform .4s var(--elan); }
+.toc a[aria-current] { border-color: var(--corail); background: #fff0e9; color: var(--fg); }
+html[data-nuit] .toc a[aria-current] { border-color: #ff8f73; background: rgba(255,143,115,.16); }
+@media (prefers-reduced-motion: reduce) { .toc a { transition: none; } }
+
 /* ---------- mode nuit : statuts du suivi et sources lisibles ---------- */
 html[data-nuit] .statut-relance { background: rgba(255,226,122,.16); color: #ffe27a; }
 html[data-nuit] .statut-offre { background: rgba(127,214,176,.18); color: #7fd6b0; }
@@ -61,3 +84,4 @@ html[data-nuit] .statut-envoyee { color: #9db8ff; }
 html[data-nuit] .stat.is-warn { border-color: rgba(255,226,122,.45); }
 html[data-nuit] .stat.is-warn strong { color: #ffe27a; }
 html[data-nuit] footer .src { color: #a9aecd; }
+@media (max-width: 640px) { html[data-nuit] .search ~ .toc { background: rgba(20,25,54,.9); } }
