@@ -198,14 +198,30 @@ $("mesurer").addEventListener("click", (ev) => {
   });
 });
 
+// Phrase de tête : uniquement des faits comptés, jamais un pronostic. Un éliminatoire absent passe avant tout,
+// même quand le score est déjà sous 49 % (la mention « plafonné » n'apparaît alors pas).
+const POIDS = { obligatoire: 3, souhaitee: 2, atout: 1 };
+const cite = (t) => `« ${t} »`;
+function phraseDeTete(r) {
+  const cs = r.correspondances, elim = cs.filter((c) => c.eliminatoire && c.statut === "absente");
+  const oblig = cs.filter((c) => c.niveau === "obligatoire" && c.statut === "absente").length;
+  if (elim.length === 1) return `Un critère éliminatoire manque : ${cite(elim[0].texte)}. C'est le premier point du plan.`;
+  if (elim.length > 1) return `${elim.length} critères éliminatoires manquent : ${elim.map((c) => cite(c.texte)).join(", ")}. Ce sont les premiers points du plan.`;
+  if (oblig) return `Il manque ${oblig} exigence${oblig > 1 ? "s" : ""} obligatoire${oblig > 1 ? "s" : ""}.`;
+  if (!r.plan.length) return "Toutes les exigences sont visibles dans votre CV.";
+  const n = r.plan.length, autres = r.plan.every((p) => p.niveau !== "obligatoire");
+  return `Aucune exigence obligatoire ne manque. ${n} point${n > 1 ? "s" : ""}${autres ? ` souhaité${n > 1 ? "s" : ""} ou atout${n > 1 ? "s" : ""}` : ""} à travailler.`;
+}
+
 function afficherEcart(r) {
   const s = r.score;
   dernier = r; $("e-score").textContent = "0"; compter($("e-score"), s ? s.score : NaN, 1200);
   $("e-jauge").style.width = s ? `${s.score}%` : "0";
-  $("e-detail").innerHTML = s
+  $("e-detail").innerHTML = `<strong class="detail-tete">${esc(phraseDeTete(r))}</strong> ` + (s
     ? `${s.presentes} présente${s.presentes > 1 ? "s" : ""}, ${s.partielles} en partie, ${s.absentes} absente${s.absentes > 1 ? "s" : ""} sur ${s.total} exigences.${s.eliminatoires ? ` <b>Score plafonné à 49 %</b> : un critère éliminatoire manque.` : ""}`
-    : "L'offre contient moins de trois exigences claires : le pourcentage ne serait pas fiable, voici seulement le détail.";
-  $("e-jalons").innerHTML = r.correspondances.map((c, i) => `<i data-s="${c.statut}" style="--i:${i}"></i>`).join("");
+    : "L'offre contient moins de trois exigences claires : le pourcentage ne serait pas fiable, voici seulement le détail.");
+  // Chaque segment pèse ce que pèse l'exigence dans le calcul : 3, 2 ou 1.
+  $("e-jalons").innerHTML = r.correspondances.map((c, i) => `<i data-s="${c.statut}" style="--i:${i};flex:${POIDS[c.niveau] || 1}"></i>`).join("");
   $("e-lignes").innerHTML = r.correspondances.map((c, i) => `<li style="--i:${i}"><span>${esc(c.texte)}</span><span class="statut ${c.statut}">${STATUT[c.statut]}</span>${c.preuve ? `<small>Dans votre CV : « ${esc(c.preuve)} »</small>` : ""}${c.note ? `<small>${esc(c.note)}</small>` : ""}</li>`).join("");
   let i = 0;
   $("e-plan").innerHTML = r.plan.length
@@ -219,7 +235,7 @@ function afficherEcart(r) {
 // Le moteur trie déjà le plan (éliminatoire, puis obligatoire, souhaitée, atout) : le groupe qui contient le point
 // le plus urgent passe en premier, pour qu'un critère éliminatoire absent reste toujours le point 01.
 const RANG = { obligatoire: 0, souhaitee: 1, atout: 2 };
-const urgence = (p) => (p.eliminatoire ? 0 : 10) + RANG[p.niveau];
+const urgence = (p) => (p.eliminatoire ? (p.statut === "absente" ? 0 : 1) : 10) + RANG[p.niveau];
 function groupesDuPlan(plan) {
   const groupes = [["partielle", "À mieux montrer"], ["absente", "À ajouter ou à acquérir"]]
     .map(([statut, titre]) => ({ statut, titre, points: plan.filter((p) => p.statut === statut) }))

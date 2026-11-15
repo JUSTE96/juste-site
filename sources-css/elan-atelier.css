@@ -86,6 +86,9 @@ html[data-nuit] .lecteur-lecture[data-teinte="cv"] { --marque: #1f5c47; }
 .plan h5 .poids { margin-left: .6rem; }
 .plan-groupe > .plan-groupe-titre, .plan-groupe > .plan-commun { animation: monte .7s var(--elan) both; animation-delay: calc(.2s + var(--i, 0) * 70ms); }
 
+/* ---------- l'écart : la phrase de tête dit d'abord ce qui bloque ---------- */
+.mesure-detail .detail-tete { display: block; margin-bottom: .35rem; color: var(--os); font-weight: 600; font-size: 1.05rem; line-height: 1.45; }
+
 /* ---------- nuit ---------- */
 html[data-nuit] .plan-commun { background: #f7f1e80f; }
 html[data-nuit] .reperes-compte { color: var(--vert); }
