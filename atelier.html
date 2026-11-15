@@ -53,8 +53,9 @@
       </div>
       <div class="etape-droite">
         <label class="sr" for="offre">Texte de l'offre</label>
-        <div class="lecteur" id="lecteur-offre"><textarea id="offre" rows="12" placeholder="Collez ici le texte de l'offre d'emploi…"></textarea></div>
+        <div class="lecteur" id="lecteur-offre"><textarea id="offre" rows="12" aria-describedby="aide-offre" placeholder="Collez ici le texte de l'offre d'emploi…"></textarea></div>
         <div class="barre"><button class="btn plein" id="assembler" type="button">Assembler le profil cible</button><span class="aide" id="aide-offre"></span></div>
+        <noscript><p class="aide noscript">L'atelier a besoin de JavaScript pour lire l'offre dans votre navigateur.</p></noscript>
       </div>
     </section>
 
@@ -92,12 +93,12 @@
       </div>
       <div class="etape-droite">
         <div class="depot">
-          <input type="file" id="fichier" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain">
+          <input type="file" id="fichier" aria-describedby="aide-fichier" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain">
           <label for="fichier" class="btn">Importer un fichier</label>
-          <span class="aide" id="aide-fichier">PDF, DOCX ou TXT, 15 Mo au plus.</span>
+          <span class="aide" id="aide-fichier" role="status">PDF, DOCX ou TXT, 15 Mo au plus.</span>
         </div>
         <label class="sr" for="cv">Texte du CV</label>
-        <div class="depot-zone lecteur" id="depot-zone"><textarea id="cv" rows="10" placeholder="…ou collez ici le texte de votre CV. Vous pouvez aussi glisser le fichier dans ce cadre."></textarea></div>
+        <div class="depot-zone lecteur" id="depot-zone"><textarea id="cv" rows="10" aria-describedby="aide-cv" placeholder="…ou collez ici le texte de votre CV. Vous pouvez aussi glisser le fichier dans ce cadre."></textarea></div>
         <div class="barre"><button class="btn plein" id="mesurer" type="button">Mesurer l'écart</button><span class="aide" id="aide-cv"></span></div>
       </div>
     </section>

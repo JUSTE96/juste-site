@@ -41,6 +41,28 @@ html[data-nuit] .fil ol { background: #232a5c; border-color: #f7f1e824; box-shad
 }
 @media (max-width: 620px) { .fil button { padding: 0 .55rem; } .fil button[aria-current="step"] { padding: 0 .9rem 0 .55rem; } }
 
+/* ---------- erreurs : un message distinct, un cadre marqué, jamais un aplat corail ---------- */
+/* --corail-texte : 5,0:1 sur la crème le jour, 6,0:1 sur #232a5c la nuit. */
+.aide { transition: color .2s; }
+.aide.erreur { color: var(--corail-texte); font-weight: 600; display: inline-flex; align-items: flex-start; gap: .5rem; }
+.aide.erreur::before { content: "!"; flex: none; display: grid; place-items: center; width: 1.25em; height: 1.25em; margin-top: .05em; border-radius: 50%; background: var(--corail-texte); color: var(--carbone); font: 700 .8em/1 var(--texte); }
+.lecteur { transition: box-shadow .2s; }
+.lecteur.invalide { box-shadow: 0 0 0 2px var(--corail-texte); }
+.depot-zone.invalide { border-color: var(--corail-texte); border-style: solid; border-width: 2px; box-shadow: none; }
+.noscript { margin: 1rem 0 0; color: var(--os); font-weight: 600; }
+
+/* ---------- où l'on écrit : un indicateur de focus visible (.lecteur rogne tout ce qui dépasse) ---------- */
+textarea:focus-visible { outline: 2px solid var(--bleu); outline-offset: -2px; }
+.depot-zone textarea:focus-visible { outline: 0; }
+.depot-zone:focus-within { border-color: var(--bleu); border-style: solid; }
+.depot-zone.invalide:focus-within { border-color: var(--corail-texte); }
+.lecteur.invalide textarea:focus-visible { outline-color: var(--corail-texte); }
+
+@media (max-width: 860px) {
+  #etape-offre .barre .aide, #etape-cv .barre .aide { order: -1; flex-basis: 100%; }
+  #etape-offre .barre .aide:empty, #etape-cv .barre .aide:empty { display: none; }
+}
+
 /* ---------- le plan en deux groupes, numérotés d'un seul tenant ---------- */
 .plan-groupes { counter-reset: p; margin-top: 1rem; }
 .plan-groupes .plan { counter-reset: none; margin-top: .4rem; }

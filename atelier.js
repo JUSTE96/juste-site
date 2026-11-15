@@ -16,7 +16,7 @@ const aller = (el) => { el.hidden = false; el.focus({ preventScroll: true }); el
 let profil = null, metier = null, dernier = null;
 
 $("exemple").insertAdjacentHTML("beforeend", DOMAINES.map((d) => `<option value="${d.id}">${d.nom} : ${d.intitule}</option>`).join(""));
-$("exemple").addEventListener("change", (e) => { if (e.target.value) { $("offre").value = domaine(e.target.value).offre; garder(); $("aide-offre").textContent = "Offre d'exemple chargée. Vous pouvez la modifier."; } });
+$("exemple").addEventListener("change", (e) => { if (e.target.value) { $("offre").value = domaine(e.target.value).offre; effacerErreur($("offre")); garder(); $("aide-offre").textContent = "Offre d'exemple chargée. Vous pouvez la modifier."; } });
 
 // Un court temps de lecture avant le résultat : on voit l'outil parcourir le texte, puis la suite arrive.
 // Le calcul est immédiat ; ce temps sert seulement à relier le clic à ce qui apparaît plus bas.
@@ -28,10 +28,31 @@ const lire = (zone, bouton, libelle, suite) => {
   setTimeout(() => { zone.classList.remove("lit"); bouton.removeAttribute("aria-busy"); bouton.textContent = texte; suite(); }, 760);
 };
 
+/* ---------- erreurs : visibles, annoncées une fois, effacées dès qu'on corrige ---------- */
+// Le message est posé avec role="alert" (une seule annonce) ; le curseur revient dans le champ à corriger,
+// relié au message par aria-describedby.
+function signaler(champ, message) {
+  const aide = $(champ.getAttribute("aria-describedby")), cadre = champ.closest(".lecteur");
+  aide.textContent = message; aide.classList.add("erreur"); aide.setAttribute("role", "alert");
+  champ.setAttribute("aria-invalid", "true"); cadre?.classList.add("invalide");
+  champ.focus({ preventScroll: true });
+  aide.closest(".barre").scrollIntoView({ behavior: calme ? "auto" : "smooth", block: "nearest" });
+}
+function effacerErreur(champ) {
+  if (champ.getAttribute("aria-invalid") !== "true") return;
+  const aide = $(champ.getAttribute("aria-describedby"));
+  aide.textContent = ""; aide.classList.remove("erreur"); aide.removeAttribute("role");
+  champ.removeAttribute("aria-invalid"); champ.closest(".lecteur")?.classList.remove("invalide");
+}
+["offre", "cv"].forEach((id) => $(id).addEventListener("input", () => effacerErreur($(id))));
+const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? "s" : ""}`;
+const nbMots = (t) => (t.trim() ? t.trim().split(/\s+/).length : 0);
+
 $("assembler").addEventListener("click", (ev) => {
-  const texte = $("offre").value.trim();
-  if (texte.replace(/\s/g, "").length < 80) { $("aide-offre").textContent = "Le texte est trop court. Collez l'annonce entière."; return; }
-  $("aide-offre").textContent = "";
+  const texte = $("offre").value.trim(), n = texte.replace(/\s/g, "").length;
+  if (!n) { signaler($("offre"), "Rien à lire pour l'instant. Collez l'annonce, ou choisissez une offre d'exemple."); return; }
+  if (n < 80) { signaler($("offre"), `Il manque du texte (${pluriel(n, "caractère")}, il en faut au moins 80). Collez l'annonce entière, rubrique «\u00a0Profil\u00a0» comprise.`); return; }
+  effacerErreur($("offre")); $("aide-offre").textContent = "";
   lire($("lecteur-offre"), ev.currentTarget, "Lecture de l'offre…", () => {
     profil = profilCible(texte);
     afficherProfil(profil, offerSignals(texte));
@@ -64,11 +85,13 @@ function afficherProfil(p, signaux) {
 }
 
 /* ---------- import du CV ---------- */
+// #aide-fichier est une zone role="status" : chaque message y est annoncé, sans déplacer le curseur ;
+// les échecs prennent en plus la couleur des erreurs.
+function direFichier(m, erreur = false) { $("aide-fichier").textContent = m; $("aide-fichier").classList.toggle("erreur", erreur); }
 async function lireFichier(f) {
-  const aide = $("aide-fichier");
   if (!f) return;
-  if (f.size > 15 * 1024 * 1024) { aide.textContent = "Ce fichier dépasse 15 Mo."; return; }
-  aide.textContent = "Lecture du fichier…";
+  if (f.size > 15 * 1024 * 1024) { direFichier("Ce fichier dépasse 15 Mo.", true); return; }
+  direFichier("Lecture du fichier…");
   try {
     let texte = "";
     if (/\.pdf$/i.test(f.name) || f.type === "application/pdf") {
@@ -82,11 +105,11 @@ async function lireFichier(f) {
       if (!window.mammoth) await new Promise((ok, ko) => { const s = document.createElement("script"); s.src = "vendor/mammoth.browser.min.js"; s.onload = ok; s.onerror = ko; document.head.appendChild(s); });
       texte = (await window.mammoth.extractRawText({ arrayBuffer: await f.arrayBuffer() })).value;
     } else if (/\.txt$/i.test(f.name) || f.type.startsWith("text/")) texte = await f.text();
-    else { aide.textContent = "Format non pris en charge. Utilisez un PDF, un fichier Word (.docx) ou du texte."; return; }
-    if (texte.trim().split(/\s+/).length < 20) { aide.textContent = "Presque aucun texte lu : ce CV est sans doute une image. Les logiciels de tri des recruteurs le liront mal aussi. Collez son texte à la main."; return; }
-    $("cv").value = texte.trim(); garder();
-    aide.textContent = `${f.name} lu (${texte.trim().split(/\s+/).length} mots).`;
-  } catch { aide.textContent = "Ce fichier n'a pas pu être lu. Collez le texte de votre CV à la main."; }
+    else { direFichier("Format non pris en charge. Utilisez un PDF, un fichier Word (.docx) ou du texte.", true); return; }
+    if (nbMots(texte) < 20) { direFichier("Presque aucun texte lu : ce CV est sans doute une image. Les logiciels de tri des recruteurs le liront mal aussi. Collez son texte à la main.", true); return; }
+    $("cv").value = texte.trim(); effacerErreur($("cv")); garder();
+    direFichier(`${f.name} lu (${nbMots(texte)} mots).`);
+  } catch { direFichier("Ce fichier n'a pas pu être lu. Collez le texte de votre CV à la main.", true); }
 }
 $("fichier").addEventListener("change", (ev) => { lireFichier(ev.target.files?.[0]); ev.target.value = ""; });
 const zone = $("depot-zone");
@@ -96,9 +119,10 @@ zone.addEventListener("drop", (e) => lireFichier(e.dataTransfer?.files?.[0]));
 
 $("mesurer").addEventListener("click", (ev) => {
   if (!profil) return;
-  const cv = $("cv").value.trim();
-  if (cv.split(/\s+/).length < 20) { $("aide-cv").textContent = "Le CV est trop court pour être comparé."; return; }
-  $("aide-cv").textContent = "";
+  const cv = $("cv").value.trim(), n = nbMots(cv);
+  if (!n) { signaler($("cv"), "Ajoutez votre CV : importez un fichier ou collez son texte."); return; }
+  if (n < 20) { signaler($("cv"), `${n} mot${n > 1 ? "s" : ""} lu${n > 1 ? "s" : ""}, il en faut au moins 20 : ajoutez vos expériences et votre formation.`); return; }
+  effacerErreur($("cv")); $("aide-cv").textContent = "";
   lire($("depot-zone"), ev.currentTarget, "Comparaison…", () => {
     afficherEcart(ecart(profil, cv));
     afficherReperes(cv);
@@ -225,7 +249,7 @@ $("copier").addEventListener("click", async () => {
 $("imprimer").addEventListener("click", () => window.print());
 $("recommencer").addEventListener("click", () => {
   profil = null; dernier = null; metier = null;
-  $("offre").value = ""; $("exemple").value = ""; garder();
+  $("offre").value = ""; $("exemple").value = ""; effacerErreur($("offre")); effacerErreur($("cv")); garder();
   ["profil", "etape-cv", "ecart"].forEach((id) => { $(id).hidden = true; });
   $("aide-offre").textContent = "Collez une nouvelle offre. Votre CV est gardé."; $("aide-actions").textContent = "";
   majFil(); $("etape-offre").scrollIntoView({ behavior: calme ? "auto" : "smooth", block: "start" }); $("offre").focus({ preventScroll: true });
