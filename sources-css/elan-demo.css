@@ -1,0 +1,64 @@
+/* JusteCV — couche « élan » de la démo et des sections de l'accueil (galerie, démo, règle, prix, questions).
+   Concaténée après elan.css par sources-css/assembler.py : elle surcharge, elle ne réécrit pas.
+   Même principe que la couche élan : chaque mouvement montre une réponse prise en compte ou un résultat,
+   tout se pose sans animation sous prefers-reduced-motion, et rien n'est caché si le script manque. */
+
+/* ---------- démo : le cadre ne coupe plus le collage ----------
+   overflow: hidden faisait de la carte un conteneur de défilement : rien n'y collait.
+   overflow: clip découpe pareil (coins arrondis compris) sans créer ce conteneur ; hidden reste en repli. */
+.vitrine, .js .vitrine.cascade.vu { overflow: hidden; overflow: clip; }
+
+/* ---------- démo : bandeau de suivi (jalons + « n / 6 ») ---------- */
+.demo-suivi { display: flex; align-items: center; gap: .9rem; margin-top: 1.3rem; }
+.demo-suivi .jalons { flex: 1; margin: 0; }
+.demo-compte { flex: none; min-width: 3.4em; text-align: right; font: 600 .9rem/1 var(--texte); font-variant-numeric: tabular-nums; color: var(--os); }
+.demo-compte.tic { animation: tic .45s var(--elan); }
+html:not(.js) .demo-suivi { display: none; }
+
+/* ---------- démo : le niveau de l'exigence sous chaque question ---------- */
+.question > .poids { grid-column: 1; margin-top: -.25rem; }
+@media (min-width: 1101px) { .question > .reponses { grid-row: 1 / span 2; align-self: center; } }
+
+/* ---------- démo : à la sixième réponse, le profil cible devient le plan ---------- */
+#demo-cible li { transition: background .35s, color .5s ease calc(var(--k, 0) * 80ms); }
+#demo-cible li::after { content: ""; position: absolute; left: -14px; top: .85rem; bottom: .85rem; width: 3px; border-radius: 3px; background: var(--c, transparent);
+  transform: scaleY(0); transform-origin: top; transition: transform .5s var(--elan) calc(var(--k, 0) * 80ms); }
+#demo-cible li[data-statut="partielle"] { --c: var(--ambre); }
+#demo-cible li[data-statut="absente"] { --c: var(--corail-texte); }
+#demo-cible.fini li[data-statut="presente"] { color: var(--acier); }
+#demo-cible.fini li[data-statut="presente"] .poids { color: var(--acier); font-weight: 500; }
+#demo-cible.fini li[data-statut="presente"] .poids::before { background: var(--acier); }
+#demo-cible.fini li[data-statut="partielle"], #demo-cible.fini li[data-statut="absente"] { color: var(--os); }
+#demo-cible.fini li[data-statut="partielle"]::after, #demo-cible.fini li[data-statut="absente"]::after { transform: scaleY(1); }
+#demo-reste { margin: 1.2rem 0 0; color: var(--os); font-weight: 600; }
+#demo-reste:not([hidden]) { animation: monte .6s var(--elan) both .25s; }
+
+/* ---------- démo sur téléphone : une seule liste, le suivi reste sous les yeux ---------- */
+@media (max-width: 860px) {
+  /* En « 30 secondes », les questions portent déjà le texte et le niveau : la liste du profil s'efface
+     (seulement quand le script a posé data-mode ; sans script elle reste). */
+  #demo[data-mode="rapide"] #demo-cible, #demo[data-mode="rapide"] #demo-reste { display: none; }
+  #demo[data-mode="rapide"] > section:first-child { padding-bottom: 1.1rem; }
+  #demo[data-mode="rapide"] > section:first-child .ref { margin-bottom: 0; }
+  #demo-rapide { display: flex; flex-direction: column; }
+  #demo-rapide > .aide:first-child { order: -2; }
+  .demo-suivi { order: -1; position: sticky; top: 80px; z-index: 3; box-sizing: border-box; height: 44px; margin: 0 calc(-1 * clamp(24px, 3vw, 44px)); padding: 0 clamp(24px, 3vw, 44px);
+    background: #fdfbff; box-shadow: 0 1px 0 var(--trait); }
+  #demo-questions .question:first-child { border-top: 0; }
+  .question { scroll-margin-top: 140px; }
+  .reponses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+  .reponses span { min-height: 48px; width: 100%; justify-content: center; padding: 0 .4rem; }
+  #rapide-actions { scroll-margin-bottom: 24px; }
+}
+@media (min-width: 861px) { .question { scroll-margin-top: 110px; } }
+
+/* ---------- mode nuit ---------- */
+@media (max-width: 860px) { html[data-nuit] .demo-suivi { background: #232a5c; box-shadow: 0 1px 0 #2c3364; } }
+/* les jalons encore vides se perdaient dans le fond de la carte */
+html[data-nuit] #demo-jalons i:not([data-s]) { background: #3b4482; }
+
+/* ---------- mouvement réduit : mêmes états, sans transition ---------- */
+@media (prefers-reduced-motion: reduce) {
+  #demo-cible li, #demo-cible li::after { transition: none; }
+  #demo-reste:not([hidden]), .demo-compte.tic { animation: none; }
+}
