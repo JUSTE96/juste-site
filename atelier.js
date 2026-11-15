@@ -18,15 +18,79 @@ let profil = null, metier = null, dernier = null;
 $("exemple").insertAdjacentHTML("beforeend", DOMAINES.map((d) => `<option value="${d.id}">${d.nom} : ${d.intitule}</option>`).join(""));
 $("exemple").addEventListener("change", (e) => { if (e.target.value) { $("offre").value = domaine(e.target.value).offre; effacerErreur($("offre")); garder(); $("aide-offre").textContent = "Offre d'exemple chargée. Vous pouvez la modifier."; } });
 
-// Un court temps de lecture avant le résultat : on voit l'outil parcourir le texte, puis la suite arrive.
-// Le calcul est immédiat ; ce temps sert seulement à relier le clic à ce qui apparaît plus bas.
-const lire = (zone, bouton, libelle, suite) => {
+// Un court temps de lecture avant le résultat : la bande parcourt le texte collé et surligne, mot pour mot,
+// les phrases que l'outil retient (exigences de l'offre, lignes du CV qui les prouvent). Le calcul est déjà fait ;
+// ce temps (1,2 s au plus) montre d'où vient le résultat, puis la suite arrive.
+// Pendant la séquence, le textarea est masqué et un calque de lecture opaque, aria-hidden, reprend sa boîte,
+// sa police et son défilement : une seule couche visible, donc aucun décalage possible entre texte et surlignage.
+const BALAYAGE = 760, MAINTIEN = 440;
+let calque = null;
+function retirerCalque() {
+  if (!calque) return;
+  calque.el.remove(); calque.champ.style.visibility = ""; calque.champ.scrollTop = calque.el.scrollTop; calque = null;
+}
+addEventListener("resize", retirerCalque);
+["offre", "cv"].forEach((id) => $(id).addEventListener("input", retirerCalque));
+
+function poserCalque(zone, champ, marques, teinte) {
+  const v = champ.value, plages = [];
+  // Marques posées par indexOf strict : une phrase introuvable telle quelle n'est jamais approchée.
+  for (const m of new Set(marques)) { const i = m ? v.indexOf(m) : -1; if (i >= 0) plages.push([i, i + m.length]); }
+  plages.sort((a, b) => a[0] - b[0]);
+  let html = "", k = 0, n = 0;
+  for (const [a, b] of plages) { if (a < k) continue; html += esc(v.slice(k, a)) + `<mark>${esc(v.slice(a, b))}</mark>`; k = b; n++; }
+  if (!n) return 0;
+  html += esc(v.slice(k)) + "\n";
+  const cs = getComputedStyle(champ), el = document.createElement("div");
+  el.className = "lecteur-lecture"; el.dataset.teinte = teinte; el.setAttribute("aria-hidden", "true");
+  for (const p of ["fontFamily", "fontSize", "fontWeight", "fontStyle", "fontStretch", "lineHeight", "letterSpacing", "wordSpacing", "textIndent", "tabSize",
+    "paddingTop", "paddingBottom", "paddingLeft", "borderTopWidth", "borderRightWidth", "borderBottomWidth", "borderLeftWidth", "borderStyle", "borderColor",
+    "borderTopLeftRadius", "borderTopRightRadius", "borderBottomLeftRadius", "borderBottomRightRadius", "backgroundColor", "color"]) el.style[p] = cs[p];
+  // La barre de défilement du textarea mange de la largeur : on la rend en marge pour garder les mêmes retours à la ligne.
+  const barre = champ.offsetWidth - champ.clientWidth - parseFloat(cs.borderLeftWidth) - parseFloat(cs.borderRightWidth);
+  el.style.paddingRight = `${parseFloat(cs.paddingRight) + Math.max(0, barre)}px`;
+  Object.assign(el.style, { left: `${champ.offsetLeft}px`, top: `${champ.offsetTop}px`, width: `${champ.offsetWidth}px`, height: `${champ.offsetHeight}px` });
+  el.innerHTML = html;
+  zone.appendChild(el);
+  el.scrollTop = champ.scrollTop;
+  // Si la première marque est hors de vue, on l'amène au tiers haut de la zone ; si les suivantes débordent
+  // en bas, on remonte le texte autant que possible sans faire sortir la première.
+  const ms = el.querySelectorAll("mark"), m0 = ms[0], mn = ms[ms.length - 1], lh = parseFloat(cs.lineHeight) || 24;
+  if (m0.offsetTop < el.scrollTop || m0.offsetTop + lh > el.scrollTop + el.clientHeight) el.scrollTop = Math.max(0, m0.offsetTop - el.clientHeight / 3);
+  const basN = mn.offsetTop + mn.offsetHeight + lh / 2 - el.clientHeight;
+  if (basN > el.scrollTop) el.scrollTop = Math.min(basN, Math.max(el.scrollTop, m0.offsetTop - lh));
+  champ.style.visibility = "hidden";
+  calque = { el, champ };
+  return n;
+}
+
+// Chaque marque se surligne quand le bord corail de la bande passe sur elle : on lit la position réelle de la bande.
+function suivreBande(zone, el) {
+  const marques = [...el.querySelectorAll("mark")], t0 = performance.now();
+  const pas = () => {
+    if (!el.isConnected) return;
+    const ap = getComputedStyle(zone, "::after"), ty = new DOMMatrixReadOnly(ap.transform === "none" ? undefined : ap.transform).m42;
+    const bord = zone.getBoundingClientRect().top + ty + parseFloat(ap.height) * .95;
+    marques.forEach((m) => { if (!m.classList.contains("vu") && m.getBoundingClientRect().top + 4 <= bord) m.classList.add("vu"); });
+    if (performance.now() - t0 < BALAYAGE) requestAnimationFrame(pas); else marques.forEach((m) => m.classList.add("vu"));
+  };
+  requestAnimationFrame(pas);
+}
+
+function lire({ zone, champ, bouton, libelle, marques, fin, teinte }, suite) {
   if (bouton.getAttribute("aria-busy") === "true") return;
   if (calme) { suite(); return; }
   const texte = bouton.textContent;
   bouton.setAttribute("aria-busy", "true"); bouton.textContent = libelle; zone.classList.add("lit");
-  setTimeout(() => { zone.classList.remove("lit"); bouton.removeAttribute("aria-busy"); bouton.textContent = texte; suite(); }, 760);
-};
+  retirerCalque();
+  const n = poserCalque(zone, champ, marques, teinte);
+  if (n) suivreBande(zone, calque.el);
+  setTimeout(() => {
+    zone.classList.remove("lit");
+    if (n) bouton.textContent = fin(n);
+    setTimeout(() => { retirerCalque(); bouton.removeAttribute("aria-busy"); bouton.textContent = texte; suite(); }, n ? MAINTIEN : 0);
+  }, BALAYAGE);
+}
 
 /* ---------- erreurs : visibles, annoncées une fois, effacées dès qu'on corrige ---------- */
 // Le message est posé avec role="alert" (une seule annonce) ; le curseur revient dans le champ à corriger,
@@ -53,8 +117,10 @@ $("assembler").addEventListener("click", (ev) => {
   if (!n) { signaler($("offre"), "Rien à lire pour l'instant. Collez l'annonce, ou choisissez une offre d'exemple."); return; }
   if (n < 80) { signaler($("offre"), `Il manque du texte (${pluriel(n, "caractère")}, il en faut au moins 80). Collez l'annonce entière, rubrique «\u00a0Profil\u00a0» comprise.`); return; }
   effacerErreur($("offre")); $("aide-offre").textContent = "";
-  lire($("lecteur-offre"), ev.currentTarget, "Lecture de l'offre…", () => {
-    profil = profilCible(texte);
+  const p = profilCible(texte);
+  lire({ zone: $("lecteur-offre"), champ: $("offre"), bouton: ev.currentTarget, libelle: "Lecture de l'offre…", teinte: "offre",
+    marques: p.exigences.map((e) => e.texte), fin: (n) => `${n} exigence${n > 1 ? "s" : ""} retenue${n > 1 ? "s" : ""}` }, () => {
+    profil = p;
     afficherProfil(profil, offerSignals(texte));
     metier = repereMetier(profil.intitule); afficherReperes("");
     // Repères ouverts d'emblée sur grand écran ; repliés au pouce, où ils repoussaient l'étape 3 de quatre écrans.
@@ -123,8 +189,10 @@ $("mesurer").addEventListener("click", (ev) => {
   if (!n) { signaler($("cv"), "Ajoutez votre CV : importez un fichier ou collez son texte."); return; }
   if (n < 20) { signaler($("cv"), `${n} mot${n > 1 ? "s" : ""} lu${n > 1 ? "s" : ""}, il en faut au moins 20 : ajoutez vos expériences et votre formation.`); return; }
   effacerErreur($("cv")); $("aide-cv").textContent = "";
-  lire($("depot-zone"), ev.currentTarget, "Comparaison…", () => {
-    afficherEcart(ecart(profil, cv));
+  const r = ecart(profil, cv);
+  lire({ zone: $("depot-zone"), champ: $("cv"), bouton: ev.currentTarget, libelle: "Comparaison…", teinte: "cv",
+    marques: r.correspondances.map((c) => (c.preuve || "").replace(/…$/, "")), fin: (n) => `${n} ligne${n > 1 ? "s" : ""} retrouvée${n > 1 ? "s" : ""}` }, () => {
+    afficherEcart(r);
     afficherReperes(cv);
     aller($("ecart")); majFil();
   });

@@ -63,6 +63,16 @@ textarea:focus-visible { outline: 2px solid var(--bleu); outline-offset: -2px; }
   #etape-offre .barre .aide:empty, #etape-cv .barre .aide:empty { display: none; }
 }
 
+/* ---------- lecture : les phrases retenues se surlignent au passage de la bande ---------- */
+.lecteur-lecture { position: absolute; margin: 0; box-sizing: border-box; overflow: hidden; white-space: pre-wrap; overflow-wrap: break-word; word-break: normal; pointer-events: none; text-align: start; }
+.lecteur-lecture mark { color: inherit; border-radius: 3px; padding-block: .06em;
+  background: linear-gradient(var(--marque), var(--marque)) no-repeat 0 0 / 0% 100%; transition: background-size .35s var(--elan-io); }
+.lecteur-lecture mark.vu { background-size: 100% 100%; }
+.lecteur-lecture[data-teinte="offre"] { --marque: color-mix(in srgb, var(--soleil) 85%, #fff); }
+.lecteur-lecture[data-teinte="cv"] { --marque: #b9ecd2; }
+html[data-nuit] .lecteur-lecture[data-teinte="offre"] { --marque: #6f5c1d; }
+html[data-nuit] .lecteur-lecture[data-teinte="cv"] { --marque: #1f5c47; }
+
 /* ---------- le plan en deux groupes, numérotés d'un seul tenant ---------- */
 .plan-groupes { counter-reset: p; margin-top: 1rem; }
 .plan-groupes .plan { counter-reset: none; margin-top: .4rem; }
