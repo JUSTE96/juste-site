@@ -112,7 +112,10 @@ function majRapide() {
 // À la sixième réponse, une seule fois : le score et le bouton viennent à l'écran s'ils n'y sont pas.
 $("demo-questions").addEventListener("change", () => {
   const avant = fini; majRapide();
-  if (fini && !avant) requestAnimationFrame(() => $("rapide-actions").scrollIntoView({ block: "nearest", behavior: calme ? "instant" : "smooth" }));
+  // On attend que le bilan ait sa hauteur finale (polices chargées, et deux images : sous animations réduites,
+  // une transition quasi nulle laisse le bilan à sa hauteur d'avant pendant une image).
+  const montrer = () => $("rapide-actions").scrollIntoView({ block: "nearest", behavior: calme ? "instant" : "smooth" });
+  if (fini && !avant) (document.fonts?.ready ?? Promise.resolve()).then(() => requestAnimationFrame(() => requestAnimationFrame(montrer)));
 });
 
 /* ---------- en collant son CV ---------- */
