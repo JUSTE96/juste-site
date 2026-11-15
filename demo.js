@@ -17,8 +17,9 @@ const ETAT0 = "Deux façons de vous situer";
 const AIDE0 = "Votre CV reste dans votre navigateur. Rien n'est envoyé.";
 
 const calme = matchMedia("(prefers-reduced-motion: reduce)").matches;
-// Le niveau d'une exigence, tel qu'il s'affiche dans le profil cible et sous chaque question.
-const niveau = (e) => `<span class="poids" data-niveau="${e.niveau}">${NIVEAU[e.niveau]}${e.eliminatoire ? " · éliminatoire" : ""}</span>`;
+// Le niveau d'une exigence, tel qu'il s'affiche dans le profil cible et sous chaque question
+// (là, avec un id : la question y renvoie par aria-describedby).
+const niveau = (e, id) => `<span class="poids"${id ? ` id="${id}"` : ""} data-niveau="${e.niveau}">${NIVEAU[e.niveau]}${e.eliminatoire ? " · éliminatoire" : ""}</span>`;
 // Rejoue une petite animation CSS (classe « tic ») quand un nombre change.
 const rejouer = (el) => { if (calme) return; el.classList.remove("tic"); void el.offsetWidth; el.classList.add("tic"); };
 
@@ -34,8 +35,9 @@ function choisir(id) {
   $("demo-ref").textContent = `Offre d'exemple · ${actuel.intitule} · ${actuel.ligne}`;
   // Chaque ligne garde un équivalent texte de sa pastille de statut (span.sr), tenu à jour par marquer().
   $("demo-cible").innerHTML = profil.exigences.map((e) => `<li>${esc(e.texte)}<span class="sr"></span>${niveau(e)}</li>`).join("");
-  // Le niveau suit chaque question (hors de la légende, pour garder un nom de groupe court).
-  $("demo-questions").innerHTML = profil.exigences.map((e, i) => `<fieldset class="question"><legend>${esc(e.texte)}</legend>${niveau(e)}<div class="reponses">${CHOIX.map(([v, t]) => `<label><input type="radio" name="q${i}" value="${v}"><span>${t}</span></label>`).join("")}</div></fieldset>`).join("");
+  // Le niveau suit chaque question (hors de la légende, pour garder un nom de groupe court) ; il en est la
+  // description : un lecteur d'écran qui entre dans le groupe au clavier lit la légende, puis le niveau.
+  $("demo-questions").innerHTML = profil.exigences.map((e, i) => `<fieldset class="question" aria-describedby="q${i}-niv"><legend>${esc(e.texte)}</legend>${niveau(e, `q${i}-niv`)}<div class="reponses">${CHOIX.map(([v, t]) => `<label><input type="radio" name="q${i}" value="${v}"><span>${t}</span></label>`).join("")}</div></fieldset>`).join("");
   // Chaque jalon a la largeur de son poids dans le score (3, 2 ou 1).
   $("demo-jalons").innerHTML = profil.exigences.map((e) => `<i style="flex-grow:${POIDS[e.niveau] ?? 1}"></i>`).join("");
   $("demo-cv").value = ""; effacer();
@@ -53,6 +55,8 @@ function marquer(statuts, plan = false) {
   });
   [...$("demo-jalons").children].forEach((j, i) => { if (statuts[i]) j.dataset.s = statuts[i]; else delete j.dataset.s; });
   $("demo-cible").classList.toggle("fini", plan);
+  // Sur ordinateur, le plan de gauche porte déjà les lignes à travailler : la feuille masque alors leur liste à droite.
+  $("demo").toggleAttribute("data-plan", plan);
   $("demo-reste").hidden = !plan;
   if (plan) $("demo-reste").textContent = k ? `Il reste ${k} ligne${k > 1 ? "s" : ""} à travailler` : "Il ne reste aucune ligne à travailler";
 }
@@ -65,9 +69,14 @@ function viser(e) {
 // Un changement de domaine remplace tout le profil : on le dit aux lecteurs d'écran.
 const annoncer = () => { $("demo-annonce").textContent = `Profil cible : ${actuel.intitule}, ${profil.exigences.length} exigences.`; };
 // Changement de domaine : fondu natif entre les deux profils quand le navigateur le permet.
+// Des changements rapprochés (flèches enchaînées) interrompent le fondu en cours : son interruption
+// (AbortError sur ready) n'est pas une erreur, le profil est remplacé quand même. Une erreur de choisir()
+// reste visible (updateCallbackDone n'est pas intercepté).
 $("demo-domaines-liste").addEventListener("change", (e) => {
   const id = e.target.value, changer = () => { choisir(id); annoncer(); };
-  if (document.startViewTransition && !calme) document.startViewTransition(changer); else changer();
+  if (!document.startViewTransition || calme) return changer();
+  const t = document.startViewTransition(changer);
+  t.ready.catch(() => {}); t.finished.catch(() => {});
 });
 // Les cartes métiers de la page renvoient ici avec leur domaine déjà choisi.
 document.addEventListener("click", (e) => { const a = e.target.closest("[data-domaine]"); if (a) { choisir(a.dataset.domaine); annoncer(); } });
@@ -126,14 +135,13 @@ $("demo-questions").addEventListener("focusin", (e) => {
   });
 });
 // À la sixième réponse, une seule fois : le score et le bouton viennent à l'écran s'ils n'y sont pas
-// (bas du bouton à sa scroll-margin-bottom du bas de la fenêtre, comme scrollIntoView « nearest »).
-// Si la réponse vient du clavier, on ne remonte pas la question au focus sous l'en-tête ou le bandeau :
-// le défilement s'arrête avant, et la touche Tab mène ensuite au bilan.
+// (bas du bouton à sa scroll-margin-bottom du bas de la fenêtre, au-dessus de la barre mobile sur téléphone,
+// comme scrollIntoView « nearest »). Au toucher comme au clavier : le défilement est le plus court possible,
+// donc la question au focus reste à l'écran quand la place le permet ; sinon le bouton passe d'abord,
+// la touche Tab y mène sans autre défilement, et Maj+Tab ou une flèche ramènent la question (focusin ci-dessus).
 function montrer(relance) {
   const a = $("rapide-actions"); if (a.hidden) return;
-  let d = a.getBoundingClientRect().bottom - (innerHeight - (parseFloat(getComputedStyle(a).scrollMarginBottom) || 0));
-  const f = document.activeElement, l = f?.closest?.(".question")?.querySelector("legend");
-  if (l && f.matches(":focus-visible")) d = Math.min(d, l.getBoundingClientRect().top - obstacle() - 8);
+  const d = a.getBoundingClientRect().bottom - (innerHeight - (parseFloat(getComputedStyle(a).scrollMarginBottom) || 0));
   if (d > 1) scrollBy({ top: d, behavior: calme ? "instant" : "smooth" });
   // Sous animations réduites, le bilan peut encore grandir d'une image à l'autre : une seule vérification de plus.
   if (calme && !relance) requestAnimationFrame(() => requestAnimationFrame(() => montrer(true)));
