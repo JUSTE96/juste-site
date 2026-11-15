@@ -60,14 +60,61 @@
     requestAnimationFrame(boucle);
   }
 
-  /* ---------- menu ---------- */
+  /* ---------- menu ----------
+     Feuille plein écran, modale : le reste de la page devient inerte et ne défile plus (même sans Lenis).
+     L'en-tête (logo, bouton Fermer, lune quand elle y est) reste atteignable. */
   const menu = document.getElementById("menu"), bouton = document.getElementById("menu-btn");
   if (menu && bouton) {
-    const fermer = () => { bouton.setAttribute("aria-expanded", "false"); bouton.firstElementChild.textContent = "Menu"; menu.classList.remove("ouvert"); lenis?.start(); setTimeout(() => { if (!menu.classList.contains("ouvert")) menu.hidden = true; }, calme ? 0 : 800); };
-    const ouvrirMenu = () => { menu.hidden = false; bouton.setAttribute("aria-expanded", "true"); bouton.firstElementChild.textContent = "Fermer"; lenis?.stop(); requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add("ouvert"))); };
-    bouton.addEventListener("click", () => bouton.getAttribute("aria-expanded") === "true" ? fermer() : ouvrirMenu());
-    menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", fermer));
-    addEventListener("keydown", (e) => { if (e.key === "Escape" && bouton.getAttribute("aria-expanded") === "true") { fermer(); bouton.focus(); } });
+    const SECTIONS = ["metiers", "mouvement", "vitrine", "apropos", "prix", "faq"];
+    const liens = [...menu.querySelectorAll("nav a")];
+    let attente = 0;
+    menu.setAttribute("role", "dialog"); menu.setAttribute("aria-modal", "true"); menu.setAttribute("aria-label", "Menu");
+    const ouvert = () => bouton.getAttribute("aria-expanded") === "true";
+    // Une seule fonction pose et retire le verrou : aucun chemin (bouton, Échap, lien) ne laisse la page inerte.
+    // La requête est refaite à chaque fois : le bouton lune est créé plus tard par nuit.js.
+    const verrouiller = (oui) => {
+      document.querySelectorAll("main, footer, #barre-mobile, .ciel-btn, a.sr").forEach((el) => { if (!el.closest(".tete")) el.inert = oui; });
+      racine.style.overflow = oui ? "hidden" : ""; racine.style.scrollbarGutter = oui ? "stable" : "";
+      racine.classList.toggle("menu-ouvert", oui);
+      if (oui) lenis?.stop(); else lenis?.start();
+    };
+    // « Vous êtes ici » : la dernière section dont le haut a passé le milieu de l'écran (jamais L'atelier, qui est une autre page).
+    const situer = () => {
+      let ici = null;
+      for (const id of SECTIONS) { const s = document.getElementById(id); if (s && s.getBoundingClientRect().top <= innerHeight / 2) ici = id; }
+      liens.forEach((a) => { if (ici && a.getAttribute("href") === "#" + ici) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current"); });
+    };
+    const fermer = (cible) => {
+      if (!ouvert()) return;
+      bouton.setAttribute("aria-expanded", "false"); bouton.firstElementChild.textContent = "Menu";
+      menu.classList.remove("ouvert");
+      verrouiller(false);
+      if (cible) {
+        // Saut franc sous le volet : la page est déjà à la bonne section quand il se lève, puis la section reçoit le focus.
+        if (lenis) lenis.scrollTo(cible, { immediate: true, force: true }); else cible.scrollIntoView({ block: "start", behavior: "instant" });
+        if (!cible.hasAttribute("tabindex")) { cible.setAttribute("tabindex", "-1"); cible.addEventListener("blur", () => cible.removeAttribute("tabindex"), { once: true }); }
+        cible.focus({ preventScroll: true });
+      }
+      clearTimeout(attente);
+      attente = setTimeout(() => { if (!menu.classList.contains("ouvert")) menu.hidden = true; }, calme ? 0 : 450);
+    };
+    const ouvrirMenu = () => {
+      clearTimeout(attente);
+      situer();
+      menu.hidden = false; bouton.setAttribute("aria-expanded", "true"); bouton.firstElementChild.textContent = "Fermer";
+      verrouiller(true);
+      requestAnimationFrame(() => requestAnimationFrame(() => { menu.classList.add("ouvert"); liens[0]?.focus({ preventScroll: true }); }));
+    };
+    bouton.addEventListener("click", () => ouvert() ? fermer() : ouvrirMenu());
+    menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", (e) => {
+      const id = a.getAttribute("href").startsWith("#") ? a.getAttribute("href").slice(1) : "";
+      const cible = id && document.getElementById(id);
+      if (!cible) { fermer(); return; }
+      e.preventDefault();
+      if (location.hash !== "#" + id) history.pushState(null, "", "#" + id);
+      fermer(cible);
+    }));
+    addEventListener("keydown", (e) => { if (e.key === "Escape" && ouvert()) { fermer(); bouton.focus(); } });
   }
 
   /* ---------- apparitions ---------- */

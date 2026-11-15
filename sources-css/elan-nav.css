@@ -1,0 +1,55 @@
+/* JusteCV — couche « navigation » de l'accueil (juste.css) : menu plein écran, en-tête, lune, barre d'action, cibles tactiles.
+   Vient après elan.css : elle surcharge sans éditer. Sous prefers-reduced-motion, tout est instantané ; sans script, rien n'est caché. */
+
+/* ---------- menu plein écran : un volet court, des entrées qui se posent dans l'ordre ---------- */
+.menu { transition: clip-path .45s cubic-bezier(.4, 0, .2, 1); }
+.menu.ouvert { transition: clip-path .5s var(--elan-io); }
+/* Fermeture : les entrées s'effacent en 200 ms, le volet se retire ensuite (plus de dalle vide). */
+.menu nav a { transition: color .3s, padding-left .5s var(--elan), opacity .2s ease, transform .2s ease; }
+.menu nav a:nth-child(1) { --i: 0; } .menu nav a:nth-child(2) { --i: 1; } .menu nav a:nth-child(3) { --i: 2; } .menu nav a:nth-child(4) { --i: 3; }
+.menu nav a:nth-child(5) { --i: 4; } .menu nav a:nth-child(6) { --i: 5; } .menu nav a:nth-child(7) { --i: 6; }
+/* Ouverture : délais réguliers pour les sept entrées (les règles d'origine n'en décalaient que quatre). */
+.menu.ouvert nav a:nth-child(n) { transition: color .3s, padding-left .5s var(--elan), opacity .4s ease calc(.1s + var(--i) * 50ms), transform .6s var(--elan) calc(.1s + var(--i) * 50ms); }
+/* Les pages annexes et le contact arrivent une fois la liste posée. */
+.menu-plus, .menu-pied { opacity: 0; transform: translateY(10px); transition: opacity .2s ease, transform .2s ease; }
+.menu.ouvert .menu-plus, .menu.ouvert .menu-pied { opacity: 1; transform: none; transition: opacity .45s ease .5s, transform .6s var(--elan) .5s; }
+.menu.ouvert .menu-pied { transition-delay: .58s; }
+.menu-pied a { color: inherit; text-decoration: underline; text-decoration-color: var(--trait); text-underline-offset: .3em; transition: color .2s, text-decoration-color .2s; }
+.menu-pied a:hover, .menu-pied a:focus-visible { color: var(--os); text-decoration-color: var(--corail); }
+
+/* « Vous êtes ici » : la section où l'on se trouvait. Le numéro laisse place à un point corail. */
+.menu nav a[aria-current] { color: var(--os); }
+.menu nav a[aria-current] small { position: relative; color: transparent; }
+.menu nav a[aria-current] small::before { content: ""; position: absolute; left: 0; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; background: var(--corail); }
+
+/* Section atteinte depuis le menu : elle reçoit le focus sans cadre (ce n'est pas une commande). */
+main section[tabindex="-1"]:focus { outline: none; }
+
+/* Pendant que le menu est ouvert, la lune flottante (inerte) s'efface ; celle de l'en-tête reste. */
+.ciel-btn { transition: opacity .3s, visibility 0s; }
+.menu-ouvert .ciel-btn:not(.dans-barre) { opacity: 0; visibility: hidden; transition: opacity .2s, visibility 0s .2s; }
+
+/* Cibles tactiles : les pages annexes du menu font 48 px de haut ; en deux colonnes sur téléphone. */
+.menu-plus a { display: inline-flex; align-items: center; min-height: 48px; }
+.menu-plus { row-gap: 0; }
+.menu-pied a { display: inline-flex; align-items: center; min-height: 44px; }
+.menu-plus + .menu-pied { margin-top: .6rem; }
+@media (max-width: 860px) {
+  .menu-plus { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; margin-top: 1.4rem; }
+  .menu { padding-top: clamp(92px, 12vh, 150px); }
+  .menu nav a { font-size: clamp(1.6rem, 5.4vh, 3.4rem); padding: .3rem 0; }
+}
+/* Écrans bas : tout tient sans défiler (360 × 740 compris). */
+@media (max-height: 760px) {
+  .menu nav a { font-size: clamp(1.5rem, 5vh, 4rem); padding: .25rem 0; }
+  .menu-pied { margin-top: 1.2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu, .menu.ouvert, .menu nav a, .menu.ouvert nav a:nth-child(n), .menu-plus, .menu-pied, .menu.ouvert .menu-plus, .menu.ouvert .menu-pied, .ciel-btn { transition: none; }
+  .menu-plus, .menu-pied, .menu nav a { transform: none; }
+}
+
+/* ---------- nuit ---------- */
+html[data-nuit] .menu nav a[aria-current] { color: var(--os); }
+html[data-nuit] .menu-pied a { text-decoration-color: #f7f1e840; }
