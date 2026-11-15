@@ -86,11 +86,34 @@
   /* ---------- bouton ---------- */
   const pret = () => {
     const b = document.createElement("button");
-    b.type = "button"; b.className = "ciel-btn";
+    b.type = "button"; b.className = "ciel-btn"; b.style.flexShrink = "0";
     b.innerHTML = '<svg class="lune" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.500 10.500Z"/></svg><svg class="soleil" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.500v2M12 19.500v2M2.500 12h2M19.500 12h2M5.300 5.300l1.400 1.400M17.300 17.300l1.400 1.400M5.300 18.700l1.400-1.400M17.300 6.700l1.400-1.400"/></svg>';
     b.addEventListener("click", () => { const v = !nuit; noter(v ? "nuit" : "jour"); appliquer(v, true); });
-    const barre = document.querySelector(".top-actions");
-    if (barre) { b.classList.add("dans-barre"); barre.prepend(b); } else document.body.append(b);
+    // Où vit le bouton : dans la barre d'outils si la page en a une ; sur téléphone (860 px et moins), dans l'en-tête,
+    // pour ne plus flotter sur le contenu ; sinon en bas de l'écran. Il change de place si la largeur franchit 860 px.
+    const etroit = matchMedia("(max-width: 860px)");
+    const placer = () => {
+      const outils = document.querySelector(".top-actions");
+      let parent = document.body, avant = null;
+      if (outils) { parent = outils; avant = outils.firstElementChild; }
+      else if (etroit.matches) {
+        // L'en-tête de l'accueil ne le loge que si la feuille qui lui fait la place est chargée (--lune-tete, posé par juste.css) :
+        // avec une ancienne feuille restée en cache, le bouton Menu sortirait de la pilule ; la lune reste alors flottante.
+        const loge = getComputedStyle(html).getPropertyValue("--lune-tete").trim() === "1";
+        const cadre = loge && document.querySelector(".tete .cadre"), wrap = document.querySelector("header.nav .wrap");
+        if (cadre) { parent = cadre; avant = cadre.querySelector("#menu-btn"); }
+        else if (wrap) { parent = wrap; avant = wrap.querySelector("details.nav-menu"); }
+      }
+      b.classList.toggle("dans-barre", parent !== document.body);
+      if (parent !== document.body) b.inert = false; // dans un en-tête, il reste utilisable même menu ouvert
+      // Déjà à sa place : on ne le déplace pas (un déplacement ferait perdre le focus).
+      if (avant === b || (b.parentNode === parent && (avant ? b.nextElementSibling === avant : parent === document.body || !b.nextElementSibling))) return;
+      const focus = document.activeElement === b;
+      parent.insertBefore(b, avant);
+      if (focus) b.focus({ preventScroll: true });
+    };
+    placer();
+    etroit.addEventListener?.("change", placer);
     const etat = nuit; nuit = !etat; appliquer(etat, false);
     setInterval(() => appliquer(veutNuit(), true), 60000);
   };
