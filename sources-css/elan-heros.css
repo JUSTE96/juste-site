@@ -67,3 +67,31 @@
 .cadran #valeur-label.exigence { max-width: 17ch; font: italic 400 1.02rem/1.3 var(--titre); color: var(--os);
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 .cadran #valeur { font-variant-numeric: tabular-nums; }
+
+/* ---------- scène à plat : sans script, et sous animations réduites ----------
+   Plus de 4,4 écrans épinglés : les quatre temps se lisent d'un trait, le cadran montre son état final (score). */
+html:not(.js) .scene { height: auto; }
+html:not(.js) .scene-fixe { position: static; height: auto; overflow: visible; padding-block: clamp(64px, 9vw, 120px); }
+html:not(.js) .scene .temps { gap: 2.2rem; }
+html:not(.js) .scene .temps li { grid-area: auto; opacity: 1; transform: none; pointer-events: auto; }
+html:not(.js) .scene .temps .num { font-size: clamp(2.4rem, 4vw, 3.4rem); margin-bottom: .6rem; }
+html:not(.js) .scene-barre, html:not(.js) .scene-rail { display: none; }
+html:not(.js) .scene-grille { align-items: start; }
+html:not(.js) .scene .cadran { position: sticky; top: 110px; }
+@media (prefers-reduced-motion: reduce) {
+  .scene { height: auto; }
+  .scene-fixe { position: static; height: auto; overflow: visible; padding-block: clamp(64px, 9vw, 120px); }
+  .scene .temps { gap: 2.2rem; }
+  .scene .temps li { grid-area: auto; opacity: 1; transform: none; pointer-events: auto; }
+  .scene .temps .num { font-size: clamp(2.4rem, 4vw, 3.4rem); margin-bottom: .6rem; }
+  .scene-barre, .scene-rail { display: none; }
+  .scene-grille { align-items: start; }
+  .scene .cadran { position: sticky; top: 110px; }
+}
+/* sur mobile, à plat : on lit les quatre temps, puis le résultat */
+@media (max-width: 860px) {
+  html:not(.js) .scene .cadran { position: relative; top: auto; order: 0; margin-top: 1.4rem; }
+}
+@media (max-width: 860px) and (prefers-reduced-motion: reduce) {
+  .scene .cadran { position: relative; top: auto; order: 0; margin-top: 1.4rem; }
+}
