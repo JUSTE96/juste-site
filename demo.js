@@ -136,12 +136,13 @@ $("demo-questions").addEventListener("focusin", (e) => {
 });
 // À la sixième réponse, une seule fois : le score et le bouton viennent à l'écran s'ils n'y sont pas
 // (bas du bouton à sa scroll-margin-bottom du bas de la fenêtre, au-dessus de la barre mobile sur téléphone,
-// comme scrollIntoView « nearest »). Au toucher comme au clavier : le défilement est le plus court possible,
-// donc la question au focus reste à l'écran quand la place le permet ; sinon le bouton passe d'abord,
-// la touche Tab y mène sans autre défilement, et Maj+Tab ou une flèche ramènent la question (focusin ci-dessus).
+// comme scrollIntoView « nearest »). Si la réponse vient du clavier, on ne remonte pas la question au focus
+// sous l'en-tête ou le bandeau : le défilement s'arrête avant, et la touche Tab mène ensuite au bouton.
 function montrer(relance) {
   const a = $("rapide-actions"); if (a.hidden) return;
-  const d = a.getBoundingClientRect().bottom - (innerHeight - (parseFloat(getComputedStyle(a).scrollMarginBottom) || 0));
+  let d = a.getBoundingClientRect().bottom - (innerHeight - (parseFloat(getComputedStyle(a).scrollMarginBottom) || 0));
+  const f = document.activeElement, l = f?.closest?.(".question")?.querySelector("legend");
+  if (l && f.matches(":focus-visible")) d = Math.min(d, l.getBoundingClientRect().top - obstacle() - 8);
   if (d > 1) scrollBy({ top: d, behavior: calme ? "instant" : "smooth" });
   // Sous animations réduites, le bilan peut encore grandir d'une image à l'autre : une seule vérification de plus.
   if (calme && !relance) requestAnimationFrame(() => requestAnimationFrame(() => montrer(true)));
