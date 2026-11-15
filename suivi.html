@@ -111,7 +111,7 @@
   }
   // Annonce visible (sous le formulaire, ou en tête de liste), lue aussi par les lecteurs d'écran (role=status).
   function annoncer(texte, id, ou) {
-    var zone = ou || annonce, t = document.createElement("span"); t.textContent = texte; zone.replaceChildren(t);
+    var zone = ou || annonce, t = document.createElement("span"); t.textContent = texte; zone.replaceChildren(t); zone.classList.remove("perimee");
     if (id) { var a = document.createElement("a"); a.href = "#c-" + id; a.setAttribute("data-voir", id); a.textContent = "Voir dans la liste"; zone.append(" ", a); }
     zone.classList.remove("vient"); void zone.offsetWidth; zone.classList.add("vient");
   }
@@ -130,8 +130,9 @@
     e.preventDefault();
     var fd = new FormData(form), list = load(), c = {}, modif = editing;
     ["poste", "entreprise", "lieu", "date", "statut", "lien", "notes"].forEach(function (k) { c[k] = (fd.get(k) || "").toString().trim(); });
-    if (modif) { var i = list.findIndex(function (x) { return x.id === modif; }); if (i > -1) { c.id = modif; list[i] = c; } }
-    else { c.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); list.unshift(c); }
+    if (modif) { var i = list.findIndex(function (x) { return x.id === modif; }); if (i > -1) { c.id = modif; list[i] = c; } else modif = null; }
+    // (une ligne supprimée pendant qu'on la modifiait : on ne perd pas la saisie, elle est ajoutée)
+    if (!modif) { c.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); list.unshift(c); }
     save(list); finEdition(); render();
     if (modif) { annoncer("Candidature modifiée : " + c.poste + ", " + c.entreprise + "."); montrer(c.id, '[data-act="edit"]'); }
     else annoncer("Candidature ajoutée : " + c.poste + ", " + c.entreprise + ".", c.id);
@@ -141,8 +142,15 @@
     e.preventDefault();
     var id = a.getAttribute("data-voir");
     if (!ligne(id) && $("filtre").value) { $("filtre").value = ""; render(); }
-    montrer(id);
+    if (montrer(id)) return;
+    // La ligne n'existe plus (supprimée ailleurs, dans un autre onglet par exemple) : le lien ne promet plus rien.
+    annoncer("Cette candidature n'est plus dans la liste."); annonce.classList.add("perimee");
+    annonce.setAttribute("tabindex", "-1"); annonce.focus({ preventScroll: true });
   });
+  // Une annonce qui montre une ligne disparue n'a plus lieu d'être.
+  function oublier(id) {
+    if ([].some.call(annonce.querySelectorAll("a[data-voir]"), function (a) { return !id || a.getAttribute("data-voir") === id; })) annonce.textContent = "";
+  }
   $("cancel").addEventListener("click", function () { finEdition(); annonce.textContent = ""; $("submit").focus(); });
   rows.addEventListener("click", function (e) {
     var b = e.target.closest("button[data-act]"); if (!b) return;
@@ -151,7 +159,7 @@
     if (b.dataset.act === "del") {
       if (confirm("Supprimer cette candidature ?")) {
         var suivant = tr.nextElementSibling || tr.previousElementSibling, sid = suivant && suivant.getAttribute("data-id");
-        save(list.filter(function (x) { return x.id !== id; })); render();
+        save(list.filter(function (x) { return x.id !== id; })); render(); oublier(id);
         var t = ligne(sid); (t ? t.querySelector('[data-act="edit"]') : $("filtre")).focus({ preventScroll: true });
       }
       return;
@@ -184,7 +192,7 @@
     var csv = "﻿" + cols.join(";") + "\n" + list.map(function (c) { return cols.map(function (k) { return '"' + String(c[k] || "").replace(/"/g, '""') + '"'; }).join(";"); }).join("\n");
     var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" })); a.download = "candidatures-juste.csv"; a.click(); URL.revokeObjectURL(a.href);
   });
-  $("wipe").addEventListener("click", function () { if (load().length && confirm("Effacer toutes les candidatures de ce navigateur ? Cette action est définitive.")) { save([]); render(); } });
+  $("wipe").addEventListener("click", function () { if (load().length && confirm("Effacer toutes les candidatures de ce navigateur ? Cette action est définitive.")) { save([]); render(); oublier(); } });
   var today = new Date(); form.elements.date.value = today.toISOString().slice(0, 10);
   render();
 })();
