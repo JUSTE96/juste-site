@@ -34,7 +34,7 @@
 (function () {
   var f = document.getElementById("cherche"), q = document.getElementById("q404");
   // Ancienne adresse de fiche (/metiers/agent-d-entretien.html) : on pré-remplit la recherche avec son nom.
-  var m = location.pathname.match(/^\/metiers\/(?:[^\/]*\/)*([^\/]+?)(?:\.html?)?\/?$/);
+  var m = location.pathname.match(/^\/metiers\/(?:[^\/]*\/)*([^\/]+?)(?:\.html?)?\/?$/i);
   if (m) {
     var s = m[1]; try { s = decodeURIComponent(s); } catch (e) {}
     q.value = s.replace(/[-_+]+/g, " ").replace(/(^| )([dl]) (?=\S)/gi, "$1$2'").replace(/\s+/g, " ").trim();

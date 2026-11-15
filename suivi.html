@@ -51,8 +51,10 @@
       <h2 id="liste">Candidatures</h2>
       <div class="liste-tools"><select id="filtre" aria-label="Filtrer par statut"><option value="">Tous les statuts</option><option value="brouillon">À envoyer</option><option value="envoyee">Envoyées</option><option value="relance">À relancer</option><option value="entretien">Entretiens</option><option value="offre">Propositions</option><option value="refus">Refus</option></select><button type="button" class="btn btn-ghost btn-sm" id="export">Exporter en CSV</button><button type="button" class="btn btn-quiet btn-sm" id="wipe">Tout effacer</button></div>
     </div>
+    <p id="annonce-liste" class="small annonce annonce-liste" role="status"></p>
     <div class="table-scroll"><table id="table"><thead><tr><th>Poste</th><th>Entreprise</th><th>Envoyée</th><th>Statut</th><th>Notes</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
     <div class="empty" id="empty"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><p><strong>Aucune candidature pour l'instant.</strong><br>Ajoutez la première avec le formulaire ci-dessus.</p></div>
+    <p class="muted vide-filtre" id="vide-filtre" hidden>Aucune candidature avec ce statut.</p>
   </section>
 
   <p class="tip-line"><span class="pill pill-amber">Conseil</span>  relancez une candidature restée sans réponse après 7 à 10 jours. Les lignes « Envoyée » depuis plus de 10 jours passent en jaune pour vous le rappeler.</p>
@@ -70,7 +72,7 @@
   var KEY = "juste.suivi.v1";
   var LABELS = { brouillon: "À envoyer", envoyee: "Envoyée", relance: "À relancer", entretien: "Entretien", offre: "Proposition", refus: "Refus" };
   var $ = function (id) { return document.getElementById(id); };
-  var form = $("form"), rows = $("rows"), annonce = $("annonce"), editing = null;
+  var form = $("form"), rows = $("rows"), annonce = $("annonce"), annonceListe = $("annonce-liste"), editing = null;
   var cartes = window.matchMedia ? matchMedia("(max-width: 700px)") : { matches: false };
   var calme = function () { return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; };
   function load() { try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
@@ -97,18 +99,21 @@
       var depuis = c.date ? (old ? '<span class="small ecoule relancer">sans réponse depuis ' + n + " j</span>" : '<span class="small muted ecoule">il y a ' + n + " j</span>") : "";
       return '<tr id="c-' + esc(c.id) + '" data-id="' + esc(c.id) + '" tabindex="-1"><td class="poste"><strong>' + poste + "</strong>" + (c.lieu ? '<span class="small muted lieu">' + esc(c.lieu) + "</span>" : "") + '</td><td class="entreprise">' + esc(c.entreprise) + '</td><td class="quand">' + (c.date ? '<span class="date">' + esc(fmtDate(c.date)) + "</span>" : "") + depuis + '</td><td class="statut-cell">' + choix(c, old) + '</td><td class="small notes">' + esc(c.notes) + '</td><td class="row-actions actions-cell"><button type="button" data-act="edit" aria-label="Modifier ' + esc(c.poste) + '">Modifier</button> <button type="button" data-act="del" aria-label="Supprimer ' + esc(c.poste) + '">Supprimer</button></td></tr>';
     }).join("");
-    $("empty").hidden = shown.length > 0; $("table").hidden = shown.length === 0;
+    // Un filtre sans résultat n'est pas une liste vide : on ne dit pas « Aucune candidature pour l'instant ».
+    $("empty").hidden = shown.length > 0 || (!!f && list.length > 0); $("table").hidden = shown.length === 0;
+    $("vide-filtre").hidden = !(f && list.length > 0 && shown.length === 0);
+    annonceListe.textContent = "";
     roles();
     var n = function (s) { return list.filter(function (c) { return c.statut === s; }).length; };
     var relance = list.filter(function (c) { return c.statut === "relance" || (c.statut === "envoyee" && days(c.date) > 10); }).length;
     var tile = function (v, l, cls) { return '<div class="stat' + (cls ? " " + cls : "") + '"><strong>' + v + "</strong><span>" + l + "</span></div>"; };
     $("stats").innerHTML = tile(list.length, list.length > 1 ? "candidatures" : "candidature") + tile(n("entretien"), n("entretien") > 1 ? "entretiens" : "entretien", n("entretien") ? "is-good" : "") + tile(relance, "à relancer", relance ? "is-warn" : "") + tile(n("offre"), n("offre") > 1 ? "propositions" : "proposition", n("offre") ? "is-good" : "");
   }
-  // Annonce visible sous le formulaire, lue aussi par les lecteurs d'écran (role=status).
-  function annoncer(texte, id) {
-    var t = document.createElement("span"); t.textContent = texte; annonce.replaceChildren(t);
-    if (id) { var a = document.createElement("a"); a.href = "#c-" + id; a.setAttribute("data-voir", id); a.textContent = "Voir dans la liste"; annonce.append(" ", a); }
-    annonce.classList.remove("vient"); void annonce.offsetWidth; annonce.classList.add("vient");
+  // Annonce visible (sous le formulaire, ou en tête de liste), lue aussi par les lecteurs d'écran (role=status).
+  function annoncer(texte, id, ou) {
+    var zone = ou || annonce, t = document.createElement("span"); t.textContent = texte; zone.replaceChildren(t);
+    if (id) { var a = document.createElement("a"); a.href = "#c-" + id; a.setAttribute("data-voir", id); a.textContent = "Voir dans la liste"; zone.append(" ", a); }
+    zone.classList.remove("vient"); void zone.offsetWidth; zone.classList.add("vient");
   }
   // Amène une ligne au centre de l'écran et la surligne un instant.
   var minuteur;
@@ -163,7 +168,14 @@
     c.statut = s.value; save(list); render();
     var tr = ligne(id);
     if (tr) tr.querySelector('select[data-act="statut"]').focus({ preventScroll: true });
-    else { annoncer("Statut changé : " + (LABELS[c.statut] || c.statut) + "."); $("filtre").focus({ preventScroll: true }); }
+    else {
+      // La ligne sort du filtre : le message s'affiche en tête de liste, et on ramène la tête de liste à l'écran avec le focus.
+      annonce.textContent = "";
+      annoncer("Statut changé : " + (LABELS[c.statut] || c.statut) + ".", null, annonceListe);
+      $("filtre").focus({ preventScroll: true });
+      var tete = document.querySelector(".suivi-liste .liste-head"), haut = tete.getBoundingClientRect().top, bas = annonceListe.getBoundingClientRect().bottom;
+      if (haut < 80 || bas > window.innerHeight) tete.scrollIntoView({ block: "start", behavior: calme() ? "auto" : "smooth" });
+    }
   });
   $("filtre").addEventListener("change", render);
   if (cartes.addEventListener) cartes.addEventListener("change", roles); else if (cartes.addListener) cartes.addListener(roles);
