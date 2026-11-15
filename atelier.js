@@ -37,7 +37,16 @@ addEventListener("resize", () => { if (calque && innerWidth !== calque.largeur) 
 function poserCalque(zone, champ, marques, teinte) {
   const v = champ.value, plages = [];
   // Marques posées par indexOf strict : une phrase introuvable telle quelle n'est jamais approchée.
-  for (const m of new Set(marques)) { const i = m ? v.indexOf(m) : -1; if (i >= 0) plages.push([i, i + m.length]); }
+  // Seule une preuve tronquée par le moteur (« … » final, coupée à 137 caractères) et coupée au milieu d'un mot
+  // est prolongée jusqu'à la fin de ce mot dans le champ : le début ne bouge pas, le texte marqué reste une sous-chaîne
+  // exacte du CV. Une marque complète n'est jamais prolongée.
+  for (const brut of new Set(marques)) {
+    const coupe = /…$/.test(brut || ""), m = coupe ? brut.slice(0, -1) : brut;
+    const i = m ? v.indexOf(m) : -1; if (i < 0) continue;
+    let b = i + m.length;
+    if (coupe && /[\p{L}\p{N}]/u.test(v[b - 1] || "")) while (b < v.length && /[\p{L}\p{N}]/u.test(v[b])) b++;
+    plages.push([i, b]);
+  }
   plages.sort((a, b) => a[0] - b[0]);
   let html = "", k = 0, n = 0;
   for (const [a, b] of plages) { if (a < k) continue; html += esc(v.slice(k, a)) + `<mark>${esc(v.slice(a, b))}</mark>`; k = b; n++; }
@@ -95,14 +104,25 @@ function lire({ zone, champ, bouton, direct, libelle, marques, fin, teinte }, su
 }
 
 /* ---------- erreurs : visibles, annoncées une fois, effacées dès qu'on corrige ---------- */
-// Le message est posé avec role="alert" (une seule annonce) ; le curseur revient dans le champ à corriger,
-// relié au message par aria-describedby.
+// Une seule annonce : le curseur revient dans le champ à corriger, qui lit alors le message relié par
+// aria-describedby. Si le curseur y est déjà (aucune prise de focus à annoncer), le message passe par role="alert".
 function signaler(champ, message) {
   const aide = $(champ.getAttribute("aria-describedby")), cadre = champ.closest(".lecteur");
-  aide.textContent = message; aide.classList.add("erreur"); aide.setAttribute("role", "alert");
+  const dejaLa = document.activeElement === champ;
+  if (dejaLa) aide.setAttribute("role", "alert"); else aide.removeAttribute("role");
+  aide.textContent = message; aide.classList.add("erreur");
   champ.setAttribute("aria-invalid", "true"); cadre?.classList.add("invalide");
-  champ.focus({ preventScroll: true });
-  aide.closest(".barre").scrollIntoView({ behavior: calme ? "auto" : "smooth", block: "center" });
+  if (!dejaLa) champ.focus({ preventScroll: true });
+  montrerErreur(cadre || champ, aide.closest(".barre"));
+}
+// Au bureau, la barre (message + bouton) au centre. Au pouce, le fil d'étapes reste collé en haut (bas à 64 px) :
+// le haut du champ vient juste sous lui (76 px, comme scroll-margin-top), sans que la barre sorte en bas de l'écran ;
+// si les deux ne tiennent pas ensemble, la barre passe d'abord, à 16 px du bas.
+function montrerErreur(cadre, barre) {
+  const behavior = calme ? "auto" : "smooth";
+  if (!matchMedia("(max-width: 860px)").matches) { barre.scrollIntoView({ behavior, block: "center" }); return; }
+  const haut = cadre.getBoundingClientRect().top - 76, bas = barre.getBoundingClientRect().bottom - (innerHeight - 16);
+  scrollBy({ top: bas > haut ? bas : haut, behavior });
 }
 function effacerErreur(champ) {
   if (champ.getAttribute("aria-invalid") !== "true") return;
@@ -177,7 +197,7 @@ async function lireFichier(f) {
     } else if (/\.txt$/i.test(f.name) || f.type.startsWith("text/")) texte = await f.text();
     else { direFichier("Format non pris en charge. Utilisez un PDF, un fichier Word (.docx) ou du texte.", true); return; }
     if (nbMots(texte) < 20) { direFichier("Presque aucun texte lu : ce CV est sans doute une image. Les logiciels de tri des recruteurs le liront mal aussi. Collez son texte à la main.", true); return; }
-    $("cv").value = texte.trim(); effacerErreur($("cv")); garder(); majPerime();
+    $("cv").value = texte.trim(); cvFictif = false; effacerErreur($("cv")); garder(); majPerime();
     direFichier(`${f.name} lu (${nbMots(texte)} mots).`);
   } catch { direFichier("Ce fichier n'a pas pu être lu. Collez le texte de votre CV à la main.", true); }
 }
@@ -195,10 +215,10 @@ function mesurer(bouton, direct = false) {
   effacerErreur($("cv")); $("aide-cv").textContent = "";
   const r = ecart(profil, cv);
   lire({ zone: $("depot-zone"), champ: $("cv"), bouton, direct, libelle: "Comparaison…", teinte: "cv",
-    marques: r.correspondances.map((c) => (c.preuve || "").replace(/…$/, "")), fin: (n) => `${n} ligne${n > 1 ? "s" : ""} retrouvée${n > 1 ? "s" : ""}` }, () => {
+    marques: r.correspondances.map((c) => c.preuve || ""), fin: (n) => `${n} ligne${n > 1 ? "s" : ""} retrouvée${n > 1 ? "s" : ""}` }, () => {
     // Mémoire du module seulement : la mesure précédente sur la même offre, pour dire ce qui a bougé.
     const avant = dernier;
-    cvMesure = cv; afficherEcart(r, avant);
+    cvMesure = cv; fictifMesure = cvFictif; afficherEcart(r, avant);
     afficherReperes(cv);
     majPerime(); aller($("ecart")); majFil();
   });
@@ -207,6 +227,19 @@ $("mesurer").addEventListener("click", (ev) => mesurer(ev.currentTarget));
 
 /* ---------- un résultat qui ne correspond plus au texte saisi est signalé ---------- */
 let offreAssemblee = null, cvMesure = null;
+// CV d'exemple : on retient son origine plutôt que de comparer le texte au caractère près, pour qu'une ligne ajoutée
+// ou corrigée ne le rende pas « réel ». cvFictif : le CV en place vient de l'exemple ; fictifMesure : celui de la dernière
+// mesure en venait. Posé par « Utiliser le CV d'exemple », par un collage du CV d'exemple tel quel, ou au retour d'un
+// brouillon qui le contient encore ; levé quand le champ est vidé, quand un fichier est importé, ou quand le texte
+// ne contient plus l'essentiel de l'exemple.
+let cvFictif = false, fictifMesure = false;
+// L'essentiel de l'exemple : la moitié au moins de ses lignes de 20 caractères ou plus (expériences, diplôme…),
+// retrouvées telles quelles. Les intitulés courts (« Formation », le nom) ne comptent pas : un vrai CV les a aussi.
+const lignesExemple = (t) => t.split("\n").map((l) => l.trim()).filter((l) => l.length >= 20);
+function resteExemple(texte) {
+  const t = String(texte ?? "");
+  return !!t.trim() && DOMAINES.some((d) => { const ls = lignesExemple(d.cv); return ls.filter((l) => t.includes(l)).length * 2 >= ls.length; });
+}
 function bandeau(el, etat) {
   const cle = etat ? etat.join("|") : "";
   if (el.dataset.etat === cle) return; // pas de nouvelle annonce à chaque frappe
@@ -353,7 +386,7 @@ function garder() {
 ["offre", "cv"].forEach((id) => $(id).addEventListener("input", garder));
 try {
   const b = JSON.parse(sessionStorage.getItem("juste.atelier") || "null");
-  if (b) { if (b.offre) $("offre").value = b.offre; if (b.cv) $("cv").value = b.cv; if (b.offre) $("aide-offre").textContent = "Votre brouillon a été retrouvé."; }
+  if (b) { if (b.offre) $("offre").value = b.offre; if (b.cv) { $("cv").value = b.cv; cvFictif = resteExemple(b.cv); } if (b.offre) $("aide-offre").textContent = "Votre brouillon a été retrouvé."; }
   // CV collé sur l'accueil : on le dit dès l'arrivée, avec de quoi le retirer.
   if (b?.source === "accueil" && b.cv) {
     $("note-accueil-texte").textContent = "Votre CV collé sur l'accueil est déjà en place à l'étape 3." + (b.offre ? "" : " Il ne manque que l'offre.");
@@ -361,7 +394,9 @@ try {
   }
 } catch {}
 $("retirer-cv").addEventListener("click", () => {
-  $("cv").value = ""; try { sessionStorage.removeItem("juste.atelier"); } catch {}
+  // Seul le CV part : l'offre gardée reste dans le brouillon.
+  $("cv").value = ""; cvFictif = false; clearTimeout(minuteur);
+  try { sessionStorage.setItem("juste.atelier", JSON.stringify({ offre: $("offre").value.slice(0, 30000), cv: "" })); } catch {}
   // Le bouton disparaît : le curseur va à l'offre, ce qui manque encore ; la note (role=status) annonce le retrait.
   $("note-accueil-texte").textContent = "CV retiré."; $("retirer-cv").hidden = true;
   majPerime(); majExemple(); $("offre").focus();
@@ -369,30 +404,33 @@ $("retirer-cv").addEventListener("click", () => {
 
 /* ---------- CV d'exemple : seulement avec une offre d'exemple non modifiée, toujours dit fictif ---------- */
 const offreExemple = () => DOMAINES.find((d) => d.offre === $("offre").value);
-const estCvExemple = (t) => DOMAINES.some((d) => d.cv === String(t ?? "").trim());
 function majExemple() {
-  const d = offreExemple(), ex = estCvExemple($("cv").value);
+  const d = offreExemple(), cv = $("cv").value.trim();
+  // Le CV reste fictif tant qu'on y retrouve l'essentiel du CV d'exemple ; vidé ou remplacé, il ne l'est plus.
+  if (cvFictif && !resteExemple(cv)) cvFictif = false;
+  else if (!cvFictif && DOMAINES.some((x) => x.cv === cv)) cvFictif = true;
   // Jamais par-dessus un CV personnel : le bouton ne s'offre que sur un champ vide ou un autre CV d'exemple.
-  const cv = $("cv").value.trim();
-  $("cv-exemple").hidden = !d || (cv !== "" && !ex) || cv === d.cv;
-  $("cv-fictif").hidden = !ex;
+  $("cv-exemple").hidden = !d || (cv !== "" && !cvFictif) || cv === d.cv;
+  $("cv-fictif").hidden = !cvFictif;
   // Le quota de l'analyse complète ne se dépense pas sur une personne fictive.
-  $("complet").disabled = ex; $("complet-exemple").hidden = !ex;
-  $("e-fictif").hidden = !(dernier && estCvExemple(cvMesure));
+  $("complet").disabled = cvFictif; $("complet-exemple").hidden = !cvFictif;
+  $("e-fictif").hidden = !(dernier && fictifMesure);
 }
 ["offre", "cv"].forEach((id) => $(id).addEventListener("input", majExemple));
 $("cv-exemple").addEventListener("click", () => {
   const d = offreExemple(); if (!d) return;
-  $("cv").value = d.cv; effacerErreur($("cv")); garder();
+  $("cv").value = d.cv; cvFictif = true; effacerErreur($("cv")); garder();
   direFichier("CV d'exemple chargé.");
   majPerime(); majExemple();
+  // Le bouton vient de disparaître : le curseur va à l'étape suivante plutôt que de retomber sur la page.
+  $("mesurer").focus();
 });
 majExemple();
 
 /* ---------- garder le résultat ---------- */
 function texteDuPlan() {
   if (!dernier) return "";
-  const s = dernier.score, l = [...(estCvExemple(cvMesure) ? ["CV d'exemple : une personne fictive, pour voir le résultat."] : []),
+  const s = dernier.score, l = [...(fictifMesure ? ["CV d'exemple : une personne fictive, pour voir le résultat."] : []),
     `JusteCV : ${profil.intitule}`, s ? `Profil cible couvert à ${s.score} %` : "Détail par exigence", ""];
   dernier.correspondances.forEach((c) => l.push(`[${STATUT[c.statut]}] ${c.texte}`));
   if (dernier.plan.length) {

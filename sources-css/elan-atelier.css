@@ -42,10 +42,11 @@ html[data-nuit] .fil ol { background: #232a5c; border-color: #f7f1e824; box-shad
 @media (max-width: 620px) { .fil button { padding: 0 .55rem; } .fil button[aria-current="step"] { padding: 0 .9rem 0 .55rem; } }
 
 /* ---------- erreurs : un message distinct, un cadre marqué, jamais un aplat corail ---------- */
+/* Le pictogramme « ! » est décoratif (texte de remplacement vide) : le message seul est lu. */
 /* --corail-texte : 5,0:1 sur la crème le jour, 6,0:1 sur #232a5c la nuit. */
 .aide { transition: color .2s; }
 .aide.erreur { color: var(--corail-texte); font-weight: 600; display: inline-flex; align-items: flex-start; gap: .5rem; }
-.aide.erreur::before { content: "!"; flex: none; display: grid; place-items: center; width: 1.25em; height: 1.25em; margin-top: .05em; border-radius: 50%; background: var(--corail-texte); color: var(--carbone); font: 700 .8em/1 var(--texte); }
+.aide.erreur::before { content: "!"; content: "!" / ""; flex: none; display: grid; place-items: center; width: 1.25em; height: 1.25em; margin-top: .05em; border-radius: 50%; background: var(--corail-texte); color: var(--carbone); font: 700 .8em/1 var(--texte); }
 .lecteur { transition: box-shadow .2s; }
 .lecteur.invalide { box-shadow: 0 0 0 2px var(--corail-texte); }
 .depot-zone.invalide { border-color: var(--corail-texte); border-style: solid; border-width: 2px; box-shadow: none; }
@@ -107,7 +108,7 @@ html[data-nuit] .bandeau-perime p { background: #4b4122; color: #ffe9a8; }
 .note-fictif::before { content: "Exemple"; display: inline-block; margin-right: .6rem; padding: .15rem .55rem; border-radius: 999px; background: var(--os); color: var(--carbone); font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; vertical-align: .1em; }
 .note-accueil { background: var(--menthe); display: flex; flex-wrap: wrap; align-items: center; gap: 0 .9rem; padding-block: .3rem; }
 .complet-exemple { margin: .8rem 0 0; color: #343a58; font-weight: 600; }
-@media print { .note-fictif { border: 1px solid #999; background: #fff; } }
+@media print { .note-fictif { border: 1px solid #999; background: #fff; break-after: avoid; page-break-after: avoid; } }
 html[data-nuit] .complet-exemple { color: var(--os); }
 
 /* ---------- l'écart : la phrase de tête dit d'abord ce qui bloque ---------- */
@@ -127,5 +128,12 @@ html[data-nuit] .reperes .chevron::before { border-color: var(--os); }
 /* Impression du plan : un titre de groupe ne reste pas seul en bas de page, un point ne se coupe pas. */
 @media print {
   .plan-titre, .plan-groupe-titre, .plan-commun { break-after: avoid; page-break-after: avoid; }
+  .plan-commun { break-inside: avoid; page-break-inside: avoid; }
   .plan li { break-inside: avoid; page-break-inside: avoid; }
+  /* L'étape 04 dépasse une page : « break-inside: avoid-page » sur .etape (feuille d'origine) y annulait tous les
+     « avoid » intérieurs. On le lève pour l'écart ; le premier point refuse aussi la coupure avant lui. */
+  #ecart.etape { break-inside: auto; page-break-inside: auto; }
+  #ecart > .etape-gauche, #ecart .mesure { break-inside: avoid; break-after: avoid; page-break-after: avoid; }
+  .plan-groupe, .plan-groupes .plan { display: block; }
+  .plan-groupe > .plan > li:first-child { break-before: avoid; page-break-before: avoid; }
 }
