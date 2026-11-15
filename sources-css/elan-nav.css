@@ -43,6 +43,12 @@ main section[tabindex="-1"]:focus { outline: none; }
   .menu nav a { font-size: clamp(1.5rem, 5vh, 4rem); padding: .25rem 0; }
   .menu-pied { margin-top: 1.2rem; }
 }
+@media (max-height: 680px) {
+  .menu nav a { font-size: clamp(1.4rem, 4.6vh, 4rem); }
+  .menu-plus { margin-top: 1rem; }
+  .menu-plus + .menu-pied { margin-top: .4rem; }
+}
+.menu-plus a { line-height: 1.25; }
 
 @media (prefers-reduced-motion: reduce) {
   .menu, .menu.ouvert, .menu nav a, .menu.ouvert nav a:nth-child(n), .menu-plus, .menu-pied, .menu.ouvert .menu-plus, .menu.ouvert .menu-pied, .menu-ouvert .ciel-btn:not(.dans-barre) { transition: none; }
@@ -66,3 +72,21 @@ html[data-nuit] .menu-pied a { text-decoration-color: #f7f1e840; }
   .menu-ouvert .tete .tete-liens { opacity: 0; visibility: hidden; transition: opacity .2s, visibility 0s .2s; }
 }
 @media (min-width: 1100px) and (prefers-reduced-motion: reduce) { .tete .tete-liens, .menu-ouvert .tete .tete-liens { transition: none; } }
+
+/* ---------- lune dans l'en-tête (860 px et moins) : plus rien ne flotte sur les statuts ----------
+   nuit.js range le bouton dans .tete .cadre, avant le bouton Menu ; nuit.css (chargé après) le met en 40 px, d'où la spécificité. */
+@media (max-width: 860px) {
+  .tete .cadre { gap: .55rem; }
+  .tete .ciel-btn.dans-barre { width: 44px; height: 44px; flex: none; margin-left: 0; }
+  .tete .ciel-btn.dans-barre:last-child { margin-left: auto; }
+}
+@media (max-width: 620px) {
+  .tete .ciel-btn.dans-barre { margin-left: auto; }
+  .tete .ciel-btn.dans-barre + .menu-btn { margin-left: 0; }
+}
+/* Très petits écrans (320 px) : la pilule loge la marque, la lune et « Fermer » sans déborder. */
+@media (max-width: 380px) {
+  .tete .cadre { gap: .45rem; }
+  .tete.fond .cadre { padding-inline: 1.1rem .55rem; }
+  .tete .menu-btn { gap: .55rem; padding-inline: .85rem; }
+}

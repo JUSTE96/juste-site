@@ -1,0 +1,10 @@
+/* JusteCV — couche « navigation » des pages de contenu (pages.css) : lune dans l'en-tête, menu mobile, pied de page.
+   Vient après pages-elan.css. Elle vaut aussi pour les 94 fiches, qu'on ne régénère pas. */
+
+/* ---------- lune dans l'en-tête (860 px et moins) ----------
+   nuit.js range le bouton dans header.nav .wrap, avant le menu ; nuit.css (chargé après) le met en 40 px, d'où la spécificité. */
+@media (max-width: 860px) {
+  .nav .wrap { gap: .55rem; }
+  header.nav .ciel-btn.dans-barre { width: 44px; height: 44px; flex: none; margin-left: auto; }
+  header.nav .ciel-btn.dans-barre + .nav-menu { margin-left: 0; }
+}

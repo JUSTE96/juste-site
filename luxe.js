@@ -73,7 +73,7 @@
     // Une seule fonction pose et retire le verrou : aucun chemin (bouton, Échap, lien) ne laisse la page inerte.
     // La requête est refaite à chaque fois : le bouton lune est créé plus tard par nuit.js.
     const verrouiller = (oui) => {
-      document.querySelectorAll("main, footer, #barre-mobile, .ciel-btn, a.sr").forEach((el) => { if (!el.closest(".tete")) el.inert = oui; });
+      document.querySelectorAll("main, footer, #barre-mobile, .ciel-btn, a.sr").forEach((el) => { el.inert = oui && !el.closest(".tete"); });
       racine.style.overflow = oui ? "hidden" : ""; racine.style.scrollbarGutter = oui ? "stable" : "";
       racine.classList.toggle("menu-ouvert", oui);
       if (oui) lenis?.stop(); else lenis?.start();
@@ -122,7 +122,7 @@
   const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("vu"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -12% 0px" });
   document.querySelectorAll(".apparait, .cascade, .volet").forEach((el) => io.observe(el));
 
-  /* ---------- barre d'action mobile : visible entre le héros et le dernier appel ---------- */
+  /* ---------- barre d'action mobile : visible entre le héros et le dernier appel, sauf là où la démo ou les prix proposent déjà l'atelier ---------- */
   const barreMobile = document.getElementById("barre-mobile");
   if (barreMobile) {
     const vus = new Map(), lien = barreMobile.querySelector("a");
@@ -131,7 +131,7 @@
       const montrer = ![...vus.values()].some(Boolean);
       barreMobile.classList.toggle("visible", montrer); lien.tabIndex = montrer ? 0 : -1;
     });
-    document.querySelectorAll(".heros, .fin, .pied").forEach((el) => { vus.set(el, true); obs.observe(el); });
+    document.querySelectorAll(".heros, #demo, #prix, .fin, .pied").forEach((el) => { vus.set(el, true); obs.observe(el); });
   }
 
   /* ---------- cadran : construction ---------- */
