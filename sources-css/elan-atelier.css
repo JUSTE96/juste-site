@@ -100,6 +100,16 @@ html[data-nuit] .lecteur-lecture[data-teinte="cv"] { --marque: #1f5c47; }
 @media print { .bandeau-perime .bouton-lien { display: none; } }
 html[data-nuit] .bandeau-perime p { background: #4b4122; color: #ffe9a8; }
 
+/* ---------- CV d'exemple (toujours dit fictif) et CV repris de l'accueil ---------- */
+.depot .bouton-lien, .note-accueil .bouton-lien { min-height: 44px; font-weight: 600; text-decoration: underline; text-decoration-color: var(--corail); text-underline-offset: .3em; }
+.depot .bouton-lien:focus-visible, .note-accueil .bouton-lien:focus-visible { outline: 2px solid var(--bleu); outline-offset: 3px; border-radius: 4px; }
+.note-fictif, .note-accueil { max-width: none; margin: 0 0 1rem; padding: .7rem 1rem; border-radius: 14px; background: var(--lilas); color: var(--os); font-size: .92rem; font-weight: 600; }
+.note-fictif::before { content: "Exemple"; display: inline-block; margin-right: .6rem; padding: .15rem .55rem; border-radius: 999px; background: var(--os); color: var(--carbone); font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; vertical-align: .1em; }
+.note-accueil { background: var(--menthe); display: flex; flex-wrap: wrap; align-items: center; gap: 0 .9rem; padding-block: .3rem; }
+.complet-exemple { margin: .8rem 0 0; color: #343a58; font-weight: 600; }
+@media print { .note-fictif { border: 1px solid #999; background: #fff; } }
+html[data-nuit] .complet-exemple { color: var(--os); }
+
 /* ---------- l'écart : la phrase de tête dit d'abord ce qui bloque ---------- */
 .mesure-detail .detail-tete { display: block; margin-bottom: .35rem; color: var(--os); font-weight: 600; font-size: 1.05rem; line-height: 1.45; }
 

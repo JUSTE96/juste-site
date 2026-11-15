@@ -52,6 +52,7 @@
         <select id="exemple"><option value="">Choisir une offre d'exemple…</option></select>
       </div>
       <div class="etape-droite">
+        <p class="note-accueil" id="note-accueil" hidden><span id="note-accueil-texte"></span> <button class="bouton-lien lien" id="retirer-cv" type="button">Retirer ce CV</button></p>
         <label class="sr" for="offre">Texte de l'offre</label>
         <div class="lecteur" id="lecteur-offre"><textarea id="offre" rows="12" aria-describedby="aide-offre" placeholder="Collez ici le texte de l'offre d'emploi…"></textarea></div>
         <div class="barre"><button class="btn plein" id="assembler" type="button">Assembler le profil cible</button><span class="aide" id="aide-offre"></span></div>
@@ -97,7 +98,9 @@
           <input type="file" id="fichier" aria-describedby="aide-fichier" accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain">
           <label for="fichier" class="btn">Importer un fichier</label>
           <span class="aide" id="aide-fichier" role="status">PDF, DOCX ou TXT, 15 Mo au plus.</span>
+          <button class="bouton-lien lien" id="cv-exemple" type="button" hidden>Utiliser le CV d'exemple</button>
         </div>
+        <p class="note-fictif" id="cv-fictif" hidden>CV d'exemple : une personne fictive, pour voir le résultat.</p>
         <label class="sr" for="cv">Texte du CV</label>
         <div class="depot-zone lecteur" id="depot-zone"><textarea id="cv" rows="10" aria-describedby="aide-cv" placeholder="…ou collez ici le texte de votre CV. Vous pouvez aussi glisser le fichier dans ce cadre."></textarea></div>
         <div class="barre"><button class="btn plein" id="mesurer" type="button">Mesurer l'écart</button><span class="aide" id="aide-cv"></span></div>
@@ -112,6 +115,7 @@
       </div>
       <div class="etape-droite">
         <div class="bandeau-perime" id="e-perime" role="status"></div>
+        <p class="note-fictif" id="e-fictif" hidden>CV d'exemple : une personne fictive, pour voir le résultat.</p>
         <div class="mesure">
           <div class="mesure-chiffre"><strong id="e-score">–</strong><span>% du profil cible</span><small class="mesure-avant" id="e-avant" hidden></small></div>
           <div class="mesure-jauge" aria-hidden="true"><span id="e-jauge"></span></div>
@@ -133,6 +137,7 @@
           <h3 class="petit-titre">Aller plus loin avec l'IA</h3>
           <p>Sept lecteurs simulés (logiciel de tri, recruteur, manager, autre candidat, patron, expert métier, sceptique) notent votre CV. Puis JusteCV le reformule ligne par ligne avec les mots de l'offre, en citant chaque ligne d'origine.</p>
           <div class="barre"><button class="btn plein" id="complet" type="button">Lancer l'analyse complète</button><span class="aide">Votre CV est anonymisé avant l'envoi. Quota gratuit limité.</span></div>
+          <p class="aide complet-exemple" id="complet-exemple" hidden>Avec le CV d'exemple, l'analyse complète reste fermée : mettez votre propre CV à l'étape 3.</p>
         </div>
       </div>
     </section>

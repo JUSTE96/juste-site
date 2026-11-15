@@ -219,6 +219,7 @@ function majPerime() {
   bandeau($("e-perime"), !dernier ? null : offreChangee ? OFFRE : cvChange ? CV : null);
   $("profil").classList.toggle("perime", offreChangee);
   $("ecart").classList.toggle("perime", !!dernier && (offreChangee || cvChange));
+  majExemple();
 }
 ["offre", "cv"].forEach((id) => $(id).addEventListener("input", majPerime));
 document.addEventListener("click", (e) => {
@@ -348,12 +349,43 @@ function garder() {
 try {
   const b = JSON.parse(sessionStorage.getItem("juste.atelier") || "null");
   if (b) { if (b.offre) $("offre").value = b.offre; if (b.cv) $("cv").value = b.cv; if (b.offre) $("aide-offre").textContent = "Votre brouillon a été retrouvé."; }
+  // CV collé sur l'accueil : on le dit dès l'arrivée, avec de quoi le retirer.
+  if (b?.source === "accueil" && b.cv) {
+    $("note-accueil-texte").textContent = "Votre CV collé sur l'accueil est déjà en place à l'étape 3." + (b.offre ? "" : " Il ne manque que l'offre.");
+    $("note-accueil").hidden = false;
+  }
 } catch {}
+$("retirer-cv").addEventListener("click", () => {
+  $("cv").value = ""; try { sessionStorage.removeItem("juste.atelier"); } catch {}
+  $("note-accueil-texte").textContent = "CV retiré."; $("retirer-cv").hidden = true;
+  majPerime(); majExemple();
+});
+
+/* ---------- CV d'exemple : seulement avec une offre d'exemple non modifiée, toujours dit fictif ---------- */
+const offreExemple = () => DOMAINES.find((d) => d.offre === $("offre").value);
+const estCvExemple = (t) => DOMAINES.some((d) => d.cv === String(t ?? "").trim());
+function majExemple() {
+  const d = offreExemple(), ex = estCvExemple($("cv").value);
+  $("cv-exemple").hidden = !d || $("cv").value.trim() === d.cv;
+  $("cv-fictif").hidden = !ex;
+  // Le quota de l'analyse complète ne se dépense pas sur une personne fictive.
+  $("complet").disabled = ex; $("complet-exemple").hidden = !ex;
+  $("e-fictif").hidden = !(dernier && estCvExemple(cvMesure));
+}
+["offre", "cv"].forEach((id) => $(id).addEventListener("input", majExemple));
+$("cv-exemple").addEventListener("click", () => {
+  const d = offreExemple(); if (!d) return;
+  $("cv").value = d.cv; effacerErreur($("cv")); garder();
+  direFichier("CV d'exemple chargé.");
+  majPerime(); majExemple();
+});
+majExemple();
 
 /* ---------- garder le résultat ---------- */
 function texteDuPlan() {
   if (!dernier) return "";
-  const s = dernier.score, l = [`JusteCV : ${profil.intitule}`, s ? `Profil cible couvert à ${s.score} %` : "Détail par exigence", ""];
+  const s = dernier.score, l = [...(estCvExemple(cvMesure) ? ["CV d'exemple : une personne fictive, pour voir le résultat."] : []),
+    `JusteCV : ${profil.intitule}`, s ? `Profil cible couvert à ${s.score} %` : "Détail par exigence", ""];
   dernier.correspondances.forEach((c) => l.push(`[${STATUT[c.statut]}] ${c.texte}`));
   if (dernier.plan.length) {
     l.push("", "Le plan"); let i = 0;
