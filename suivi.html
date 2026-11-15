@@ -41,6 +41,7 @@
       <label class="full">Notes <input name="notes" placeholder="Contact, salaire annoncé, points à préparer…"></label>
       <div class="full form-actions"><button class="btn btn-primary" type="submit" id="submit">Ajouter la candidature</button><button class="btn btn-ghost" type="button" id="cancel" hidden>Annuler</button></div>
     </form>
+    <p id="annonce" class="small annonce" role="status"></p>
   </section>
 
   <div class="stats" id="stats" aria-live="polite"></div>
@@ -69,42 +70,103 @@
   var KEY = "juste.suivi.v1";
   var LABELS = { brouillon: "À envoyer", envoyee: "Envoyée", relance: "À relancer", entretien: "Entretien", offre: "Proposition", refus: "Refus" };
   var $ = function (id) { return document.getElementById(id); };
-  var form = $("form"), rows = $("rows"), editing = null;
+  var form = $("form"), rows = $("rows"), annonce = $("annonce"), editing = null;
+  var cartes = window.matchMedia ? matchMedia("(max-width: 700px)") : { matches: false };
+  var calme = function () { return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; };
   function load() { try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
   function save(list) { try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) { alert("Impossible d'enregistrer : le stockage du navigateur est bloqué ou plein."); } }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function fmtDate(d) { if (!d) return ""; var p = d.split("-"); return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : d; }
   function days(d) { if (!d) return 0; return Math.floor((Date.now() - new Date(d + "T00:00:00").getTime()) / 864e5); }
+  function ligne(id) { return id ? document.getElementById("c-" + id) : null; }
+  // Sur téléphone, le tableau devient une liste de cartes : on le dit aussi aux lecteurs d'écran.
+  function roles() {
+    var t = $("table"), head = t.tHead, on = cartes.matches;
+    if (on) { t.setAttribute("role", "presentation"); head.setAttribute("aria-hidden", "true"); rows.setAttribute("role", "list"); }
+    else { t.removeAttribute("role"); head.removeAttribute("aria-hidden"); rows.removeAttribute("role"); }
+    [].forEach.call(rows.rows, function (tr) { if (on) tr.setAttribute("role", "listitem"); else tr.removeAttribute("role"); });
+  }
+  function choix(c, old) {
+    return '<select class="statut statut-' + (old ? "relance" : esc(c.statut)) + '" data-act="statut" aria-label="Statut de ' + esc(c.poste) + '">' + Object.keys(LABELS).map(function (k) { return '<option value="' + k + '"' + (k === c.statut ? " selected" : "") + ">" + LABELS[k] + "</option>"; }).join("") + "</select>";
+  }
   function render() {
     var list = load(), f = $("filtre").value, shown = f ? list.filter(function (c) { return c.statut === f; }) : list;
     rows.innerHTML = shown.map(function (c) {
-      var old = c.statut === "envoyee" && days(c.date) > 10;
+      var n = days(c.date), old = c.statut === "envoyee" && n > 10;
       var poste = c.lien ? '<a href="' + esc(c.lien) + '" target="_blank" rel="noopener">' + esc(c.poste) + "</a>" : esc(c.poste);
-      return "<tr data-id=\"" + c.id + "\"><td><strong>" + poste + "</strong>" + (c.lieu ? '<br><span class="small muted">' + esc(c.lieu) + "</span>" : "") + "</td><td>" + esc(c.entreprise) + "</td><td>" + esc(fmtDate(c.date)) + (c.date ? '<br><span class="small muted">il y a ' + days(c.date) + " j</span>" : "") + '</td><td><span class="statut statut-' + (old ? "relance" : esc(c.statut)) + '">' + (old ? "À relancer" : LABELS[c.statut] || c.statut) + '</span></td><td class="small">' + esc(c.notes) + '</td><td class="row-actions actions-cell"><button type="button" data-act="edit">Modifier</button><button type="button" data-act="del">Supprimer</button></td></tr>';
+      var depuis = c.date ? (old ? '<span class="small ecoule relancer">sans réponse depuis ' + n + " j</span>" : '<span class="small muted ecoule">il y a ' + n + " j</span>") : "";
+      return '<tr id="c-' + esc(c.id) + '" data-id="' + esc(c.id) + '" tabindex="-1"><td class="poste"><strong>' + poste + "</strong>" + (c.lieu ? '<span class="small muted lieu">' + esc(c.lieu) + "</span>" : "") + '</td><td class="entreprise">' + esc(c.entreprise) + '</td><td class="quand">' + (c.date ? '<span class="date">' + esc(fmtDate(c.date)) + "</span>" : "") + depuis + '</td><td class="statut-cell">' + choix(c, old) + '</td><td class="small notes">' + esc(c.notes) + '</td><td class="row-actions actions-cell"><button type="button" data-act="edit" aria-label="Modifier ' + esc(c.poste) + '">Modifier</button> <button type="button" data-act="del" aria-label="Supprimer ' + esc(c.poste) + '">Supprimer</button></td></tr>';
     }).join("");
     $("empty").hidden = shown.length > 0; $("table").hidden = shown.length === 0;
+    roles();
     var n = function (s) { return list.filter(function (c) { return c.statut === s; }).length; };
     var relance = list.filter(function (c) { return c.statut === "relance" || (c.statut === "envoyee" && days(c.date) > 10); }).length;
     var tile = function (v, l, cls) { return '<div class="stat' + (cls ? " " + cls : "") + '"><strong>' + v + "</strong><span>" + l + "</span></div>"; };
     $("stats").innerHTML = tile(list.length, list.length > 1 ? "candidatures" : "candidature") + tile(n("entretien"), n("entretien") > 1 ? "entretiens" : "entretien", n("entretien") ? "is-good" : "") + tile(relance, "à relancer", relance ? "is-warn" : "") + tile(n("offre"), n("offre") > 1 ? "propositions" : "proposition", n("offre") ? "is-good" : "");
   }
+  // Annonce visible sous le formulaire, lue aussi par les lecteurs d'écran (role=status).
+  function annoncer(texte, id) {
+    var t = document.createElement("span"); t.textContent = texte; annonce.replaceChildren(t);
+    if (id) { var a = document.createElement("a"); a.href = "#c-" + id; a.setAttribute("data-voir", id); a.textContent = "Voir dans la liste"; annonce.append(" ", a); }
+    annonce.classList.remove("vient"); void annonce.offsetWidth; annonce.classList.add("vient");
+  }
+  // Amène une ligne au centre de l'écran et la surligne un instant.
+  var minuteur;
+  function montrer(id, cible) {
+    var tr = ligne(id); if (!tr) return false;
+    tr.scrollIntoView({ block: "center", behavior: calme() ? "auto" : "smooth" });
+    tr.classList.remove("neuve"); void tr.offsetWidth; tr.classList.add("neuve");
+    clearTimeout(minuteur); minuteur = setTimeout(function () { var t = ligne(id); if (t) t.classList.remove("neuve"); }, 1600);
+    (cible ? tr.querySelector(cible) || tr : tr).focus({ preventScroll: true });
+    return true;
+  }
+  function finEdition() { editing = null; form.reset(); form.elements.date.value = new Date().toISOString().slice(0, 10); $("submit").textContent = "Ajouter la candidature"; $("cancel").hidden = true; }
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    var fd = new FormData(form), list = load(), c = {};
+    var fd = new FormData(form), list = load(), c = {}, modif = editing;
     ["poste", "entreprise", "lieu", "date", "statut", "lien", "notes"].forEach(function (k) { c[k] = (fd.get(k) || "").toString().trim(); });
-    if (editing) { var i = list.findIndex(function (x) { return x.id === editing; }); if (i > -1) { c.id = editing; list[i] = c; } }
+    if (modif) { var i = list.findIndex(function (x) { return x.id === modif; }); if (i > -1) { c.id = modif; list[i] = c; } }
     else { c.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); list.unshift(c); }
-    save(list); editing = null; form.reset(); $("submit").textContent = "Ajouter la candidature"; $("cancel").hidden = true; render();
+    save(list); finEdition(); render();
+    if (modif) { annoncer("Candidature modifiée : " + c.poste + ", " + c.entreprise + "."); montrer(c.id, '[data-act="edit"]'); }
+    else annoncer("Candidature ajoutée : " + c.poste + ", " + c.entreprise + ".", c.id);
   });
-  $("cancel").addEventListener("click", function () { editing = null; form.reset(); $("submit").textContent = "Ajouter la candidature"; $("cancel").hidden = true; });
+  annonce.addEventListener("click", function (e) {
+    var a = e.target.closest("a[data-voir]"); if (!a) return;
+    e.preventDefault();
+    var id = a.getAttribute("data-voir");
+    if (!ligne(id) && $("filtre").value) { $("filtre").value = ""; render(); }
+    montrer(id);
+  });
+  $("cancel").addEventListener("click", function () { finEdition(); annonce.textContent = ""; $("submit").focus(); });
   rows.addEventListener("click", function (e) {
     var b = e.target.closest("button[data-act]"); if (!b) return;
-    var id = b.closest("tr").getAttribute("data-id"), list = load(), c = list.find(function (x) { return x.id === id; });
-    if (b.dataset.act === "del") { if (confirm("Supprimer cette candidature ?")) { save(list.filter(function (x) { return x.id !== id; })); render(); } return; }
+    var tr = b.closest("tr"), id = tr.getAttribute("data-id"), list = load(), c = list.find(function (x) { return x.id === id; });
+    if (!c) return;
+    if (b.dataset.act === "del") {
+      if (confirm("Supprimer cette candidature ?")) {
+        var suivant = tr.nextElementSibling || tr.previousElementSibling, sid = suivant && suivant.getAttribute("data-id");
+        save(list.filter(function (x) { return x.id !== id; })); render();
+        var t = ligne(sid); (t ? t.querySelector('[data-act="edit"]') : $("filtre")).focus({ preventScroll: true });
+      }
+      return;
+    }
     editing = id; Object.keys(c).forEach(function (k) { if (form.elements[k]) form.elements[k].value = c[k]; });
-    $("submit").textContent = "Enregistrer les modifications"; $("cancel").hidden = false; form.scrollIntoView({ behavior: "smooth", block: "start" }); form.elements.poste.focus();
+    $("submit").textContent = "Enregistrer les modifications"; $("cancel").hidden = false; annonce.textContent = "";
+    form.scrollIntoView({ behavior: calme() ? "auto" : "smooth", block: "start" }); form.elements.poste.focus({ preventScroll: true });
+  });
+  // Le statut se change en un geste, directement dans la liste.
+  rows.addEventListener("change", function (e) {
+    var s = e.target.closest('select[data-act="statut"]'); if (!s) return;
+    var id = s.closest("tr").getAttribute("data-id"), list = load(), c = list.find(function (x) { return x.id === id; });
+    if (!c) return;
+    c.statut = s.value; save(list); render();
+    var tr = ligne(id);
+    if (tr) tr.querySelector('select[data-act="statut"]').focus({ preventScroll: true });
+    else { annoncer("Statut changé : " + (LABELS[c.statut] || c.statut) + "."); $("filtre").focus({ preventScroll: true }); }
   });
   $("filtre").addEventListener("change", render);
+  if (cartes.addEventListener) cartes.addEventListener("change", roles); else if (cartes.addListener) cartes.addListener(roles);
   $("export").addEventListener("click", function () {
     var list = load(), cols = ["poste", "entreprise", "lieu", "date", "statut", "lien", "notes"];
     var csv = "﻿" + cols.join(";") + "\n" + list.map(function (c) { return cols.map(function (k) { return '"' + String(c[k] || "").replace(/"/g, '""') + '"'; }).join(";"); }).join("\n");
