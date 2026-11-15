@@ -54,6 +54,20 @@ html:not(.js) .demo-suivi { display: none; }
   font: 700 .8rem/1 var(--texte); color: #fff; background: var(--corail-texte); }
 html[data-nuit] #demo-aide.erreur::before { color: #141936; }
 
+/* ---------- démo sur grand écran : le profil cible reste en face pendant qu'on répond ----------
+   Seulement si la fenêtre est assez haute pour la colonne entière sous l'en-tête. */
+@media (min-width: 1001px) and (min-height: 700px) {
+  .vitrine > section:first-child { position: sticky; top: 104px; align-self: start; }
+}
+
+/* ---------- questions sur grand écran : le titre tient la colonne de gauche, comme « À propos » ---------- */
+@media (min-width: 1001px) {
+  .faq .cadre { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 0 clamp(2rem, 6vw, 6rem); align-items: start; }
+  .faq .bloc-tete { grid-column: 1; grid-row: 1 / span 20; display: block; position: sticky; top: 120px; margin-bottom: 0; }
+  .faq .bloc-tete p { margin-top: 1.4rem; }
+  .faq details { grid-column: 2; }
+}
+
 /* ---------- démo sur téléphone : une seule liste, le suivi reste sous les yeux ---------- */
 @media (max-width: 860px) {
   /* En « 30 secondes », les questions portent déjà le texte et le niveau : la liste du profil s'efface
