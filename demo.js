@@ -151,4 +151,18 @@ $("demo-comparer").addEventListener("click", () => comparer($("demo-cv").value))
 $("demo-exemple").addEventListener("click", () => { $("demo-cv").value = actuel.cv; comparer(actuel.cv); });
 $("demo-retour").addEventListener("click", () => { marquer([]); $("demo-resultat").hidden = true; $("demo-saisie").hidden = false; $("demo-etat").textContent = ETAT0; effacer(); $("demo-cv").focus(); });
 
+/* ---------- vers l'atelier : le CV collé ici n'est pas à recoller ----------
+   Seulement si le visiteur a lui-même collé son CV (pas le CV d'exemple) ; sessionStorage seulement :
+   rien ne survit à la fermeture de l'onglet. On garde l'offre déjà en brouillon dans l'atelier. */
+$("demo").addEventListener("click", (e) => {
+  if (!e.target.closest?.('a[href^="atelier.html"]')) return;
+  const cv = $("demo-cv").value.trim();
+  if (mots(cv) < MOTS_MIN || cv === String(actuel?.cv ?? "").trim()) return;
+  try {
+    let b = null; try { b = JSON.parse(sessionStorage.getItem("juste.atelier") || "null"); } catch {}
+    if (!b || typeof b !== "object") b = {};
+    sessionStorage.setItem("juste.atelier", JSON.stringify({ ...b, offre: typeof b.offre === "string" ? b.offre : "", cv: cv.slice(0, 30000), source: "accueil" }));
+  } catch {}
+});
+
 choisir("soin");
