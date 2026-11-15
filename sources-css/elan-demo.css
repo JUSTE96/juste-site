@@ -33,6 +33,14 @@ html:not(.js) .demo-suivi { display: none; }
 #demo-reste { margin: 1.2rem 0 0; color: var(--os); font-weight: 600; }
 #demo-reste:not([hidden]) { animation: monte .6s var(--elan) both .25s; }
 
+/* ---------- démo : le bilan, court, puis les points à travailler avec leur niveau ---------- */
+#rapide-suite:not(.sr) { color: var(--os); font-weight: 600; font-size: 1rem; margin-top: .2rem; }
+#rapide-manques { margin: .7rem 0 0; }
+#rapide-manques li { position: relative; padding-left: 1.55rem; animation: monte .6s var(--elan) both; animation-delay: calc(.3s + var(--i, 0) * 60ms); }
+#rapide-manques li::before { content: ""; position: absolute; left: 1px; top: 1.32rem; width: 9px; height: 9px; border-radius: 50%; box-sizing: border-box; border: 1.5px solid var(--corail-texte); transform: scale(1.2); }
+#rapide-manques li[data-statut="partielle"]::before { border-color: var(--ambre); background: linear-gradient(90deg, var(--ambre) 50%, transparent 50%); }
+@media (max-width: 560px) { #rapide-manques li { grid-template-columns: 1fr; gap: .25rem; } }
+
 /* ---------- démo sur téléphone : une seule liste, le suivi reste sous les yeux ---------- */
 @media (max-width: 860px) {
   /* En « 30 secondes », les questions portent déjà le texte et le niveau : la liste du profil s'efface
@@ -60,5 +68,5 @@ html[data-nuit] #demo-jalons i:not([data-s]) { background: #3b4482; }
 /* ---------- mouvement réduit : mêmes états, sans transition ---------- */
 @media (prefers-reduced-motion: reduce) {
   #demo-cible li, #demo-cible li::after { transition: none; }
-  #demo-reste:not([hidden]), .demo-compte.tic { animation: none; }
+  #demo-reste:not([hidden]), .demo-compte.tic, #rapide-manques li { animation: none; }
 }

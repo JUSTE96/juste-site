@@ -9,6 +9,7 @@ import { compter } from "./moteur/compte.mjs";
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const NIVEAU = { obligatoire: "Obligatoire", souhaitee: "Souhaitée", atout: "Atout" };
+const POIDS = { obligatoire: 3, souhaitee: 2, atout: 1 };
 const STATUT = { presente: "Présent", partielle: "En partie", absente: "Absent" };
 const CHOIX = [["presente", "Oui"], ["partielle", "En partie"], ["absente", "Non"]];
 const ETAT0 = "Deux façons de vous situer";
@@ -33,7 +34,8 @@ function choisir(id) {
   $("demo-cible").innerHTML = profil.exigences.map((e) => `<li>${esc(e.texte)}${niveau(e)}</li>`).join("");
   // Le niveau suit chaque question (hors de la légende, pour garder un nom de groupe court).
   $("demo-questions").innerHTML = profil.exigences.map((e, i) => `<fieldset class="question"><legend>${esc(e.texte)}</legend>${niveau(e)}<div class="reponses">${CHOIX.map(([v, t]) => `<label><input type="radio" name="q${i}" value="${v}"><span>${t}</span></label>`).join("")}</div></fieldset>`).join("");
-  $("demo-jalons").innerHTML = profil.exigences.map(() => "<i></i>").join("");
+  // Chaque jalon a la largeur de son poids dans le score (3, 2 ou 1).
+  $("demo-jalons").innerHTML = profil.exigences.map((e) => `<i style="flex-grow:${POIDS[e.niveau] ?? 1}"></i>`).join("");
   $("demo-cv").value = ""; $("demo-aide").textContent = AIDE0;
   fini = false; majRapide(); mode(rapide);
 }
@@ -88,10 +90,19 @@ function majRapide() {
   const compte = fini && s ? `${s.score} %` : `${faites} / ${total}`;
   if ($("rapide-compte").textContent !== compte) { $("rapide-compte").textContent = compte; if (faites) rejouer($("rapide-compte")); }
   if (!fini) $("rapide-chiffre").textContent = "0";
+  // La phrase d'état (lue par les lecteurs d'écran) : le compte des réponses, puis, à la fin, le score
+  // en tête et le nombre de points à travailler. Le compte et le score sont déjà affichés en grand :
+  // à l'écran, seule la suite reste visible.
+  $("rapide-suite").classList.toggle("sr", !fini);
+  $("rapide-manques").hidden = true;
   if (!fini) { $("rapide-suite").textContent = `${faites} réponse${faites > 1 ? "s" : ""} sur ${total}`; return; }
-  const manques = rep.filter((r) => r.statut !== "presente").map((r) => r.e.texte);
+  const manques = rep.filter((r) => r.statut !== "presente");
   compter($("rapide-chiffre"), s ? s.score : NaN);
-  $("rapide-suite").textContent = (s?.eliminatoires ? "Score plafonné à 49 % : un critère exigé manque. " : "") + (manques.length ? `À travailler : ${manques.join(" ; ")}.` : "Vous couvrez tout le profil. Montrez-le avec des exemples concrets.");
+  const n = manques.length;
+  $("rapide-suite").innerHTML = (s ? `<span class="sr">${s.score} % du profil cible. </span>` : "") + (s?.eliminatoires ? "Score plafonné à 49 % : un critère exigé manque. " : "")
+    + (n ? `${n} point${n > 1 ? "s" : ""} à travailler.` : "Vous couvrez tout le profil. Montrez-le avec des exemples concrets.");
+  $("rapide-manques").innerHTML = manques.map((r, i) => `<li data-statut="${r.statut}" style="--i:${i}">${esc(r.e.texte)}${niveau(r.e)}</li>`).join("");
+  $("rapide-manques").hidden = !n;
 }
 // À la sixième réponse, une seule fois : le score et le bouton viennent à l'écran s'ils n'y sont pas.
 $("demo-questions").addEventListener("change", () => {
