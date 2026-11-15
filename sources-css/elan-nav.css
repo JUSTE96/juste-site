@@ -26,7 +26,6 @@
 main section[tabindex="-1"]:focus { outline: none; }
 
 /* Pendant que le menu est ouvert, la lune flottante (inerte) s'efface ; celle de l'en-tête reste. */
-.ciel-btn { transition: opacity .3s, visibility 0s; }
 .menu-ouvert .ciel-btn:not(.dans-barre) { opacity: 0; visibility: hidden; transition: opacity .2s, visibility 0s .2s; }
 
 /* Cibles tactiles : les pages annexes du menu font 48 px de haut ; en deux colonnes sur téléphone. */
@@ -46,10 +45,24 @@ main section[tabindex="-1"]:focus { outline: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .menu, .menu.ouvert, .menu nav a, .menu.ouvert nav a:nth-child(n), .menu-plus, .menu-pied, .menu.ouvert .menu-plus, .menu.ouvert .menu-pied, .ciel-btn { transition: none; }
+  .menu, .menu.ouvert, .menu nav a, .menu.ouvert nav a:nth-child(n), .menu-plus, .menu-pied, .menu.ouvert .menu-plus, .menu.ouvert .menu-pied, .menu-ouvert .ciel-btn:not(.dans-barre) { transition: none; }
   .menu-plus, .menu-pied, .menu nav a { transform: none; }
 }
 
 /* ---------- nuit ---------- */
 html[data-nuit] .menu nav a[aria-current] { color: var(--os); }
 html[data-nuit] .menu-pied a { text-decoration-color: #f7f1e840; }
+
+/* ---------- en-tête de l'accueil : les cinq pages, dans l'ordre des pages de contenu (à partir de 1100 px) ---------- */
+.tete .tete-liens { display: none; }
+@media (min-width: 1100px) {
+  .tete .tete-liens { display: flex; gap: 1.7rem; margin-left: auto; }
+  .tete .tete-liens ~ .btn { margin-left: 0; }
+  .tete .tete-liens a { display: inline-flex; align-items: center; min-height: 44px; font-size: .95rem; font-weight: 500; color: var(--acier);
+    background: linear-gradient(var(--corail), var(--corail)) no-repeat 0 calc(100% - .5rem) / 0% 2px; transition: background-size .45s var(--elan), color .2s; }
+  .tete .tete-liens a:hover, .tete .tete-liens a:focus-visible { color: var(--os); background-size: 100% 2px; }
+  /* Menu ouvert : les cinq liens s'effacent, la feuille fait déjà la liste. */
+  .tete .tete-liens { transition: opacity .3s, visibility 0s; }
+  .menu-ouvert .tete .tete-liens { opacity: 0; visibility: hidden; transition: opacity .2s, visibility 0s .2s; }
+}
+@media (min-width: 1100px) and (prefers-reduced-motion: reduce) { .tete .tete-liens, .menu-ouvert .tete .tete-liens { transition: none; } }

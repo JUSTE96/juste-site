@@ -183,7 +183,8 @@
   const maj = () => {
     demande = false;
     const h = innerHeight;
-    tete?.classList.toggle("fond", scrollY > 24);
+    // En-tête rétréci : le bouton passe en corail (au premier écran, le héros porte déjà le bouton corail).
+    if (tete) { const fond = scrollY > 24; tete.classList.toggle("fond", fond); tete.querySelector(".cadre > .btn")?.classList.toggle("plein", fond); }
     for (const el of paras) {
       const r = el.parentElement.getBoundingClientRect();
       if (r.bottom < 0 || r.top > h) continue;
