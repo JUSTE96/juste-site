@@ -101,10 +101,10 @@
     </div>
   </div>
   <div class="galerie elan" id="galerie">
-    <figure style="background-image:url(assets/cine/flou-soin.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="soin" aria-hidden="true"></video><figcaption><b>Soin</b>Infirmier, aide-soignant, brancardier<a class="lien" href="#vitrine" data-domaine="soin">Voir ce qu'une offre demande</a></figcaption></figure>
-    <figure style="background-image:url(assets/cine/flou-batiment.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="batiment" aria-hidden="true"></video><figcaption><b>Bâtiment</b>Maçon, électricien, peintre<a class="lien" href="#vitrine" data-domaine="batiment">Voir ce qu'une offre demande</a></figcaption></figure>
-    <figure style="background-image:url(assets/cine/flou-cuisine.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="cuisine" aria-hidden="true"></video><figcaption><b>Restauration</b>Cuisinier, serveur, boulanger<a class="lien" href="#vitrine" data-domaine="restauration">Voir ce qu'une offre demande</a></figcaption></figure>
-    <figure style="background-image:url(assets/cine/flou-logistique.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="logistique" aria-hidden="true"></video><figcaption><b>Logistique</b>Cariste, préparateur, chauffeur<a class="lien" href="#vitrine" data-domaine="logistique">Voir ce qu'une offre demande</a></figcaption></figure>
+    <figure style="background-image:url(assets/cine/flou-soin.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="soin" aria-hidden="true"></video><figcaption><b>Soin</b>Infirmier, aide-soignant, brancardier<a class="lien" href="#vitrine" data-domaine="soin">Voir ce qu'une offre demande<span class="sr"> en soin</span></a></figcaption></figure>
+    <figure style="background-image:url(assets/cine/flou-batiment.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="batiment" aria-hidden="true"></video><figcaption><b>Bâtiment</b>Maçon, électricien, peintre<a class="lien" href="#vitrine" data-domaine="batiment">Voir ce qu'une offre demande<span class="sr"> dans le bâtiment</span></a></figcaption></figure>
+    <figure style="background-image:url(assets/cine/flou-cuisine.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="cuisine" aria-hidden="true"></video><figcaption><b>Restauration</b>Cuisinier, serveur, boulanger<a class="lien" href="#vitrine" data-domaine="restauration">Voir ce qu'une offre demande<span class="sr"> en restauration</span></a></figcaption></figure>
+    <figure style="background-image:url(assets/cine/flou-logistique.jpg)"><video class="clip" muted loop playsinline preload="none" data-clip="logistique" aria-hidden="true"></video><figcaption><b>Logistique</b>Cariste, préparateur, chauffeur<a class="lien" href="#vitrine" data-domaine="logistique">Voir ce qu'une offre demande<span class="sr"> en logistique</span></a></figcaption></figure>
   </div>
 </section>
 
@@ -176,6 +176,7 @@
       <div class="domaines-liste" id="demo-domaines-liste"></div>
       <a class="lien" href="atelier.html">Autre domaine : coller une offre</a>
     </fieldset>
+    <p class="sr" role="status" id="demo-annonce"></p>
     <div class="vitrine cascade" id="demo">
       <section aria-labelledby="v-cible">
         <h3 class="petit-titre" id="v-cible">Profil cible</h3>
@@ -188,6 +189,7 @@
           <li>Sens du relationnel, rigueur et esprit d'équipe<span class="poids">Souhaitée</span></li>
           <li>Certification AMF souhaitée<span class="poids">Souhaitée</span></li>
         </ul>
+        <p class="aide" id="demo-reste" hidden></p>
       </section>
       <section aria-labelledby="v-cv">
         <h3 class="petit-titre" id="v-cv">Votre CV</h3>
@@ -199,25 +201,26 @@
         <div id="demo-rapide">
           <p class="aide">Pour chaque ligne du profil, dites si vous l'avez. Rien à écrire.</p>
           <div id="demo-questions"></div>
-          <div class="jalons" id="demo-jalons" aria-hidden="true"></div>
+          <div class="demo-suivi" id="demo-suivi" aria-hidden="true"><div class="jalons" id="demo-jalons"></div><span class="demo-compte" id="rapide-compte"></span></div>
           <p class="demo-score" id="rapide-score" hidden><strong id="rapide-chiffre">–</strong><span>% du profil cible</span></p>
           <p class="aide" id="rapide-suite" role="status" aria-live="polite">0 réponse sur 6</p>
-          <div class="barre" id="rapide-actions" hidden><a class="btn plein" href="atelier.html">Essayer avec votre offre</a></div>
+          <ul class="lignes" id="rapide-manques" hidden></ul>
+          <div class="barre" id="rapide-actions" hidden><a class="btn plein" href="atelier.html">Mesurer ma propre offre</a></div>
         </div>
         <div id="demo-saisie" hidden>
           <label class="sr" for="demo-cv">Texte de votre CV</label>
-          <textarea id="demo-cv" rows="9" placeholder="Collez ici le texte de votre CV : expériences, formation, compétences…"></textarea>
+          <textarea id="demo-cv" rows="9" aria-describedby="demo-aide" placeholder="Collez ici le texte de votre CV : expériences, formation, compétences…"></textarea>
+          <p class="aide" id="demo-aide">Votre CV reste dans votre navigateur. Rien n'est envoyé.</p>
           <div class="barre">
             <button class="btn plein" id="demo-comparer" type="button">Comparer</button>
             <button class="lien bouton-lien" id="demo-exemple" type="button">Voir avec un CV d'exemple</button>
           </div>
-          <p class="aide" id="demo-aide">Votre CV reste dans votre navigateur. Rien n'est envoyé.</p>
         </div>
-        <div id="demo-resultat" hidden tabindex="-1">
+        <div id="demo-resultat" hidden tabindex="-1" role="region" aria-label="Résultat de la comparaison">
           <p class="demo-score"><strong id="demo-score">–</strong><span>% du profil cible</span></p>
           <ul class="lignes" id="demo-lignes"></ul>
           <div class="barre">
-            <a class="btn plein" href="atelier.html">Essayer avec votre offre</a>
+            <a class="btn plein" href="atelier.html">Mesurer ma propre offre</a>
             <button class="lien bouton-lien" id="demo-retour" type="button">Modifier mon CV</button>
           </div>
         </div>
@@ -300,13 +303,12 @@
         <ul><li>Tout Premium</li><li>Suivi des candidatures</li><li>Sans renouvellement automatique</li></ul>
       </div>
     </div>
-    <p class="note-prix">Les formules payantes ouvrent à la fin de la bêta.</p>
   </div>
 </section>
 
 <section class="bloc faq" id="faq" aria-labelledby="titre-faq" style="padding-top:0">
   <div class="cadre">
-    <div class="bloc-tete apparait"><h2 class="moyen" id="titre-faq">Questions.</h2><p></p></div>
+    <div class="bloc-tete apparait"><h2 class="moyen" id="titre-faq">Questions.</h2><p>Une autre question ? <a class="lien" href="mailto:contact@justecv.fr">contact@justecv.fr</a></p></div>
     <details><summary>Pourquoi ne pas simplement générer le CV parfait ?</summary><p>Parce qu'un CV qui colle à 100 % à l'offre contiendrait des choses que vous n'avez pas faites. Elles ressortent en entretien, et un diplôme inventé est un motif de licenciement. JusteCV vous montre la cible pour que vous l'atteigniez pour de vrai.</p></details>
     <details><summary>Mon CV est-il envoyé quelque part ?</summary><p>Non. Dans l'atelier gratuit, l'offre et le CV sont lus dans votre navigateur. Rien ne part sur un serveur, et rien n'est conservé quand vous fermez la page.</p></details>
     <details><summary>Comment le score est-il calculé ?</summary><p>Chaque exigence pèse 3 si elle est obligatoire, 2 si elle est souhaitée, 1 si c'est un atout. Une exigence présente compte entièrement, en partie pour moitié, absente pour rien. Si un critère éliminatoire (diplôme exigé, permis, habilitation) manque, le score ne dépasse pas 49 %.</p></details>

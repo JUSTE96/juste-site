@@ -1,0 +1,148 @@
+/* JusteCV — couche « élan » de la démo et des sections de l'accueil (galerie, démo, règle, prix, questions).
+   Concaténée après elan.css par sources-css/assembler.py : elle surcharge, elle ne réécrit pas.
+   Même principe que la couche élan : chaque mouvement montre une réponse prise en compte ou un résultat,
+   tout se pose sans animation sous prefers-reduced-motion, et rien n'est caché si le script manque. */
+
+/* ---------- galerie : la flèche du lien est décorative (hors du nom accessible quand le navigateur le permet) ---------- */
+.galerie figcaption .lien::after { content: "→"; content: "→" / ""; }
+/* Galerie : la première carte s'aligne sur la marge du titre au lieu du bord de l'écran ; la légende remplit
+   la carte (plus de bande d'image sous les légendes courtes) ; toute la carte mène au lien. */
+.galerie { scroll-padding-inline: var(--marge); }
+.galerie figure { display: grid; grid-template-rows: auto 1fr; }
+.galerie video { width: 100%; }
+.galerie figcaption { align-content: start; }
+.galerie figcaption .lien::before { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+
+/* ---------- démo : le cadre ne coupe plus le collage ----------
+   overflow: hidden faisait de la carte un conteneur de défilement : rien n'y collait.
+   overflow: clip découpe pareil (coins arrondis compris) sans créer ce conteneur ; hidden reste en repli. */
+.vitrine, .js .vitrine.cascade.vu { overflow: hidden; overflow: clip; }
+
+/* ---------- démo : bandeau de suivi (jalons + « n / 6 ») ---------- */
+.demo-suivi { display: flex; align-items: center; gap: .9rem; margin-top: 1.3rem; }
+.demo-suivi .jalons { flex: 1; margin: 0; }
+.demo-compte { flex: none; min-width: 3.4em; text-align: right; font: 600 .9rem/1 var(--texte); font-variant-numeric: tabular-nums; color: var(--os); }
+.demo-compte.tic { animation: tic .45s var(--elan); }
+html:not(.js) .demo-suivi { display: none; }
+
+/* ---------- démo : le niveau de l'exigence sous chaque question ---------- */
+.question > .poids { grid-column: 1; margin-top: -.25rem; }
+@media (min-width: 1101px) { .question > .reponses { grid-row: 1 / span 2; align-self: center; } }
+
+/* ---------- démo : à la sixième réponse, le profil cible devient le plan ---------- */
+#demo-cible li { transition: background .35s, color .5s ease calc(var(--k, 0) * 80ms); }
+#demo-cible li::after { content: ""; position: absolute; left: -14px; top: .85rem; bottom: .85rem; width: 3px; border-radius: 3px; background: var(--c, transparent);
+  transform: scaleY(0); transform-origin: top; transition: transform .5s var(--elan) calc(var(--k, 0) * 80ms); }
+#demo-cible li[data-statut="partielle"] { --c: var(--ambre); }
+#demo-cible li[data-statut="absente"] { --c: var(--corail-texte); }
+#demo-cible.fini li[data-statut="presente"] { color: var(--acier); }
+#demo-cible.fini li[data-statut="presente"] .poids { color: var(--acier); font-weight: 500; }
+#demo-cible.fini li[data-statut="presente"] .poids::before { background: var(--acier); }
+#demo-cible.fini li[data-statut="partielle"], #demo-cible.fini li[data-statut="absente"] { color: var(--os); }
+#demo-cible.fini li[data-statut="partielle"]::after, #demo-cible.fini li[data-statut="absente"]::after { transform: scaleY(1); }
+#demo-reste { margin: 1.2rem 0 0; color: var(--os); font-weight: 600; }
+#demo-reste:not([hidden]) { animation: monte .6s var(--elan) both .25s; }
+
+/* ---------- démo : le bilan, court, puis les points à travailler avec leur niveau ----------
+   Seulement quand le script tourne : sans lui, la ligne d'état reste discrète (les questions n'existent pas). */
+html.js #rapide-suite:not(.sr) { color: var(--os); font-weight: 600; font-size: 1rem; margin-top: .2rem; }
+#rapide-manques { margin: .7rem 0 0; }
+/* Sur ordinateur, le profil de gauche est devenu le plan (#demo-cible.fini, data-plan posé par le script) :
+   il porte déjà les lignes à travailler, avec leur niveau et leur statut. La liste de droite ferait doublon ;
+   la phrase « N points à travailler. » reste. Sur téléphone, le profil est masqué : la liste reste. */
+@media (min-width: 861px) { #demo[data-plan] #rapide-manques { display: none; } }
+#rapide-manques li { position: relative; padding-left: 1.55rem; animation: monte .6s var(--elan) both; animation-delay: calc(.3s + var(--i, 0) * 60ms); }
+#rapide-manques li::before { content: ""; position: absolute; left: 1px; top: 1.32rem; width: 9px; height: 9px; border-radius: 50%; box-sizing: border-box; border: 1.5px solid var(--corail-texte); transform: scale(1.2); }
+#rapide-manques li[data-statut="partielle"]::before { border-color: var(--ambre); background: linear-gradient(90deg, var(--ambre) 50%, transparent 50%); }
+@media (max-width: 560px) { #rapide-manques li { grid-template-columns: 1fr; gap: .25rem; } }
+
+/* ---------- démo, « Coller mon CV » : une erreur se voit et se distingue de l'aide ----------
+   Texte et bordure en corail lisible, jamais en aplat (le corail plein reste celui des boutons). */
+#demo-cv { transition: border-color .2s, box-shadow .2s; }
+#demo-cv.invalide { border-color: var(--corail-texte); box-shadow: inset 0 0 0 1px var(--corail-texte); }
+#demo-aide { transition: color .2s; }
+#demo-aide.erreur { display: flex; align-items: flex-start; gap: .55rem; color: var(--corail-texte); font-weight: 600; }
+#demo-aide.erreur::before { content: "!"; flex: none; width: 1.3rem; height: 1.3rem; margin-top: .05rem; border-radius: 50%; display: grid; place-items: center;
+  font: 700 .8rem/1 var(--texte); color: #fff; background: var(--corail-texte); }
+html[data-nuit] #demo-aide.erreur::before { color: #141936; }
+
+/* ---------- démo sur grand écran : le profil cible reste en face pendant qu'on répond ----------
+   Seulement si la fenêtre est assez haute pour la colonne entière, plan compris, sous l'en-tête : plus la carte est étroite,
+   plus les lignes passent sur deux lignes et plus la colonne est haute (mesuré sur le domaine le plus long). */
+@media (min-width: 1300px) and (min-height: 700px), (min-width: 1200px) and (min-height: 760px), (min-width: 1001px) and (min-height: 820px) {
+  .vitrine > section:first-child { position: sticky; top: 104px; align-self: start; }
+}
+
+/* ---------- questions sur grand écran : le titre tient la colonne de gauche, comme « À propos » ---------- */
+@media (min-width: 1001px) {
+  .faq .cadre { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 0 clamp(2rem, 6vw, 6rem); align-items: start; }
+  .faq .bloc-tete { grid-column: 1; grid-row: 1 / span 20; display: block; position: sticky; top: 120px; margin-bottom: 0; }
+  .faq .bloc-tete p { margin-top: 1.4rem; }
+  .faq details { grid-column: 2; }
+}
+
+/* ---------- prix : ce qui est ouvert passe devant, ce qui viendra se met en retrait ----------
+   Les règles de clair.css portent des !important sur le fond et la bordure : celles-ci aussi. */
+.prix > div:first-child { background: var(--os) !important; border-color: transparent !important; color: var(--carbone); }
+.prix > div:first-child .petit-titre, .prix > div:first-child .montant { color: var(--carbone); }
+.prix > div:first-child .montant { font-size: 3.4rem; }
+.prix > div:first-child .montant small { color: color-mix(in srgb, var(--carbone) 72%, transparent); }
+.prix > div:first-child ul { color: color-mix(in srgb, var(--carbone) 80%, transparent); }
+.prix > div:first-child :focus-visible { outline-color: var(--carbone); }
+.prix > div:nth-child(n+2) { background: transparent !important; border: 1px dashed color-mix(in srgb, var(--os) 30%, transparent) !important; }
+.prix > div:nth-child(n+2) .montant { font-size: 2rem; color: var(--acier); }
+@media (hover: hover) {
+  .prix > div:nth-child(n+2):hover { transform: none; box-shadow: none; }
+  .prix > div:first-child:hover { box-shadow: 0 34px 60px -30px rgba(28,32,64,.6); }
+}
+@media (min-width: 1001px) { .prix { grid-template-columns: 1.2fr 1fr 1fr; } }
+/* La nuit, l'inversion donnait un aplat crème, la surface la plus vive de la page : la carte reste bleu nuit,
+   un ton au-dessus du ciel, et se distingue par un filet crème de 2 px. Les fonds pêche et ciel de nuit sont neutralisés. */
+html[data-nuit] .prix > div:first-child { background: #2c3470 !important; border: 2px solid var(--os) !important; color: var(--os); }
+html[data-nuit] .prix > div:first-child .petit-titre, html[data-nuit] .prix > div:first-child .montant { color: var(--os); }
+html[data-nuit] .prix > div:first-child .montant small { color: color-mix(in srgb, var(--os) 72%, transparent); }
+html[data-nuit] .prix > div:first-child ul { color: color-mix(in srgb, var(--os) 82%, transparent); }
+html[data-nuit] .prix > div:first-child :focus-visible { outline-color: var(--os); }
+html[data-nuit] .prix > div:nth-child(n+2) { background: transparent !important; }
+@media (hover: hover) { html[data-nuit] .prix > div:nth-child(n+2):hover { box-shadow: none; } }
+
+/* ---------- démo sur téléphone : une seule liste, le suivi reste sous les yeux ---------- */
+@media (max-width: 860px) {
+  /* En « 30 secondes », les questions portent déjà le texte et le niveau : la liste du profil s'efface
+     (seulement quand le script a posé data-mode ; sans script elle reste). */
+  #demo[data-mode="rapide"] #demo-cible, #demo[data-mode="rapide"] #demo-reste { display: none; }
+  #demo[data-mode="rapide"] > section:first-child { padding-bottom: 1.1rem; }
+  #demo[data-mode="rapide"] > section:first-child .ref { margin-bottom: 0; }
+  #demo-rapide { display: flex; flex-direction: column; }
+  #demo-rapide > .aide:first-child { order: -2; }
+  /* Collé à 80 px sous l'en-tête flottant (qui finit à 72 px) : l'ombre pleine de 8 px ferme la bande entre les deux,
+     le texte des questions ne défile plus dans cet interstice. */
+  .demo-suivi { order: -1; position: sticky; top: 80px; z-index: 3; box-sizing: border-box; height: 44px; margin: 0 calc(-1 * clamp(24px, 3vw, 44px)); padding: 0 clamp(24px, 3vw, 44px);
+    background: #fdfbff; box-shadow: 0 -8px 0 #fdfbff, 0 1px 0 var(--trait); }
+  #demo-questions .question:first-child { border-top: 0; }
+  .question { scroll-margin-top: 140px; }
+  .reponses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+  .reponses span { min-height: 48px; width: 100%; justify-content: center; padding: 0 .4rem; }
+}
+#rapide-actions, #rapide-actions .btn { scroll-margin-bottom: 24px; }
+/* Sur téléphone, la barre flottante #barre-mobile (64 px, à 12 px du bas) peut couvrir le bas de l'écran :
+   le bouton de fin s'arrête au-dessus d'elle, avec la même marge de 24 px (y compris quand Tab l'amène au focus). */
+@media (max-width: 860px) { #rapide-actions, #rapide-actions .btn { scroll-margin-bottom: calc(100px + env(safe-area-inset-bottom)); } }
+@media (min-width: 861px) { .question { scroll-margin-top: 110px; } }
+
+/* ---------- mode nuit ---------- */
+@media (max-width: 860px) { html[data-nuit] .demo-suivi { background: #232a5c; box-shadow: 0 -8px 0 #232a5c, 0 1px 0 #2c3364; } }
+/* « La règle » : le jour, c'est la seule bande sombre de la page ; la nuit, son voile à .55 se fondait dans le ciel.
+   Fond plus dense et liseré corail en tête, bord à bord (l'animation « feuille » finit sans marge ni arrondi).
+   Sélecteur plus fort que celui de nuit.css, chargé après juste.css. */
+html[data-nuit] .bloc.regle { background: rgba(31, 37, 80, .78); box-shadow: inset 0 2px 0 #ff8f73; }
+/* les jalons encore vides se perdaient dans le fond de la carte */
+html[data-nuit] #demo-jalons i:not([data-s]) { background: #3b4482; }
+
+/* ---------- mouvement réduit : mêmes états, sans transition ---------- */
+@media (prefers-reduced-motion: reduce) {
+  /* La règle globale donne .01ms de transition à toutes les propriétés : la ligne d'état, qui quitte .sr à la fin,
+     garderait 1 px de large pendant une image (bilan plus haut de 70 px, défilement de fin trop long). */
+  #demo-cible li, #demo-cible li::after, #rapide-suite { transition: none; }
+  #demo-reste:not([hidden]), .demo-compte.tic, #rapide-manques li { animation: none; }
+}
