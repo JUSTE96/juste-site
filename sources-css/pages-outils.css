@@ -85,9 +85,15 @@ html[data-nuit] .annonce:not(:empty)::before { background-color: #2f9e6c; }
 }
 
 /* ---------- 404 et merci : une même entrée, qui pose la page élément par élément ---------- */
-.merci .search { justify-self: stretch; width: 100%; max-width: 34rem; margin: 1.1rem 0 .4rem; gap: .6rem; }
-.merci .search input { flex: 1 1 auto; min-width: 0; min-height: 52px; }
-.merci .search .btn { flex: none; min-height: 52px; }
+.merci .search { justify-self: stretch; align-items: stretch; width: 100%; max-width: 34rem; margin: 1.1rem 0 .4rem; gap: .6rem; }
+.merci .search input { flex: 1 1 auto; min-width: 0; }
+/* la recherche est l'action de la page : bouton à l'encre, pour ne pas doubler le corail de « Essayer avec une offre » */
+.merci .search .btn { flex: none; justify-content: center; min-height: 50px; background: var(--fg); border-color: var(--fg); color: var(--bg); box-shadow: 0 12px 24px -16px rgba(28,32,64,.7); }
+.merci .search .btn:hover { background: color-mix(in srgb, var(--fg) 86%, var(--corail)); border-color: transparent; }
+@media (max-width: 520px) {
+  .merci .search { flex-wrap: wrap; }
+  .merci .search input, .merci .search .btn { flex: 1 1 100%; }
+}
 .merci .conseils { margin: .5rem 0 0; max-width: 36rem; padding-left: 1.6em; gap: .7rem; color: var(--fg); }
 .merci .conseils li { padding-left: .35em; line-height: 1.55; }
 .merci .conseils li::marker { font: 600 1.02rem var(--display); color: var(--sapin); }
