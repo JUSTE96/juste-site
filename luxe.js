@@ -77,46 +77,18 @@
     document.querySelectorAll(".heros, .fin, .pied").forEach((el) => { vus.set(el, true); obs.observe(el); });
   }
 
-  /* ---------- cadran : construction ---------- */
-  const NS = "http://www.w3.org/2000/svg", C = 300, VALEUR = 68, N = 12;
-  const COUVERTS = [0, 1, 2, 4, 5, 7, 8, 10], PLAN = [3, 6, 9, 11];
-  const minutes = document.getElementById("minutes"), gIndex = document.getElementById("index");
-  const idx = [];
-  if (gIndex) {
-    const pt = (a, r) => [C + r * Math.sin(a), C - r * Math.cos(a)];
-    const trait = (a, r1, r2, cl, parent) => { const [x1, y1] = pt(a, r1), [x2, y2] = pt(a, r2); const l = document.createElementNS(NS, "line"); Object.entries({ x1, y1, x2, y2, class: cl }).forEach(([k, v]) => l.setAttribute(k, v)); parent.appendChild(l); return l; };
-    for (let i = 0; i < 60; i++) if (i % 5) trait((i / 60) * Math.PI * 2, 270, 278, "minute", minutes);
-    for (let i = 0; i < N; i++) idx.push(trait((i / N) * Math.PI * 2, 222, 278, "index", gIndex));
-  }
-  const arc = document.getElementById("arc"), aiguille = document.getElementById("aiguille");
-  const valeur = document.getElementById("valeur"), label = document.getElementById("valeur-label");
-  const L = 2 * Math.PI * 252;
-  if (arc) { arc.style.strokeDasharray = L; arc.style.strokeDashoffset = L; }
+  /* ---------- cadran : construction ----------
+     Le cadran est construit et dessiné par elan.js, à partir des lignes lues dans le héros et du vrai moteur de score.
+     Ici ne reste que la bascule des textes de la scène. */
 
-  /* ---------- scène pilotée au défilement ---------- */
+  /* ---------- scène pilotée au défilement : le texte du temps en cours ---------- */
   const scene = document.getElementById("mouvement"), temps = [...document.querySelectorAll("#temps li")], barre = document.getElementById("scene-barre");
   const borne = (x) => Math.max(0, Math.min(1, x));
-  const doux = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
   let dernierPas = -1;
   const dessiner = (p) => {
     const pas = Math.min(3, Math.floor(p * 4));
     if (pas !== dernierPas) { temps.forEach((li, i) => { li.classList.toggle("actif", i === pas); li.classList.toggle("passe", i < pas); }); dernierPas = pas; }
-    barre.style.transform = `scaleX(${p})`;
-    const lus = Math.round(borne(p / .24) * N);            // 1. lecture : les index s'allument
-    const k = doux(borne((p - .5) / .22));                  // 3. écart : l'aiguille monte
-    const nbCouverts = Math.round(k * COUVERTS.length);
-    const plan = p > .78;                                   // 4. plan : les manques ressortent
-    idx.forEach((l, i) => {
-      l.classList.toggle("lu", i < lus);
-      l.classList.toggle("couvert", COUVERTS.indexOf(i) > -1 && COUVERTS.indexOf(i) < nbCouverts);
-      l.classList.toggle("plan", plan && PLAN.includes(i));
-    });
-    arc.style.strokeDashoffset = L * (1 - (VALEUR / 100) * k);
-    aiguille.style.transform = `rotate(${VALEUR * 3.6 * k}deg)`;
-    const ecrire = (el, t) => { t = String(t); if (el.textContent !== t) el.textContent = t; };
-    if (p < .5) { ecrire(valeur, lus); ecrire(label, pas === 0 ? "exigences lues" : "exigences dans le profil cible"); }
-    else if (!plan) { ecrire(valeur, Math.round(VALEUR * k)); ecrire(label, "% du profil cible"); }
-    else { ecrire(valeur, PLAN.length); ecrire(label, "écarts dans le plan"); }
+    if (barre) barre.style.transform = `scaleX(${p})`;
   };
 
   /* ---------- boucle de défilement : en-tête, parallaxe, scène ---------- */
@@ -132,7 +104,8 @@
       if (r.bottom < 0 || r.top > h) continue;
       el.style.transform = `translate3d(0, ${(r.top + r.height / 2 - h / 2) * -Number(el.dataset.parallaxe)}px, 0)`;
     }
-    if (scene && arc) {
+    // Sous animations réduites, la scène est mise à plat (les quatre temps lisibles d'un trait) : rien à piloter.
+    if (scene && temps.length && !calme) {
       const r = scene.getBoundingClientRect();
       dessiner(borne(-r.top / (r.height - h)));
     }

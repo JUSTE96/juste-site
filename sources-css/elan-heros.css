@@ -36,3 +36,34 @@
   .heros .actions { flex-direction: column; }
   .heros .actions .btn { flex: none; white-space: normal; }
 }
+
+/* ---------- cadran : le calcul du score, segment par segment ----------
+   Un segment par exigence de l'offre du héros. Mêmes couleurs que partout ailleurs :
+   niveau (obligatoire corail-texte, souhaitée bleu, atout contour seul), puis résultat (vert présent, ambre en partie, corail-texte absent). */
+.cadran .anneau { stroke: var(--trait); }
+.cadran .seg { opacity: 0; transition: opacity .35s ease; }
+.cadran .seg.lu { opacity: 1; }
+.cadran .seg path { stroke-width: 2; stroke-linejoin: round; transition: fill .45s ease, stroke .45s ease; }
+.cadran .seg-fond { fill: var(--os); stroke: transparent; }
+.cadran .seg-plein { fill: transparent; stroke: none; }
+/* 2. profil cible : la couleur du niveau */
+.cadran svg:not([data-temps="0"]) .seg[data-n="obligatoire"] .seg-fond { fill: var(--corail-texte); }
+.cadran svg:not([data-temps="0"]) .seg[data-n="souhaitee"] .seg-fond { fill: var(--bleu); }
+.cadran svg:not([data-temps="0"]) .seg[data-n="atout"] .seg-fond { fill: transparent; stroke: var(--acier); }
+/* 3. écart : le segment jugé devient une piste, remplie à son crédit ; absent, il ne garde qu'un contour pointillé */
+.cadran svg .seg.juge[data-n] .seg-fond { fill: var(--trait); stroke: transparent; }
+.cadran svg .seg.juge[data-n][data-s="absente"] .seg-fond { fill: transparent; stroke: var(--corail-texte); stroke-width: 3; stroke-dasharray: 6 5; }
+.cadran .seg[data-s="presente"] .seg-plein { fill: var(--vert); }
+.cadran .seg[data-s="partielle"] .seg-plein { fill: var(--ambre); }
+/* 4. plan : ce qui est couvert s'efface, les écarts restent */
+.cadran .seg { transition: opacity .45s ease; }
+.cadran svg[data-temps="3"] .seg[data-s="presente"] { opacity: .3; }
+/* le centre */
+.cadran .valeur span { max-width: 15ch; }
+.cadran .valeur [class^="niv-"] { white-space: nowrap; }
+.cadran .valeur .niv-obligatoire { color: var(--corail-texte); font-weight: 600; }
+.cadran .valeur .niv-souhaitee { color: var(--bleu); font-weight: 600; }
+.cadran .valeur .niv-atout { color: var(--acier); font-weight: 600; }
+.cadran #valeur-label.exigence { max-width: 17ch; font: italic 400 1.02rem/1.3 var(--titre); color: var(--os);
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.cadran #valeur { font-variant-numeric: tabular-nums; }

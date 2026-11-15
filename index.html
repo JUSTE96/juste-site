@@ -134,16 +134,19 @@
         <div class="scene-barre" aria-hidden="true"><span id="scene-barre"></span></div>
       </div>
       <div class="cadran" id="cadran">
-        <svg viewBox="0 0 600 600" role="img" aria-labelledby="cadran-desc">
-          <desc id="cadran-desc">Cadran piloté par le défilement. Douze index représentent les exigences d'une offre. Ils s'allument à la lecture, puis l'aiguille indique la part du profil cible que couvre le CV : 68 %. Les quatre exigences restantes forment le plan.</desc>
+        <svg viewBox="0 0 600 600" role="img" aria-labelledby="cadran-desc" data-temps="2">
+          <desc id="cadran-desc">Cadran calculé sur l'offre lue plus haut : 6 exigences, qui pèsent 3 si elles sont obligatoires, 2 si elles sont souhaitées, 1 si c'est un atout. 3 présentes, 2 en partie, 1 absente : le CV couvre 68 % du profil cible. 3 écarts forment le plan.</desc>
           <circle class="anneau" cx="300" cy="300" r="286"/>
-          <g id="minutes"></g>
-          <g id="index"></g>
-          <circle class="arc" id="arc" cx="300" cy="300" r="252" transform="rotate(-90 300 300)"/>
-          <circle class="anneau tourne" cx="300" cy="300" r="190" stroke-dasharray="2 6"/>
-          <g class="aiguille" id="aiguille"><line x1="300" y1="118" x2="300" y2="34" stroke="#ff6b4a" stroke-width="3"/><circle cx="300" cy="118" r="4" fill="#ff6b4a"/></g>
+          <g id="segments">
+            <g class="seg lu juge" data-n="obligatoire" data-s="presente"><path class="seg-fond" d="M308.93 44.16A256 256 0 0 1 546.08 229.44L517.25 237.71A226 226 0 0 0 307.89 74.14Z"/><path class="seg-plein" d="M308.93 44.16A256 256 0 0 1 546.08 229.44L517.25 237.71A226 226 0 0 0 307.89 74.14Z"/></g>
+            <g class="seg lu juge" data-n="obligatoire" data-s="partielle"><path class="seg-fond" d="M550.41 246.77A256 256 0 0 1 428.00 521.70L413.00 495.72A226 226 0 0 0 521.06 253.01Z"/><path class="seg-plein" d="M550.41 246.77A256 256 0 0 1 533.87 404.12L506.46 391.92A226 226 0 0 0 521.06 253.01Z"/></g>
+            <g class="seg lu juge" data-n="souhaitee" data-s="presente"><path class="seg-fond" d="M412.22 530.09A256 256 0 0 1 204.10 537.36L215.34 509.54A226 226 0 0 0 399.07 503.13Z"/><path class="seg-plein" d="M412.22 530.09A256 256 0 0 1 204.10 537.36L215.34 509.54A226 226 0 0 0 399.07 503.13Z"/></g>
+            <g class="seg lu juge" data-n="souhaitee" data-s="presente"><path class="seg-fond" d="M187.78 530.09A256 256 0 0 1 53.92 370.56L82.75 362.29A226 226 0 0 0 200.93 503.13Z"/><path class="seg-plein" d="M187.78 530.09A256 256 0 0 1 53.92 370.56L82.75 362.29A226 226 0 0 0 200.93 503.13Z"/></g>
+            <g class="seg lu juge" data-n="souhaitee" data-s="partielle"><path class="seg-fond" d="M49.59 353.23A256 256 0 0 1 92.89 149.53L117.16 167.16A226 226 0 0 0 78.94 346.99Z"/><path class="seg-plein" d="M49.59 353.23A256 256 0 0 1 49.59 246.77L78.94 253.01A226 226 0 0 0 78.94 346.99Z"/></g>
+            <g class="seg lu juge" data-n="souhaitee" data-s="absente"><path class="seg-fond" d="M103.89 135.45A256 256 0 0 1 291.07 44.16L292.11 74.14A226 226 0 0 0 126.87 154.73Z"/><path class="seg-plein" d=""/></g>
+          </g>
         </svg>
-        <div class="valeur" aria-hidden="true"><strong id="valeur">0</strong><span id="valeur-label">exigences lues</span></div>
+        <div class="valeur" aria-hidden="true"><strong id="valeur">68</strong><span id="valeur-label">% du profil cible</span></div>
       </div>
     </div>
   </div>
