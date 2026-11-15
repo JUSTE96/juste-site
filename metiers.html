@@ -573,8 +573,8 @@
     var frag = document.createDocumentFragment(), total = 0, nouvelles = 0;
     groupes.forEach(function (g, i) {
       if (!g.length) return;
-      if (i === 2 && total) frag.appendChild(separateur("Autres métiers dont une appellation contient « " + brut + " »"));
-      if (i === 3 && total) frag.appendChild(separateur("Autres métiers dont la description ou les savoir-faire contiennent « " + brut + " »"));
+      if (i === 2 && total) frag.appendChild(separateur("Autres métiers dont une appellation contient «\u00a0" + brut + "\u00a0»"));
+      if (i === 3 && total) frag.appendChild(separateur("Autres métiers dont la description ou les savoir-faire contiennent «\u00a0" + brut + "\u00a0»"));
       g.forEach(function (f) {
         if (!f.copie) { f.copie = f.carte.cloneNode(true); f.copie.addEventListener("animationend", function () { this.classList.remove("arrive"); }); }
         if (!f.vue) { f.copie.classList.add("arrive"); f.copie.style.setProperty("--i", Math.min(nouvelles++, 8)); f.vue = true; }
@@ -589,6 +589,11 @@
     if (premier && etroit.matches) {
       var bas = q.getBoundingClientRect().bottom, haut = window.visualViewport ? visualViewport.height : innerHeight;
       if (bas + 140 > haut) q.parentNode.scrollIntoView({ block: "start", behavior: calme.matches ? "auto" : "smooth" });
+    }
+    /* aucun résultat : le message et le bouton « Effacer la recherche » restent entiers à l'écran */
+    if (!total) {
+      var hautV = window.visualViewport ? visualViewport.height : innerHeight;
+      if (vide.getBoundingClientRect().bottom > hautV) vide.scrollIntoView({ block: "nearest", behavior: calme.matches ? "auto" : "smooth" });
     }
   }
   var avant = "";

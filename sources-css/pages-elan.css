@@ -81,15 +81,17 @@ html[data-nuit] .toc a[aria-current] { border-color: #ff8f73; background: rgba(2
    Des phrases de 40 à 100 caractères, pas des étiquettes : une ligne par terme, filet fin entre deux, l'étoile des termes
    essentiels en repère de marge. Deux colonnes à partir de 700 px. Seule la carte #mots-cles est visée : la rangée de
    liens .chips de la carte « Avec JusteCV » reste intacte. */
-#mots-cles.card .chips { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin: 0 0 .6rem; }
+#mots-cles.card .chips { --pas: .42rem; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin: 0 0 .6rem; }
 #mots-cles.card .chips span { position: relative; background: none; border: 0; border-top: 1px solid var(--line); border-radius: 0;
-  padding: .42rem 0 .42rem 1.45rem; font-size: .9rem; line-height: 1.4; color: var(--fg); }
+  padding: var(--pas) 0 var(--pas) 1.45rem; font-size: .9rem; line-height: 1.4; color: var(--fg); }
 #mots-cles.card .chips span:first-child { border-top: 0; }
-#mots-cles.card .chips span::before { content: ""; position: absolute; left: .1rem; top: calc(.42rem + .7em); width: .55rem; height: 1.5px; border-radius: 1px; background: var(--muted); opacity: .55; }
+/* tiret fin : un filet de bordure (calé au pixel) plutôt qu'un fond de 1,5 px, pour la même épaisseur à chaque ligne */
+#mots-cles.card .chips span::before { content: ""; position: absolute; left: .1rem; top: calc(var(--pas) + .7em); width: .55rem; height: 0; border-top: 1px solid currentColor; color: var(--muted); opacity: .7; }
 #mots-cles.card .chips span.core { background: none; border-color: var(--line); font-weight: 500; }
-#mots-cles.card .chips span.core::before { content: "★"; top: .42rem; left: 0; width: auto; height: auto; background: none; opacity: 1; color: var(--ambre); font-size: .9em; line-height: 1.58; }
+#mots-cles.card .chips span.core::before { content: "★"; top: var(--pas); left: 0; width: auto; height: auto; background: none; border-top: 0; opacity: 1; color: var(--ambre); font-size: .9em; line-height: 1.58; }
 @media (min-width: 700px) {
-  #mots-cles.card .chips { display: block; columns: 2; column-gap: 2rem; }
+  /* en deux colonnes, des lignes un peu plus serrées : une fiche à listes courtes ne grandit pas */
+  #mots-cles.card .chips { --pas: .36rem; display: block; columns: 2; column-gap: 2rem; margin-bottom: .2rem; }
   #mots-cles.card .chips span { display: block; break-inside: avoid; border-top: 0; border-bottom: 1px solid var(--line); }
 }
 html[data-nuit] #mots-cles.card .chips span { background: none; border-color: rgba(247,241,232,.12); }
