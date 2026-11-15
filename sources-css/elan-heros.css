@@ -16,3 +16,23 @@
 .pause .i-lecture, .pause[aria-pressed="true"] .i-pause { display: none; }
 .pause[aria-pressed="true"] .i-lecture { display: inline; }
 .heros.en-pause::before, .heros.en-pause .puce, .heros.en-pause .lecture-tete i, .heros.en-pause .lecture-tete i::after { animation-play-state: paused !important; }
+
+/* ---------- héros mobile : la lecture en direct au-dessus de la ligne de flottaison ----------
+   Titre, chapô, deux boutons côte à côte, puis une vignette de 260 px dont la carte occupe le bas :
+   la bande de photo du haut garde le bouton pause visible et touchable. */
+@media (max-width: 900px) {
+  .heros.plein { padding-top: 84px; min-height: 0; }
+  .heros.plein .heros-texte { padding-bottom: 18px; }
+  .heros-texte .ref { display: none; }
+  .heros-bas { margin-top: .9rem; padding-top: .9rem; gap: .9rem; }
+  .heros-bas .chapo { font-size: 1rem; line-height: 1.45; }
+  .heros .actions { flex-wrap: nowrap; gap: .5rem; width: 100%; max-width: 30rem; }
+  .heros .actions .btn { flex: 1 1 0; min-width: 0; padding-inline: .5rem; font-size: .92rem; white-space: nowrap; justify-content: center; }
+  .heros.plein .heros-media { aspect-ratio: auto; height: 260px; margin-bottom: 28px; }
+  .lecture { top: auto; bottom: 12px; }
+  .heros.plein .pause { top: 12px; right: 12px; }
+}
+@media (max-width: 359px) {
+  .heros .actions { flex-direction: column; }
+  .heros .actions .btn { flex: none; white-space: normal; }
+}
