@@ -56,8 +56,19 @@
   let lenis = null;
   if (!calme && window.Lenis) {
     lenis = new Lenis({ duration: 1.15, anchors: true });
-    const boucle = (t) => { lenis.raf(t); requestAnimationFrame(boucle); };
-    requestAnimationFrame(boucle);
+    // Boucle à la demande : elle tourne pendant un défilement et 400 ms après le dernier geste, puis la page se repose.
+    // Tout geste (molette, toucher, clavier, clic, défilement, retour sur l'onglet) la réveille.
+    // À la reprise, l'horloge de Lenis est recalée : sinon la première image compterait toute la pause et sauterait au bout.
+    let image = 0, reveil = 0, reprise = false;
+    const boucle = (t) => {
+      if (reprise) { lenis.time = t; reprise = false; }
+      lenis.raf(t);
+      image = (lenis.isScrolling || t - reveil < 400) ? requestAnimationFrame(boucle) : 0;
+    };
+    const reveiller = () => { reveil = performance.now(); if (!image) { reprise = true; image = requestAnimationFrame(boucle); } };
+    ["wheel", "touchstart", "keydown", "pointerdown", "click", "scroll", "resize"].forEach((ev) => addEventListener(ev, reveiller, { passive: true, capture: true }));
+    document.addEventListener("visibilitychange", reveiller);
+    reveiller();
   }
 
   /* ---------- menu ----------
