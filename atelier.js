@@ -16,7 +16,7 @@ const aller = (el) => { el.hidden = false; el.focus({ preventScroll: true }); el
 let profil = null, metier = null, dernier = null;
 
 $("exemple").insertAdjacentHTML("beforeend", DOMAINES.map((d) => `<option value="${d.id}">${d.nom} : ${d.intitule}</option>`).join(""));
-$("exemple").addEventListener("change", (e) => { if (e.target.value) { $("offre").value = domaine(e.target.value).offre; effacerErreur($("offre")); garder(); $("aide-offre").textContent = "Offre d'exemple chargée. Vous pouvez la modifier."; } });
+$("exemple").addEventListener("change", (e) => { if (e.target.value) { $("offre").value = domaine(e.target.value).offre; effacerErreur($("offre")); garder(); majPerime(); $("aide-offre").textContent = "Offre d'exemple chargée. Vous pouvez la modifier."; } });
 
 // Un court temps de lecture avant le résultat : la bande parcourt le texte collé et surligne, mot pour mot,
 // les phrases que l'outil retient (exigences de l'offre, lignes du CV qui les prouvent). Le calcul est déjà fait ;
@@ -77,9 +77,9 @@ function suivreBande(zone, el) {
   requestAnimationFrame(pas);
 }
 
-function lire({ zone, champ, bouton, libelle, marques, fin, teinte }, suite) {
+function lire({ zone, champ, bouton, direct, libelle, marques, fin, teinte }, suite) {
   if (bouton.getAttribute("aria-busy") === "true") return;
-  if (calme) { suite(); return; }
+  if (calme || direct) { retirerCalque(); suite(); return; }
   const texte = bouton.textContent;
   bouton.setAttribute("aria-busy", "true"); bouton.textContent = libelle; zone.classList.add("lit");
   retirerCalque();
@@ -112,23 +112,25 @@ function effacerErreur(champ) {
 const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? "s" : ""}`;
 const nbMots = (t) => (t.trim() ? t.trim().split(/\s+/).length : 0);
 
-$("assembler").addEventListener("click", (ev) => {
+// direct : relancé depuis un bandeau « a changé », loin du texte : pas de lecture animée hors de l'écran.
+function assembler(bouton, direct = false) {
   const texte = $("offre").value.trim(), n = texte.replace(/\s/g, "").length;
   if (!n) { signaler($("offre"), "Rien à lire pour l'instant. Collez l'annonce, ou choisissez une offre d'exemple."); return; }
   if (n < 80) { signaler($("offre"), `Il manque du texte (${pluriel(n, "caractère")}, il en faut au moins 80). Collez l'annonce entière, rubrique «\u00a0Profil\u00a0» comprise.`); return; }
   effacerErreur($("offre")); $("aide-offre").textContent = "";
   const p = profilCible(texte);
-  lire({ zone: $("lecteur-offre"), champ: $("offre"), bouton: ev.currentTarget, libelle: "Lecture de l'offre…", teinte: "offre",
+  lire({ zone: $("lecteur-offre"), champ: $("offre"), bouton, direct, libelle: "Lecture de l'offre…", teinte: "offre",
     marques: p.exigences.map((e) => e.texte), fin: (n) => `${n} exigence${n > 1 ? "s" : ""} retenue${n > 1 ? "s" : ""}` }, () => {
-    profil = p;
+    profil = p; offreAssemblee = texte;
     afficherProfil(profil, offerSignals(texte));
     metier = repereMetier(profil.intitule); afficherReperes("");
     // Repères ouverts d'emblée sur grand écran ; repliés au pouce, où ils repoussaient l'étape 3 de quatre écrans.
     $("p-reperes").open = matchMedia("(min-width: 861px)").matches;
-    $("etape-cv").hidden = false; $("ecart").hidden = true; dernier = null;
-    aller($("profil")); majFil();
+    $("etape-cv").hidden = false; $("ecart").hidden = true; dernier = null; cvMesure = null;
+    majPerime(); aller($("profil")); majFil();
   });
-});
+}
+$("assembler").addEventListener("click", (ev) => assembler(ev.currentTarget));
 
 function afficherProfil(p, signaux) {
   $("p-intitule").textContent = p.intitule;
@@ -173,7 +175,7 @@ async function lireFichier(f) {
     } else if (/\.txt$/i.test(f.name) || f.type.startsWith("text/")) texte = await f.text();
     else { direFichier("Format non pris en charge. Utilisez un PDF, un fichier Word (.docx) ou du texte.", true); return; }
     if (nbMots(texte) < 20) { direFichier("Presque aucun texte lu : ce CV est sans doute une image. Les logiciels de tri des recruteurs le liront mal aussi. Collez son texte à la main.", true); return; }
-    $("cv").value = texte.trim(); effacerErreur($("cv")); garder();
+    $("cv").value = texte.trim(); effacerErreur($("cv")); garder(); majPerime();
     direFichier(`${f.name} lu (${nbMots(texte)} mots).`);
   } catch { direFichier("Ce fichier n'a pas pu être lu. Collez le texte de votre CV à la main.", true); }
 }
@@ -183,20 +185,47 @@ const zone = $("depot-zone");
 ["dragleave", "drop"].forEach((t) => zone.addEventListener(t, (e) => { e.preventDefault(); zone.classList.remove("survol"); }));
 zone.addEventListener("drop", (e) => lireFichier(e.dataTransfer?.files?.[0]));
 
-$("mesurer").addEventListener("click", (ev) => {
+function mesurer(bouton, direct = false) {
   if (!profil) return;
   const cv = $("cv").value.trim(), n = nbMots(cv);
   if (!n) { signaler($("cv"), "Ajoutez votre CV : importez un fichier ou collez son texte."); return; }
   if (n < 20) { signaler($("cv"), `${n} mot${n > 1 ? "s" : ""} lu${n > 1 ? "s" : ""}, il en faut au moins 20 : ajoutez vos expériences et votre formation.`); return; }
   effacerErreur($("cv")); $("aide-cv").textContent = "";
   const r = ecart(profil, cv);
-  lire({ zone: $("depot-zone"), champ: $("cv"), bouton: ev.currentTarget, libelle: "Comparaison…", teinte: "cv",
+  lire({ zone: $("depot-zone"), champ: $("cv"), bouton, direct, libelle: "Comparaison…", teinte: "cv",
     marques: r.correspondances.map((c) => (c.preuve || "").replace(/…$/, "")), fin: (n) => `${n} ligne${n > 1 ? "s" : ""} retrouvée${n > 1 ? "s" : ""}` }, () => {
-    afficherEcart(r);
+    // Mémoire du module seulement : la mesure précédente sur la même offre, pour dire ce qui a bougé.
+    const avant = dernier;
+    cvMesure = cv; afficherEcart(r, avant);
     afficherReperes(cv);
-    aller($("ecart")); majFil();
+    majPerime(); aller($("ecart")); majFil();
   });
+}
+$("mesurer").addEventListener("click", (ev) => mesurer(ev.currentTarget));
+
+/* ---------- un résultat qui ne correspond plus au texte saisi est signalé ---------- */
+let offreAssemblee = null, cvMesure = null;
+function bandeau(el, etat) {
+  const cle = etat ? etat.join("|") : "";
+  if (el.dataset.etat === cle) return; // pas de nouvelle annonce à chaque frappe
+  el.dataset.etat = cle;
+  el.innerHTML = etat ? `<p><span>${etat[0]}</span> <button type="button" class="bouton-lien lien" data-refaire="${etat[2]}">${etat[1]}</button></p>` : "";
+}
+function majPerime() {
+  const offreChangee = !!profil && $("offre").value.trim() !== offreAssemblee;
+  const cvChange = !!dernier && $("cv").value.trim() !== cvMesure;
+  const OFFRE = ["L'offre a changé.", "Assembler à nouveau", "assembler"], CV = ["Votre CV a changé depuis cette mesure.", "Mesurer à nouveau", "mesurer"];
+  bandeau($("p-perime"), offreChangee ? OFFRE : null);
+  bandeau($("e-perime"), !dernier ? null : offreChangee ? OFFRE : cvChange ? CV : null);
+  $("profil").classList.toggle("perime", offreChangee);
+  $("ecart").classList.toggle("perime", !!dernier && (offreChangee || cvChange));
+}
+["offre", "cv"].forEach((id) => $(id).addEventListener("input", majPerime));
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-refaire]"); if (!b) return;
+  if (b.dataset.refaire === "assembler") assembler($("assembler"), true); else mesurer($("mesurer"), true);
 });
+$("corriger").addEventListener("click", versCv);
 
 // Phrase de tête : uniquement des faits comptés, jamais un pronostic. Un éliminatoire absent passe avant tout,
 // même quand le score est déjà sous 49 % (la mention « plafonné » n'apparaît alors pas).
@@ -213,16 +242,25 @@ function phraseDeTete(r) {
   return `Aucune exigence obligatoire ne manque. ${n} point${n > 1 ? "s" : ""}${autres ? ` souhaité${n > 1 ? "s" : ""} ou atout${n > 1 ? "s" : ""}` : ""} à travailler.`;
 }
 
-function afficherEcart(r) {
+function afficherEcart(r, avant = null) {
   const s = r.score;
   dernier = r; $("e-score").textContent = "0"; compter($("e-score"), s ? s.score : NaN, 1200);
+  // Mesure précédente sur la même offre : une ligne, et « avant : … » là où le statut a changé. Rien n'est stocké.
+  const sAvant = avant?.score;
+  $("e-avant").hidden = !(s && sAvant);
+  $("e-avant").textContent = s && sAvant ? `Mesure précédente : ${sAvant.score} %` : "";
+  const statutAvant = new Map((avant?.correspondances || []).map((c) => [c.id, c.statut]));
+  const etat = (c) => {
+    const st = `<span class="statut ${c.statut}">${STATUT[c.statut]}</span>`, a = statutAvant.get(c.id);
+    return a && a !== c.statut ? `<span class="etat">${st}<small class="avant">avant : ${STATUT[a]}</small></span>` : st;
+  };
   $("e-jauge").style.width = s ? `${s.score}%` : "0";
   $("e-detail").innerHTML = `<strong class="detail-tete">${esc(phraseDeTete(r))}</strong> ` + (s
     ? `${s.presentes} présente${s.presentes > 1 ? "s" : ""}, ${s.partielles} en partie, ${s.absentes} absente${s.absentes > 1 ? "s" : ""} sur ${s.total} exigences.${s.eliminatoires ? ` <b>Score plafonné à 49 %</b> : un critère éliminatoire manque.` : ""}`
     : "L'offre contient moins de trois exigences claires : le pourcentage ne serait pas fiable, voici seulement le détail.");
   // Chaque segment pèse ce que pèse l'exigence dans le calcul : 3, 2 ou 1.
   $("e-jalons").innerHTML = r.correspondances.map((c, i) => `<i data-s="${c.statut}" style="--i:${i};flex:${POIDS[c.niveau] || 1}"></i>`).join("");
-  $("e-lignes").innerHTML = r.correspondances.map((c, i) => `<li style="--i:${i}"><span>${esc(c.texte)}</span><span class="statut ${c.statut}">${STATUT[c.statut]}</span>${c.preuve ? `<small>Dans votre CV : « ${esc(c.preuve)} »</small>` : ""}${c.note ? `<small>${esc(c.note)}</small>` : ""}</li>`).join("");
+  $("e-lignes").innerHTML = r.correspondances.map((c, i) => `<li style="--i:${i}"><span>${esc(c.texte)}</span>${etat(c)}${c.preuve ? `<small>Dans votre CV : « ${esc(c.preuve)} »</small>` : ""}${c.note ? `<small>${esc(c.note)}</small>` : ""}</li>`).join("");
   let i = 0;
   $("e-plan").innerHTML = r.plan.length
     ? groupesDuPlan(r.plan).map((g) => `<div class="plan-groupe" data-statut="${g.statut}" style="--i:${i}"><h4 class="plan-groupe-titre">${g.titre}</h4><p class="plan-commun"><b>Déjà fait ?</b> ${esc(g.commune)}</p><ol class="plan">${g.points.map((p) =>
@@ -332,8 +370,8 @@ $("copier").addEventListener("click", async () => {
 });
 $("imprimer").addEventListener("click", () => window.print());
 $("recommencer").addEventListener("click", () => {
-  profil = null; dernier = null; metier = null;
-  $("offre").value = ""; $("exemple").value = ""; effacerErreur($("offre")); effacerErreur($("cv")); garder();
+  profil = null; dernier = null; metier = null; offreAssemblee = null; cvMesure = null;
+  $("offre").value = ""; $("exemple").value = ""; effacerErreur($("offre")); effacerErreur($("cv")); garder(); majPerime();
   ["profil", "etape-cv", "ecart"].forEach((id) => { $(id).hidden = true; });
   $("aide-offre").textContent = "Collez une nouvelle offre. Votre CV est gardé."; $("aide-actions").textContent = "";
   majFil(); $("etape-offre").scrollIntoView({ behavior: calme ? "auto" : "smooth", block: "start" }); $("offre").focus({ preventScroll: true });

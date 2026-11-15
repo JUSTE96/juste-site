@@ -86,6 +86,20 @@ html[data-nuit] .lecteur-lecture[data-teinte="cv"] { --marque: #1f5c47; }
 .plan h5 .poids { margin-left: .6rem; }
 .plan-groupe > .plan-groupe-titre, .plan-groupe > .plan-commun { animation: monte .7s var(--elan) both; animation-delay: calc(.2s + var(--i, 0) * 70ms); }
 
+/* ---------- résultat périmé : un bandeau et un cadre pointillé, le texte reste lisible ---------- */
+.bandeau-perime:empty { display: none; }
+.bandeau-perime p { max-width: none; margin: 0 0 1.4rem; padding: .85rem 1.1rem; border-radius: 16px; background: var(--soleil); color: var(--os); font-weight: 600; display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .9rem; animation: monte .5s var(--elan) both; }
+.bandeau-perime .bouton-lien { min-height: 44px; font-weight: 600; text-decoration: underline; text-decoration-color: var(--corail-texte); text-underline-offset: .3em; text-decoration-thickness: 2px; }
+.bandeau-perime .bouton-lien:focus-visible { outline: 2px solid var(--bleu); outline-offset: 3px; border-radius: 4px; }
+#ecart.perime .mesure { outline: 1.5px dashed var(--acier); outline-offset: 14px; border-radius: 18px; }
+@media (max-width: 620px) { #ecart.perime .mesure { outline-offset: 8px; } }
+.mesure-avant { display: block; margin-top: .45rem; color: var(--acier); font-size: .85rem; }
+.correspondances .etat { display: flex; flex-direction: column; align-items: flex-end; gap: .3rem; }
+.correspondances .etat .avant { color: var(--acier); font-size: .78rem; white-space: nowrap; }
+@media (max-width: 620px) { .correspondances .etat { flex-direction: row; align-items: baseline; gap: .8rem; justify-self: start; } }
+@media print { .bandeau-perime .bouton-lien { display: none; } }
+html[data-nuit] .bandeau-perime p { background: #4b4122; color: #ffe9a8; }
+
 /* ---------- l'écart : la phrase de tête dit d'abord ce qui bloque ---------- */
 .mesure-detail .detail-tete { display: block; margin-bottom: .35rem; color: var(--os); font-weight: 600; font-size: 1.05rem; line-height: 1.45; }
 
