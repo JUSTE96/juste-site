@@ -37,4 +37,15 @@
     passer(u.href, e, a);
   });
   addEventListener("pageshow", (ev) => { if (ev.persisted) document.querySelectorAll(".passage").forEach((n) => n.remove()); });
+
+  /* Menu mobile des pages de contenu et des fiches (<details class="nav-menu">) : il se referme quand on touche à côté,
+     avec Échap (le focus revient au bouton), ou dès qu'on choisit une page. Sans script, il garde son fonctionnement natif. */
+  const menusOuverts = () => document.querySelectorAll("details.nav-menu[open]");
+  // pointerdown plutôt que click : Safari iOS n'émet pas de click quand on touche une zone sans lien.
+  document.addEventListener("pointerdown", (e) => { menusOuverts().forEach((d) => { if (!d.contains(e.target)) d.open = false; }); });
+  document.addEventListener("click", (e) => { const a = e.target.closest && e.target.closest("details.nav-menu nav a"); if (a) a.closest("details").open = false; });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    menusOuverts().forEach((d) => { d.open = false; d.querySelector("summary")?.focus(); });
+  });
 })();

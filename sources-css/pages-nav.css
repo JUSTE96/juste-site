@@ -12,3 +12,26 @@
 /* ---------- pied de page : liens à 44 px (pages de contenu et fiches) ---------- */
 footer .wrap > a { display: inline-flex; align-items: center; min-height: 44px; padding-inline: .4rem; margin-inline: -.4rem; }
 footer .wrap:first-child { row-gap: 0; }
+
+/* ---------- menu mobile : panneau pleine largeur, ancré sur la capsule de l'en-tête ----------
+   Pas de position: fixed (la capsule porte backdrop-filter et deviendrait de toute façon le bloc conteneur) :
+   le panneau se cale sous la capsule, à sa largeur. La fermeture (toucher à côté, Échap, lien) est dans passage.js. */
+@media (max-width: 900px) {
+  .nav .wrap { position: relative; }
+  .nav-menu { position: static; }
+  .nav-menu nav { position: absolute; left: 0; right: 0; top: calc(100% + .6rem); min-width: 0; max-height: calc(100dvh - 100px); overflow-y: auto; overscroll-behavior: contain; padding: .5rem; }
+  .nav-menu nav a { display: flex; align-items: center; gap: .7rem; min-height: 50px; }
+  .nav-menu nav a + a { box-shadow: 0 -1px 0 var(--line); }
+  .nav-menu nav a:hover + a, .nav-menu nav a + a:hover { box-shadow: none; }
+  .nav-menu nav a[aria-current] { font-weight: 700; }
+  .nav-menu nav a[aria-current]::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--corail); }
+}
+@media (max-width: 900px) and (prefers-reduced-motion: no-preference) {
+  .nav-menu[open] nav { transform-origin: 50% 0; animation: menu-pose .35s var(--elan) both; }
+  .nav-menu[open] nav a { animation: menu-lien .4s var(--elan) both; }
+  .nav-menu[open] nav a:nth-child(2) { animation-delay: .03s; } .nav-menu[open] nav a:nth-child(3) { animation-delay: .06s; }
+  .nav-menu[open] nav a:nth-child(4) { animation-delay: .09s; } .nav-menu[open] nav a:nth-child(5) { animation-delay: .12s; }
+  .nav-menu[open] nav a:nth-child(6) { animation-delay: .15s; } .nav-menu[open] nav a:nth-child(n+7) { animation-delay: .18s; }
+  @keyframes menu-pose { from { opacity: 0; transform: translateY(-8px) scale(.98); } }
+  @keyframes menu-lien { from { opacity: 0; transform: translateY(-4px); } }
+}
