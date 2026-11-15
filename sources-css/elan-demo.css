@@ -62,8 +62,9 @@ html:not(.js) .demo-suivi { display: none; }
 html[data-nuit] #demo-aide.erreur::before { color: #141936; }
 
 /* ---------- démo sur grand écran : le profil cible reste en face pendant qu'on répond ----------
-   Seulement si la fenêtre est assez haute pour la colonne entière sous l'en-tête. */
-@media (min-width: 1001px) and (min-height: 700px) {
+   Seulement si la fenêtre est assez haute pour la colonne entière, plan compris, sous l'en-tête : plus la carte est étroite,
+   plus les lignes passent sur deux lignes et plus la colonne est haute (mesuré sur le domaine le plus long). */
+@media (min-width: 1300px) and (min-height: 700px), (min-width: 1200px) and (min-height: 760px), (min-width: 1001px) and (min-height: 820px) {
   .vitrine > section:first-child { position: sticky; top: 104px; align-self: start; }
 }
 
@@ -109,18 +110,23 @@ html[data-nuit] .prix > div:nth-child(n+2) { background: transparent !important;
   #demo[data-mode="rapide"] > section:first-child .ref { margin-bottom: 0; }
   #demo-rapide { display: flex; flex-direction: column; }
   #demo-rapide > .aide:first-child { order: -2; }
+  /* Collé à 80 px sous l'en-tête flottant (qui finit à 72 px) : l'ombre pleine de 8 px ferme la bande entre les deux,
+     le texte des questions ne défile plus dans cet interstice. */
   .demo-suivi { order: -1; position: sticky; top: 80px; z-index: 3; box-sizing: border-box; height: 44px; margin: 0 calc(-1 * clamp(24px, 3vw, 44px)); padding: 0 clamp(24px, 3vw, 44px);
-    background: #fdfbff; box-shadow: 0 1px 0 var(--trait); }
+    background: #fdfbff; box-shadow: 0 -8px 0 #fdfbff, 0 1px 0 var(--trait); }
   #demo-questions .question:first-child { border-top: 0; }
   .question { scroll-margin-top: 140px; }
   .reponses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
   .reponses span { min-height: 48px; width: 100%; justify-content: center; padding: 0 .4rem; }
 }
-#rapide-actions { scroll-margin-bottom: 24px; }
+#rapide-actions, #rapide-actions .btn { scroll-margin-bottom: 24px; }
+/* Sur téléphone, la barre flottante #barre-mobile (64 px, à 12 px du bas) peut couvrir le bas de l'écran :
+   le bouton de fin s'arrête au-dessus d'elle, avec la même marge de 24 px (y compris quand Tab l'amène au focus). */
+@media (max-width: 860px) { #rapide-actions, #rapide-actions .btn { scroll-margin-bottom: calc(100px + env(safe-area-inset-bottom)); } }
 @media (min-width: 861px) { .question { scroll-margin-top: 110px; } }
 
 /* ---------- mode nuit ---------- */
-@media (max-width: 860px) { html[data-nuit] .demo-suivi { background: #232a5c; box-shadow: 0 1px 0 #2c3364; } }
+@media (max-width: 860px) { html[data-nuit] .demo-suivi { background: #232a5c; box-shadow: 0 -8px 0 #232a5c, 0 1px 0 #2c3364; } }
 /* « La règle » : le jour, c'est la seule bande sombre de la page ; la nuit, son voile à .55 se fondait dans le ciel.
    Fond plus dense et liseré corail en tête, bord à bord (l'animation « feuille » finit sans marge ni arrondi).
    Sélecteur plus fort que celui de nuit.css, chargé après juste.css. */

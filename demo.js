@@ -109,13 +109,40 @@ function majRapide() {
   $("rapide-manques").innerHTML = manques.map((r, i) => `<li data-statut="${r.statut}" style="--i:${i}">${esc(r.e.texte)}${niveau(r.e)}</li>`).join("");
   $("rapide-manques").hidden = !n;
 }
-// À la sixième réponse, une seule fois : le score et le bouton viennent à l'écran s'ils n'y sont pas.
+// Ce qui couvre le haut de l'écran : l'en-tête flottant, et sur téléphone le bandeau de suivi collé sous lui.
+function obstacle() {
+  const suivi = $("demo-suivi"), tete = $("tete");
+  let bas = tete ? Math.max(0, tete.getBoundingClientRect().bottom) : 0;
+  if (getComputedStyle(suivi).position === "sticky") bas = Math.max(bas, suivi.getBoundingClientRect().bottom);
+  return bas;
+}
+// Une question amenée au focus clavier ne reste pas sous l'en-tête ou le bandeau : le navigateur ne fait défiler
+// que le bouton radio, qu'il juge visible même caché dessous ; on ramène la question entière (scroll-margin-top).
+$("demo-questions").addEventListener("focusin", (e) => {
+  if (!e.target.matches?.(":focus-visible")) return;
+  requestAnimationFrame(() => {
+    const q = e.target.closest(".question"), l = q?.querySelector("legend");
+    if (l && document.activeElement === e.target && l.getBoundingClientRect().top < obstacle() + 4) q.scrollIntoView({ block: "start", behavior: calme ? "instant" : "smooth" });
+  });
+});
+// À la sixième réponse, une seule fois : le score et le bouton viennent à l'écran s'ils n'y sont pas
+// (bas du bouton à sa scroll-margin-bottom du bas de la fenêtre, comme scrollIntoView « nearest »).
+// Si la réponse vient du clavier, on ne remonte pas la question au focus sous l'en-tête ou le bandeau :
+// le défilement s'arrête avant, et la touche Tab mène ensuite au bilan.
+function montrer(relance) {
+  const a = $("rapide-actions"); if (a.hidden) return;
+  let d = a.getBoundingClientRect().bottom - (innerHeight - (parseFloat(getComputedStyle(a).scrollMarginBottom) || 0));
+  const f = document.activeElement, l = f?.closest?.(".question")?.querySelector("legend");
+  if (l && f.matches(":focus-visible")) d = Math.min(d, l.getBoundingClientRect().top - obstacle() - 8);
+  if (d > 1) scrollBy({ top: d, behavior: calme ? "instant" : "smooth" });
+  // Sous animations réduites, le bilan peut encore grandir d'une image à l'autre : une seule vérification de plus.
+  if (calme && !relance) requestAnimationFrame(() => requestAnimationFrame(() => montrer(true)));
+}
 $("demo-questions").addEventListener("change", () => {
   const avant = fini; majRapide();
   // On attend que le bilan ait sa hauteur finale (polices chargées, et deux images : sous animations réduites,
   // une transition quasi nulle laisse le bilan à sa hauteur d'avant pendant une image).
-  const montrer = () => $("rapide-actions").scrollIntoView({ block: "nearest", behavior: calme ? "instant" : "smooth" });
-  if (fini && !avant) (document.fonts?.ready ?? Promise.resolve()).then(() => requestAnimationFrame(() => requestAnimationFrame(montrer)));
+  if (fini && !avant) (document.fonts?.ready ?? Promise.resolve()).then(() => requestAnimationFrame(() => requestAnimationFrame(() => montrer())));
 });
 
 /* ---------- en collant son CV ---------- */
