@@ -36,6 +36,8 @@ $("assembler").addEventListener("click", (ev) => {
     profil = profilCible(texte);
     afficherProfil(profil, offerSignals(texte));
     metier = repereMetier(profil.intitule); afficherReperes("");
+    // Repères ouverts d'emblée sur grand écran ; repliés au pouce, où ils repoussaient l'étape 3 de quatre écrans.
+    $("p-reperes").open = matchMedia("(min-width: 861px)").matches;
     $("etape-cv").hidden = false; $("ecart").hidden = true; dernier = null;
     aller($("profil")); majFil();
   });
@@ -134,7 +136,23 @@ function afficherReperes(cv) {
   const r = reperesDansCv(metier, cv);
   const bloc = (titre, liste) => liste.length ? `<h4>${titre}</h4><ul class="reperes-liste">${liste.map((x) => `<li class="${cv ? (x.vu ? "vu" : "absent") : ""}">${esc(x.texte)}${cv ? `<span>${x.vu ? "Déjà visible dans votre CV" : "Pas visible dans votre CV"}</span>` : ""}</li>`).join("")}</ul>` : "";
   $("r-listes").innerHTML = bloc("Savoir-faire au cœur du métier", r.savoirFaire) + bloc("Savoirs et outils", r.savoirs) + bloc("Savoir-être", r.savoirEtre);
+  // Résumé compté sur les termes réellement affichés ; l'état ouvert ou fermé n'est jamais changé ici.
+  const n = $("r-listes").querySelectorAll("li").length, vus = $("r-listes").querySelectorAll("li.vu").length;
+  $("r-compte").textContent = cv
+    ? `${n} terme${n > 1 ? "s" : ""} du référentiel, dont ${vus} déjà visible${vus > 1 ? "s" : ""} dans votre CV`
+    : `Voir les ${n} terme${n > 1 ? "s" : ""} du référentiel`;
 }
+// À l'impression, les repères sont toujours dépliés ; on rend ensuite l'état choisi.
+let repliAvantImpression = false;
+addEventListener("beforeprint", () => { const d = $("p-reperes"); repliAvantImpression = !d.open; d.open = true; });
+addEventListener("afterprint", () => { if (repliAvantImpression) $("p-reperes").open = false; repliAvantImpression = false; });
+
+/* ---------- passer à l'étape suivante sans chercher ---------- */
+function versCv() {
+  $("etape-cv").scrollIntoView({ behavior: calme ? "auto" : "smooth", block: "start" });
+  $("cv").focus({ preventScroll: true });
+}
+$("vers-cv").addEventListener("click", versCv);
 
 /* ---------- fil d'étapes ---------- */
 const boutons = [...document.querySelectorAll("#fil button")];

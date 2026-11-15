@@ -1,0 +1,52 @@
+/* JusteCV — couche « atelier » : l'outil se lit d'un geste, au pouce comme au bureau.
+   Concaténée après elan.css : elle surcharge sans éditer. Les règles de nuit sont écrites à la main sous html[data-nuit]. */
+
+/* ---------- étape 02 : repères du métier repliables, et la suite à portée de main ---------- */
+.reperes > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 1rem; min-height: 44px; margin: -.3rem -.4rem; padding: .3rem .4rem; border-radius: 14px; }
+.reperes > summary::-webkit-details-marker { display: none; }
+.reperes > summary:focus-visible { outline: 2px solid var(--bleu); outline-offset: 2px; }
+.reperes-sommaire { display: grid; gap: .35rem; flex: 1; min-width: 0; }
+.reperes-sommaire .petit-titre { margin: 0; }
+.reperes-compte { font-size: .9rem; font-weight: 600; color: #2f4a3e; }
+.reperes .chevron { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.7); transition: transform .25s var(--elan), background .25s; }
+.reperes .chevron::before { content: ""; width: 9px; height: 9px; border: solid var(--os); border-width: 0 1.8px 1.8px 0; transform: translateY(-2px) rotate(45deg); }
+.reperes[open] .chevron { transform: rotate(180deg); }
+@media (hover: hover) { .reperes > summary:hover .chevron { background: #fff; } }
+.reperes[open] > summary { margin-bottom: .8rem; }
+.reperes > .aide:first-of-type { margin-top: .2rem; }
+.continuer { margin-top: 1.8rem; }
+/* Le fil collé (84 px + 52 px) ne doit pas recouvrir le haut d'une étape : section[id] imposait 96 px. */
+section.etape { scroll-margin-top: 148px; }
+@media print {
+  .reperes > summary .chevron { display: none; }
+  .reperes::details-content { content-visibility: visible; }
+}
+
+/* ---------- au pouce : niveau et statut passent sous le texte ---------- */
+@media (max-width: 620px) {
+  .piece .lignes li, .correspondances li { grid-template-columns: minmax(0, 1fr); gap: .45rem; }
+  .piece .lignes li .poids, .correspondances li .statut { justify-self: start; }
+}
+
+/* ---------- le fil d'étapes est opaque : le texte ne se lit plus au travers ---------- */
+.fil ol { background: #fffaf4; border-color: var(--trait); box-shadow: 0 10px 26px -18px rgba(28,32,64,.45); }
+html[data-nuit] .fil ol { background: #232a5c; border-color: #f7f1e824; box-shadow: 0 12px 28px -18px #000000b3; }
+
+/* ---------- au pouce : une seule barre en haut ---------- */
+@media (max-width: 860px) {
+  .page-atelier .tete { position: absolute; }
+  .fil { top: calc(8px + env(safe-area-inset-top)); }
+  .fil button { min-width: 44px; min-height: 44px; justify-content: center; padding: 0 .9rem; }
+  section.etape { scroll-margin-top: 76px; }
+}
+@media (max-width: 620px) { .fil button { padding: 0 .55rem; } .fil button[aria-current="step"] { padding: 0 .9rem 0 .55rem; } }
+
+/* ---------- nuit ---------- */
+html[data-nuit] .reperes-compte { color: var(--vert); }
+html[data-nuit] .reperes .chevron { background: #f7f1e814; }
+html[data-nuit] .reperes .chevron::before { border-color: var(--os); }
+@media (hover: hover) { html[data-nuit] .reperes > summary:hover .chevron { background: #f7f1e826; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .reperes .chevron { transition: none; }
+}
