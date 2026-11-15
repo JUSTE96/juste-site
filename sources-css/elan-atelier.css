@@ -16,7 +16,7 @@
 .reperes > .aide:first-of-type { margin-top: .2rem; }
 .continuer { margin-top: 1.8rem; }
 /* Le fil collé (84 px + 52 px) ne doit pas recouvrir le haut d'une étape : section[id] imposait 96 px. */
-section.etape { scroll-margin-top: 148px; }
+section.etape, #cv-fictif { scroll-margin-top: 148px; }
 @media print {
   .reperes > summary .chevron { display: none; }
   .reperes::details-content { content-visibility: visible; }
@@ -37,7 +37,7 @@ html[data-nuit] .fil ol { background: #232a5c; border-color: #f7f1e824; box-shad
   .page-atelier .tete { position: absolute; }
   .fil { top: calc(8px + env(safe-area-inset-top)); }
   .fil button { min-width: 44px; min-height: 44px; justify-content: center; padding: 0 .9rem; }
-  section.etape { scroll-margin-top: 76px; }
+  section.etape, #cv-fictif { scroll-margin-top: 76px; }
 }
 @media (max-width: 620px) { .fil button { padding: 0 .55rem; } .fil button[aria-current="step"] { padding: 0 .9rem 0 .55rem; } }
 
@@ -74,18 +74,10 @@ textarea:focus-visible { outline: 2px solid var(--bleu); outline-offset: -2px; }
 html[data-nuit] .lecteur-lecture[data-teinte="offre"] { --marque: #6f5c1d; }
 html[data-nuit] .lecteur-lecture[data-teinte="cv"] { --marque: #1f5c47; }
 
-/* ---------- le plan en deux groupes, numérotés d'un seul tenant ---------- */
-.plan-groupes { counter-reset: p; margin-top: 1rem; }
-.plan-groupes .plan { counter-reset: none; margin-top: .4rem; }
-.plan-groupe + .plan-groupe { margin-top: 2.2rem; }
-.plan-groupe-titre { display: flex; align-items: center; gap: .6rem; margin: 0; font: 400 1.2rem/1.3 var(--titre); letter-spacing: -.01em; }
-.plan-groupe-titre::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--corail-texte); }
-.plan-groupe[data-statut="partielle"] .plan-groupe-titre::before { background: var(--ambre); }
-.plan-commun { max-width: none; margin: .7rem 0 0; padding: .8rem 1rem; border-radius: 14px; background: rgba(28,32,64,.045); color: var(--acier); font-size: .95rem; }
+/* ---------- le plan : une seule liste ; la phrase « déjà fait ? » commune est dite une fois en tête ---------- */
+.plan-commun { max-width: none; margin: 1rem 0 0; padding: .8rem 1rem; border-radius: 14px; background: rgba(28,32,64,.045); color: var(--acier); font-size: .95rem; animation: monte .7s var(--elan) both; animation-delay: .2s; }
 .plan-commun b { color: var(--os); font-weight: 600; }
-.plan h5 { margin: 0 0 .6rem; font: 500 1.05rem/1.35 var(--texte); }
-.plan h5 .poids { margin-left: .6rem; }
-.plan-groupe > .plan-groupe-titre, .plan-groupe > .plan-commun { animation: monte .7s var(--elan) both; animation-delay: calc(.2s + var(--i, 0) * 70ms); }
+.plan-commun + .plan { margin-top: .4rem; }
 
 /* ---------- résultat périmé : un bandeau et un cadre pointillé, le texte reste lisible ---------- */
 .bandeau-perime:empty { display: none; }
@@ -125,15 +117,14 @@ html[data-nuit] .reperes .chevron::before { border-color: var(--os); }
   .reperes .chevron { transition: none; }
 }
 
-/* Impression du plan : un titre de groupe ne reste pas seul en bas de page, un point ne se coupe pas. */
+/* Impression du plan : le titre et la phrase commune ne restent pas seuls en bas de page, un point ne se coupe pas. */
 @media print {
-  .plan-titre, .plan-groupe-titre, .plan-commun { break-after: avoid; page-break-after: avoid; }
+  .plan-titre, .plan-commun { break-after: avoid; page-break-after: avoid; }
   .plan-commun { break-inside: avoid; page-break-inside: avoid; }
   .plan li { break-inside: avoid; page-break-inside: avoid; }
   /* L'étape 04 dépasse une page : « break-inside: avoid-page » sur .etape (feuille d'origine) y annulait tous les
      « avoid » intérieurs. On le lève pour l'écart ; le premier point refuse aussi la coupure avant lui. */
   #ecart.etape { break-inside: auto; page-break-inside: auto; }
   #ecart > .etape-gauche, #ecart .mesure { break-inside: avoid; break-after: avoid; page-break-after: avoid; }
-  .plan-groupe, .plan-groupes .plan { display: block; }
-  .plan-groupe > .plan > li:first-child { break-before: avoid; page-break-before: avoid; }
+  .plan > li:first-child { break-before: avoid; page-break-before: avoid; }
 }

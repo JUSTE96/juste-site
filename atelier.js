@@ -300,29 +300,19 @@ function afficherEcart(r, avant = null) {
   // Chaque segment pèse ce que pèse l'exigence dans le calcul : 3, 2 ou 1.
   $("e-jalons").innerHTML = r.correspondances.map((c, i) => `<i data-s="${c.statut}" style="--i:${i};flex:${POIDS[c.niveau] || 1}"></i>`).join("");
   $("e-lignes").innerHTML = r.correspondances.map((c, i) => `<li style="--i:${i}"><span>${esc(c.texte)}</span>${etat(c)}${c.preuve ? `<small>Dans votre CV : « ${esc(c.preuve)} »</small>` : ""}${c.note ? `<small>${esc(c.note)}</small>` : ""}</li>`).join("");
-  let i = 0;
+  const commune = phraseCommune(r.plan);
   $("e-plan").innerHTML = r.plan.length
-    ? groupesDuPlan(r.plan).map((g) => `<div class="plan-groupe" data-statut="${g.statut}" style="--i:${i}"><h4 class="plan-groupe-titre">${g.titre}</h4><p class="plan-commun"><b>Déjà fait ?</b> ${esc(g.commune)}</p><ol class="plan">${g.points.map((p) =>
-        `<li style="--i:${i++}"><h5>${esc(p.texte)} <span class="poids" data-niveau="${p.niveau}">${NIVEAU[p.niveau]}${p.eliminatoire ? " · éliminatoire" : ""}</span></h5>${p.siDejaFait !== g.commune ? `<p><b>Déjà fait ?</b> ${esc(p.siDejaFait)}</p>` : ""}${p.sinon ? `<p><b>Sinon :</b> ${esc(p.sinon)}</p>` : ""}</li>`).join("")}</ol></div>`).join("")
-    : `<ol class="plan"><li><h5>Votre CV couvre tout le profil cible.</h5><p>Vérifiez que chaque ligne est appuyée par un exemple concret, puis postulez.</p></li></ol>`;
+    ? `<p class="plan-commun"><b>Déjà fait ?</b> ${esc(commune)}</p><ol class="plan">${r.plan.map((p, i) =>
+        `<li style="--i:${i}"><h4>${esc(p.texte)} <span class="poids" data-niveau="${p.niveau}">${NIVEAU[p.niveau]}${p.eliminatoire ? " · éliminatoire" : ""}</span></h4>${p.siDejaFait !== commune ? `<p><b>Déjà fait ?</b> ${esc(p.siDejaFait)}</p>` : ""}${p.sinon ? `<p><b>Sinon :</b> ${esc(p.sinon)}</p>` : ""}</li>`).join("")}</ol>`
+    : `<ol class="plan"><li><h4>Votre CV couvre tout le profil cible.</h4><p>Vérifiez que chaque ligne est appuyée par un exemple concret, puis postulez.</p></li></ol>`;
 }
 
-/* ---------- le plan en deux groupes : à mieux montrer (en partie), à ajouter ou à acquérir (absent) ---------- */
-// La phrase « déjà fait ? » commune à un groupe est dite une fois en tête ; un point ne garde la sienne que si elle diffère.
-// Le moteur trie déjà le plan (éliminatoire, puis obligatoire, souhaitée, atout) : le groupe qui contient le point
-// le plus urgent passe en premier, pour qu'un critère éliminatoire absent reste toujours le point 01.
-const RANG = { obligatoire: 0, souhaitee: 1, atout: 2 };
-const urgence = (p) => (p.eliminatoire ? (p.statut === "absente" ? 0 : 1) : 10) + RANG[p.niveau];
-function groupesDuPlan(plan) {
-  const groupes = [["partielle", "À mieux montrer"], ["absente", "À ajouter ou à acquérir"]]
-    .map(([statut, titre]) => ({ statut, titre, points: plan.filter((p) => p.statut === statut) }))
-    .filter((g) => g.points.length)
-    .sort((a, b) => urgence(a.points[0]) - urgence(b.points[0]));
-  for (const g of groupes) {
-    const n = new Map(); g.points.forEach((p) => n.set(p.siDejaFait, (n.get(p.siDejaFait) || 0) + 1));
-    g.commune = [...n.entries()].sort((a, b) => b[1] - a[1])[0][0];
-  }
-  return groupes;
+/* ---------- le plan : une seule liste, dans l'ordre du moteur (éliminatoire, obligatoire, souhaitée, atout) ---------- */
+// La phrase « déjà fait ? » la plus fréquente est dite une fois en tête ; un point ne garde la sienne que si elle diffère.
+function phraseCommune(plan) {
+  if (!plan.length) return "";
+  const n = new Map(); plan.forEach((p) => n.set(p.siDejaFait, (n.get(p.siDejaFait) || 0) + 1));
+  return [...n.entries()].sort((a, b) => b[1] - a[1])[0][0];
 }
 
 /* ---------- passerelle vers l'analyse complète (serveur, jury, CV adapté) ---------- */
@@ -423,7 +413,12 @@ $("cv-exemple").addEventListener("click", () => {
   direFichier("CV d'exemple chargé.");
   majPerime(); majExemple();
   // Le bouton vient de disparaître : le curseur va à l'étape suivante plutôt que de retomber sur la page.
-  $("mesurer").focus();
+  // Sans défilement imposé par le focus : la note « CV d'exemple : une personne fictive » vient sous le fil, bien visible.
+  // Elle entre en glissant (translateY) : on vise sa place finale, pas sa position de départ.
+  $("mesurer").focus({ preventScroll: true });
+  const note = $("cv-fictif"), st = getComputedStyle(note);
+  const decale = st.transform && st.transform !== "none" ? new DOMMatrixReadOnly(st.transform).m42 : 0;
+  scrollTo({ top: note.getBoundingClientRect().top + scrollY - decale - (parseFloat(st.scrollMarginTop) || 0), behavior: calme ? "auto" : "smooth" });
 });
 majExemple();
 
@@ -434,11 +429,9 @@ function texteDuPlan() {
     `JusteCV : ${profil.intitule}`, s ? `Profil cible couvert à ${s.score} %` : "Détail par exigence", ""];
   dernier.correspondances.forEach((c) => l.push(`[${STATUT[c.statut]}] ${c.texte}`));
   if (dernier.plan.length) {
-    l.push("", "Le plan"); let i = 0;
-    for (const g of groupesDuPlan(dernier.plan)) {
-      l.push("", g.titre, `Déjà fait ? ${g.commune}`);
-      g.points.forEach((p) => l.push(`${++i}. ${p.texte} (${NIVEAU[p.niveau]}${p.eliminatoire ? ", éliminatoire" : ""})`, ...(p.siDejaFait !== g.commune ? [`   Déjà fait ? ${p.siDejaFait}`] : []), ...(p.sinon ? [`   Sinon : ${p.sinon}`] : [])));
-    }
+    const commune = phraseCommune(dernier.plan);
+    l.push("", "Le plan", `Déjà fait ? ${commune}`);
+    dernier.plan.forEach((p, i) => l.push(`${i + 1}. ${p.texte} (${NIVEAU[p.niveau]}${p.eliminatoire ? ", éliminatoire" : ""})`, ...(p.siDejaFait !== commune ? [`   Déjà fait ? ${p.siDejaFait}`] : []), ...(p.sinon ? [`   Sinon : ${p.sinon}`] : [])));
   }
   return l.join("\n");
 }
