@@ -121,6 +121,10 @@ html[data-nuit] .prix > div:nth-child(n+2) { background: transparent !important;
 
 /* ---------- mode nuit ---------- */
 @media (max-width: 860px) { html[data-nuit] .demo-suivi { background: #232a5c; box-shadow: 0 1px 0 #2c3364; } }
+/* « La règle » : le jour, c'est la seule bande sombre de la page ; la nuit, son voile à .55 se fondait dans le ciel.
+   Fond plus dense et liseré corail en tête, bord à bord (l'animation « feuille » finit sans marge ni arrondi).
+   Sélecteur plus fort que celui de nuit.css, chargé après juste.css. */
+html[data-nuit] .bloc.regle { background: rgba(31, 37, 80, .78); box-shadow: inset 0 2px 0 #ff8f73; }
 /* les jalons encore vides se perdaient dans le fond de la carte */
 html[data-nuit] #demo-jalons i:not([data-s]) { background: #3b4482; }
 
