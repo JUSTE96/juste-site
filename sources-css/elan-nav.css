@@ -49,6 +49,12 @@ main section[tabindex="-1"]:focus { outline: none; }
   .menu-plus + .menu-pied { margin-top: .4rem; }
 }
 .menu-plus a { line-height: 1.25; }
+/* Téléphone en paysage : le menu défile ; l'en-tête prend le fond du menu pour que les entrées ne passent pas sous la marque. */
+@media (max-height: 600px) {
+  .menu-ouvert .tete { background: #fffaf4; }
+  html[data-nuit].menu-ouvert .tete { background: #141936; }
+}
+@media (max-height: 600px) and (prefers-reduced-motion: reduce) { .tete { transition: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   .menu, .menu.ouvert, .menu nav a, .menu.ouvert nav a:nth-child(n), .menu-plus, .menu-pied, .menu.ouvert .menu-plus, .menu.ouvert .menu-pied, .menu-ouvert .ciel-btn:not(.dans-barre) { transition: none; }
@@ -75,6 +81,7 @@ html[data-nuit] .menu-pied a { text-decoration-color: #f7f1e840; }
 
 /* ---------- lune dans l'en-tête (860 px et moins) : plus rien ne flotte sur les statuts ----------
    nuit.js range le bouton dans .tete .cadre, avant le bouton Menu ; nuit.css (chargé après) le met en 40 px, d'où la spécificité. */
+:root { --lune-tete: 1; } /* signal lu par nuit.js : cette feuille sait loger la lune dans l'en-tête */
 @media (max-width: 860px) {
   .tete .cadre { gap: .55rem; }
   .tete .ciel-btn.dans-barre { width: 44px; height: 44px; flex: none; margin-left: 0; }

@@ -79,7 +79,9 @@
     const SECTIONS = ["metiers", "mouvement", "vitrine", "apropos", "prix", "faq"];
     const liens = [...menu.querySelectorAll("nav a")];
     let attente = 0;
-    menu.setAttribute("role", "dialog"); menu.setAttribute("aria-modal", "true"); menu.setAttribute("aria-label", "Menu");
+    // Pas d'aria-modal : le bouton Fermer vit dans l'en-tête, hors du dialogue, et certains lecteurs d'écran ne l'atteindraient plus.
+    // inert suffit à rendre le reste de la page muet. data-lenis-prevent : le menu défile nativement quand il dépasse (téléphone en paysage).
+    menu.setAttribute("role", "dialog"); menu.setAttribute("aria-label", "Menu"); menu.setAttribute("data-lenis-prevent", "");
     const ouvert = () => bouton.getAttribute("aria-expanded") === "true";
     // Une seule fonction pose et retire le verrou : aucun chemin (bouton, Échap, lien) ne laisse la page inerte.
     // La requête est refaite à chaque fois : le bouton lune est créé plus tard par nuit.js.
@@ -112,7 +114,8 @@
     const ouvrirMenu = () => {
       clearTimeout(attente);
       situer();
-      menu.hidden = false; bouton.setAttribute("aria-expanded", "true"); bouton.firstElementChild.textContent = "Fermer";
+      menu.hidden = false; menu.scrollTop = 0; // en paysage, une ouverture précédente a pu le laisser défilé : on repart du haut
+      bouton.setAttribute("aria-expanded", "true"); bouton.firstElementChild.textContent = "Fermer";
       verrouiller(true);
       requestAnimationFrame(() => requestAnimationFrame(() => { menu.classList.add("ouvert"); liens[0]?.focus({ preventScroll: true }); }));
     };
@@ -146,8 +149,16 @@
     document.querySelectorAll(".heros, #demo, #prix, .fin, .pied").forEach((el) => { vus.set(el, true); obs.observe(el); });
     // Sur les écrans bas, le fil d'étapes de la scène descend dans la bande où vit la barre : elle lui laisse la place.
     // (Le fil est construit par elan.js, d'où l'attente de DOMContentLoaded.)
-    const bande = new IntersectionObserver(regler, { rootMargin: `-${Math.max(0, innerHeight - 92)}px 0px 0px 0px` });
-    addEventListener("DOMContentLoaded", () => document.querySelectorAll(".scene-rail").forEach((el) => { vus.set(el, false); bande.observe(el); }));
+    // La bande dépend de la hauteur de l'écran : l'observateur est recréé quand elle change (rotation, barre du navigateur).
+    let bande = null, hauteur = 0, delai = 0;
+    const observerBande = () => {
+      if (innerHeight === hauteur) return;
+      hauteur = innerHeight; bande?.disconnect();
+      bande = new IntersectionObserver(regler, { rootMargin: `-${Math.max(0, hauteur - 92)}px 0px 0px 0px` });
+      document.querySelectorAll(".scene-rail").forEach((el) => { vus.set(el, false); bande.observe(el); });
+    };
+    addEventListener("DOMContentLoaded", observerBande);
+    addEventListener("resize", () => { clearTimeout(delai); delai = setTimeout(observerBande, 150); }, { passive: true });
   }
 
   /* ---------- cadran : construction ---------- */

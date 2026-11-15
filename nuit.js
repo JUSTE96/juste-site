@@ -97,7 +97,10 @@
       let parent = document.body, avant = null;
       if (outils) { parent = outils; avant = outils.firstElementChild; }
       else if (etroit.matches) {
-        const cadre = document.querySelector(".tete .cadre"), wrap = document.querySelector("header.nav .wrap");
+        // L'en-tête de l'accueil ne le loge que si la feuille qui lui fait la place est chargée (--lune-tete, posé par juste.css) :
+        // avec une ancienne feuille restée en cache, le bouton Menu sortirait de la pilule ; la lune reste alors flottante.
+        const loge = getComputedStyle(html).getPropertyValue("--lune-tete").trim() === "1";
+        const cadre = loge && document.querySelector(".tete .cadre"), wrap = document.querySelector("header.nav .wrap");
         if (cadre) { parent = cadre; avant = cadre.querySelector("#menu-btn"); }
         else if (wrap) { parent = wrap; avant = wrap.querySelector("details.nav-menu"); }
       }

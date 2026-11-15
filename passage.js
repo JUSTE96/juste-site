@@ -42,7 +42,16 @@
      avec Échap (le focus revient au bouton), ou dès qu'on choisit une page. Sans script, il garde son fonctionnement natif. */
   const menusOuverts = () => document.querySelectorAll("details.nav-menu[open]");
   // pointerdown plutôt que click : Safari iOS n'émet pas de click quand on touche une zone sans lien.
-  document.addEventListener("pointerdown", (e) => { menusOuverts().forEach((d) => { if (!d.contains(e.target)) d.open = false; }); });
+  // Le toucher qui ferme le menu ne fait rien d'autre : le click qui le suit (sur une carte, un lien sous le panneau) est avalé.
+  let avaler = false, oubli = 0;
+  document.addEventListener("pointerdown", (e) => {
+    clearTimeout(oubli); avaler = false;
+    menusOuverts().forEach((d) => { if (!d.contains(e.target)) { d.open = false; avaler = true; } });
+  });
+  // Le drapeau tombe 400 ms après le lever du doigt, si aucun click n'a suivi (glissement, défilement).
+  const oublier = () => { if (avaler) { clearTimeout(oubli); oubli = setTimeout(() => { avaler = false; }, 400); } };
+  document.addEventListener("pointerup", oublier); document.addEventListener("pointercancel", oublier);
+  document.addEventListener("click", (e) => { if (!avaler) return; avaler = false; clearTimeout(oubli); e.preventDefault(); e.stopPropagation(); }, true);
   document.addEventListener("click", (e) => { const a = e.target.closest && e.target.closest("details.nav-menu nav a"); if (a) a.closest("details").open = false; });
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Escape") return;
