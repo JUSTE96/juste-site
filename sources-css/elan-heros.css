@@ -33,6 +33,8 @@
   .heros.plein .pause { top: 12px; right: 12px; }
 }
 @media (max-width: 359px) {
+  /* le bouton du ciel (fixe, en bas à droite) couvrirait la pause : elle passe en haut à gauche de la vignette */
+  .heros.plein .pause { right: auto; left: 12px; }
   .heros .actions { flex-direction: column; }
   .heros .actions .btn { flex: none; white-space: normal; }
 }
@@ -42,7 +44,7 @@
    niveau (obligatoire corail-texte, souhaitée bleu, atout contour seul), puis résultat (vert présent, ambre en partie, corail-texte absent). */
 .cadran .anneau { stroke: var(--trait); }
 .cadran .seg { opacity: 0; transition: opacity .35s ease; }
-.cadran .seg.lu { opacity: 1; }
+.cadran .seg.lu { opacity: var(--o, 1); }
 .cadran .seg path { stroke-width: 2; stroke-linejoin: round; transition: fill .45s ease, stroke .45s ease; }
 .cadran .seg-fond { fill: var(--os); stroke: transparent; }
 .cadran .seg-plein { fill: transparent; stroke: none; }
@@ -55,9 +57,10 @@
 .cadran svg .seg.juge[data-n][data-s="absente"] .seg-fond { fill: transparent; stroke: var(--corail-texte); stroke-width: 3; stroke-dasharray: 6 5; }
 .cadran .seg[data-s="presente"] .seg-plein { fill: var(--vert); }
 .cadran .seg[data-s="partielle"] .seg-plein { fill: var(--ambre); }
-/* 4. plan : ce qui est couvert s'efface, les écarts restent */
-.cadran .seg { transition: opacity .45s ease; }
-.cadran svg[data-temps="3"] .seg[data-s="presente"] { opacity: .3; }
+/* 4. plan : ce qui est couvert s'efface, les écarts restent (opacité --o posée par elan.js, une exigence après l'autre) */
+.cadran .seg { transition: opacity .3s ease; }
+/* la scène est plus courte : plus de long palier immobile après le dernier temps */
+@media (prefers-reduced-motion: no-preference) { .js .scene { height: 380vh; } }
 /* le centre */
 .cadran .valeur span { max-width: 15ch; }
 .cadran .valeur [class^="niv-"] { white-space: nowrap; }
@@ -106,7 +109,13 @@ html:not(.js) .scene .cadran { position: sticky; top: 110px; }
 .fiche .fiche-groupe dl > div:nth-child(3n) { border-right: 0; }
 .fiche .fiche-groupe dl > div:nth-child(n+4) { border-top: 0; }
 .fiche .fiche-groupe dl > div:nth-child(3n+1) { padding-left: 0; }
-.fiche-groupe > .lien { display: inline-block; margin-top: .3rem; font-size: .95rem; color: var(--os); }
+.fiche-groupe > .lien { display: inline-flex; align-items: center; min-height: 44px; margin-top: .1rem; font-size: .95rem; color: var(--os); }
+/* côte à côte : titres, définitions et lien sur des rangées communes, les valeurs alignées en bas de chaque case */
+@media (min-width: 1001px) {
+  .fiche-groupes { grid-template-rows: auto auto auto; row-gap: 0; }
+  .fiche-groupe { display: grid; grid-row: span 3; grid-template-rows: subgrid; align-content: start; }
+  .fiche-groupe > .lien { justify-self: start; align-self: start; }
+}
 @media (max-width: 1000px) { .fiche-groupes { grid-template-columns: 1fr; } }
 /* mobile : la grille à deux colonnes d'origine, par groupe */
 @media (max-width: 560px) {

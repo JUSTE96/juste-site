@@ -157,6 +157,8 @@ const dessinerCadran = (() => {
   const N = donnees.length, ECART = 4, DISPO = 360 - N * ECART, C = 300, R = 256, EP = [16, 30];
   const total = donnees.reduce((t, d) => t + WEIGHTS[d.exigence], 0);
   const ecarts = donnees.filter((d) => d.statut !== "presente").length;
+  const presentes = donnees.map((d, i) => d.statut === "presente" ? i : -1).filter((i) => i >= 0);
+  const pas4 = presentes.length > 1 ? .1 / (presentes.length - 1) : 0;
   const large = matchMedia("(min-width: 861px)");
   const doux = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
   const pt = (a, r) => { const t = a * Math.PI / 180; return `${(C + r * Math.sin(t)).toFixed(2)} ${(C - r * Math.cos(t)).toFixed(2)}`; };
@@ -174,7 +176,7 @@ const dessinerCadran = (() => {
   });
   segments.replaceChildren(...segs.map((s) => s.g));
   const n = (k, un, plusieurs) => `${k} ${k > 1 ? plusieurs : un}`;
-  if (desc) desc.textContent = `Cadran calculé sur l'offre lue plus haut :${n(N, "exigence", "exigences")}, `
+  if (desc) desc.textContent = `Cadran calculé sur l'offre lue plus haut : ${n(N, "exigence", "exigences")}, `
     + `qui pèsent 3 si elles sont obligatoires, 2 si elles sont souhaitées, 1 si c'est un atout. `
     + `${n(resultat.presentes, "présente", "présentes")}, ${resultat.partielles} en partie, ${n(resultat.absentes, "absente", "absentes")} : `
     + `le CV couvre ${resultat.score} % du profil cible. ${n(ecarts, "écart forme", "écarts forment")} le plan.`;
@@ -217,6 +219,9 @@ const dessinerCadran = (() => {
       if (k3 < 1) fini = false;
       acquis += WEIGHTS[s.d.exigence] * f;
       s.g.classList.toggle("lu", i < lus);
+      // 4. plan : les exigences présentes s'effacent l'une après l'autre, les écarts restent
+      const o = s.d.statut === "presente" ? (1 - .7 * borne((p - (.75 + presentes.indexOf(i) * pas4)) / .04)).toFixed(3) : "1";
+      if (s.o !== o) { s.o = o; s.g.style.setProperty("--o", o); }
       s.g.classList.toggle("juge", p >= t0);
       geo.push([a, a + w, f]);
       a += w + ECART;
@@ -243,7 +248,7 @@ if (scene) {
   else {
     const temps = $$("#temps li"), barre = $(".scene-barre", scene);
     // Où s'arrête chaque lien : la fin de chaque temps, quand son dessin est complet.
-    const CIBLES = [.215, .44, .735, .93];
+    const CIBLES = [.215, .44, .735, .9];
     const rail = document.createElement("nav");
     rail.className = "scene-rail"; rail.setAttribute("aria-label", "Les quatre temps de la méthode");
     temps.forEach((li, i) => {
