@@ -40,6 +40,19 @@
 }
 @media print { *, *::before, *::after { animation: none !important; } }
 
+/* ---------- metiers.html : la recherche montre ses résultats juste sous le champ ---------- */
+#resultats { margin: .3rem 0 2.5rem; }
+.resultats-sep { grid-column: 1 / -1; margin: 1.1rem 0 -.1rem; padding-top: 1rem; border-top: 1px solid var(--line); max-width: 46rem; }
+#vide { display: block; justify-items: start; text-align: left; padding: 1rem 0 1.5rem; }
+#vide p { margin: 0 0 .9rem; max-width: 40rem; color: var(--muted); }
+#vide p a { color: var(--fg); text-decoration-color: var(--corail); }
+#vide .btn { min-height: 44px; }
+/* les copies ne suivent pas l'animation liée au défilement des cartes d'origine : sinon elles restent pâles */
+#resultats .mcard { animation: none; }
+@media (prefers-reduced-motion: no-preference) {
+  #resultats .mcard.arrive { animation: pose .35s var(--elan) both; animation-timeline: auto; animation-range: normal; animation-delay: calc(var(--i, 0) * 30ms); }
+}
+
 /* ---------- mode nuit : statuts du suivi et sources lisibles ---------- */
 html[data-nuit] .statut-relance { background: rgba(255,226,122,.16); color: #ffe27a; }
 html[data-nuit] .statut-offre { background: rgba(127,214,176,.18); color: #7fd6b0; }
