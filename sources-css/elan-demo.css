@@ -68,6 +68,31 @@ html[data-nuit] #demo-aide.erreur::before { color: #141936; }
   .faq details { grid-column: 2; }
 }
 
+/* ---------- prix : ce qui est ouvert passe devant, ce qui viendra se met en retrait ----------
+   Les règles de clair.css portent des !important sur le fond et la bordure : celles-ci aussi. */
+.prix > div:first-child { background: var(--os) !important; border-color: transparent !important; color: var(--carbone); }
+.prix > div:first-child .petit-titre, .prix > div:first-child .montant { color: var(--carbone); }
+.prix > div:first-child .montant { font-size: 3.4rem; }
+.prix > div:first-child .montant small { color: color-mix(in srgb, var(--carbone) 72%, transparent); }
+.prix > div:first-child ul { color: color-mix(in srgb, var(--carbone) 80%, transparent); }
+.prix > div:first-child :focus-visible { outline-color: var(--carbone); }
+.prix > div:nth-child(n+2) { background: transparent !important; border: 1px dashed color-mix(in srgb, var(--os) 30%, transparent) !important; }
+.prix > div:nth-child(n+2) .montant { font-size: 2rem; color: var(--acier); }
+@media (hover: hover) {
+  .prix > div:nth-child(n+2):hover { transform: none; box-shadow: none; }
+  .prix > div:first-child:hover { box-shadow: 0 34px 60px -30px rgba(28,32,64,.6); }
+}
+@media (min-width: 1001px) { .prix { grid-template-columns: 1.2fr 1fr 1fr; } }
+/* La nuit, l'inversion donnait un aplat crème, la surface la plus vive de la page : la carte reste bleu nuit,
+   un ton au-dessus du ciel, et se distingue par un filet crème de 2 px. Les fonds pêche et ciel de nuit sont neutralisés. */
+html[data-nuit] .prix > div:first-child { background: #2c3470 !important; border: 2px solid var(--os) !important; color: var(--os); }
+html[data-nuit] .prix > div:first-child .petit-titre, html[data-nuit] .prix > div:first-child .montant { color: var(--os); }
+html[data-nuit] .prix > div:first-child .montant small { color: color-mix(in srgb, var(--os) 72%, transparent); }
+html[data-nuit] .prix > div:first-child ul { color: color-mix(in srgb, var(--os) 82%, transparent); }
+html[data-nuit] .prix > div:first-child :focus-visible { outline-color: var(--os); }
+html[data-nuit] .prix > div:nth-child(n+2) { background: transparent !important; }
+@media (hover: hover) { html[data-nuit] .prix > div:nth-child(n+2):hover { box-shadow: none; } }
+
 /* ---------- démo sur téléphone : une seule liste, le suivi reste sous les yeux ---------- */
 @media (max-width: 860px) {
   /* En « 30 secondes », les questions portent déjà le texte et le niveau : la liste du profil s'efface
