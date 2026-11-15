@@ -36,7 +36,7 @@ function choisir(id) {
   $("demo-questions").innerHTML = profil.exigences.map((e, i) => `<fieldset class="question"><legend>${esc(e.texte)}</legend>${niveau(e)}<div class="reponses">${CHOIX.map(([v, t]) => `<label><input type="radio" name="q${i}" value="${v}"><span>${t}</span></label>`).join("")}</div></fieldset>`).join("");
   // Chaque jalon a la largeur de son poids dans le score (3, 2 ou 1).
   $("demo-jalons").innerHTML = profil.exigences.map((e) => `<i style="flex-grow:${POIDS[e.niveau] ?? 1}"></i>`).join("");
-  $("demo-cv").value = ""; $("demo-aide").textContent = AIDE0;
+  $("demo-cv").value = ""; effacer();
   fini = false; majRapide(); mode(rapide);
 }
 // Le profil cible (à gauche) et les jalons reflètent chaque réponse : on voit tout de suite ce qui est couvert.
@@ -111,8 +111,30 @@ $("demo-questions").addEventListener("change", () => {
 });
 
 /* ---------- en collant son CV ---------- */
+// Une seule mesure, pour le test comme pour le message : le nombre de mots.
+const MOTS_MIN = 20;
+const mots = (t) => { const x = t.trim(); return x ? x.split(/\s+/).length : 0; };
+// Erreur : message coloré sous le champ (déjà relié par aria-describedby), champ marqué invalide, focus dessus.
+// Le lecteur d'écran lit la description en arrivant sur le champ : pas de zone live en plus, pas de double annonce.
+function signaler(message) {
+  const aide = $("demo-aide"), champ = $("demo-cv");
+  aide.textContent = message; aide.classList.add("erreur");
+  champ.classList.add("invalide"); champ.setAttribute("aria-invalid", "true");
+  champ.focus({ preventScroll: true });
+  aide.scrollIntoView({ block: "nearest", behavior: calme ? "instant" : "smooth" });
+}
+// Dès qu'on reprend la saisie, l'erreur s'efface et l'aide d'origine revient.
+function effacer() {
+  const aide = $("demo-aide"), champ = $("demo-cv");
+  aide.textContent = AIDE0; aide.classList.remove("erreur");
+  champ.classList.remove("invalide"); champ.removeAttribute("aria-invalid");
+}
+$("demo-cv").addEventListener("input", () => { if ($("demo-cv").hasAttribute("aria-invalid")) effacer(); });
 function comparer(cv) {
-  if (cv.trim().split(/\s+/).length < 20) { $("demo-aide").textContent = "Collez un peu plus de texte : il faut au moins vos expériences et votre formation."; $("demo-cv").focus(); return; }
+  const n = mots(cv);
+  if (!n) return signaler("Collez votre CV, ou cliquez sur « Voir avec un CV d'exemple ».");
+  if (n < MOTS_MIN) return signaler(`${n} mot${n > 1 ? "s" : ""} lu${n > 1 ? "s" : ""}, il en faut au moins ${MOTS_MIN} : ajoutez vos expériences et votre formation.`);
+  effacer();
   const r = ecart(profil, cv), s = r.score;
   $("demo-score").textContent = "0"; compter($("demo-score"), s ? s.score : NaN);
   $("demo-etat").textContent = s ? `${s.presentes} présente${s.presentes > 1 ? "s" : ""}, ${s.partielles} en partie, ${s.absentes} absente${s.absentes > 1 ? "s" : ""}${s.eliminatoires ? " · plafonné : critère exigé manquant" : ""}` : "Détail par exigence";
@@ -122,6 +144,6 @@ function comparer(cv) {
 }
 $("demo-comparer").addEventListener("click", () => comparer($("demo-cv").value));
 $("demo-exemple").addEventListener("click", () => { $("demo-cv").value = actuel.cv; comparer(actuel.cv); });
-$("demo-retour").addEventListener("click", () => { marquer([]); $("demo-resultat").hidden = true; $("demo-saisie").hidden = false; $("demo-etat").textContent = ETAT0; $("demo-aide").textContent = AIDE0; $("demo-cv").focus(); });
+$("demo-retour").addEventListener("click", () => { marquer([]); $("demo-resultat").hidden = true; $("demo-saisie").hidden = false; $("demo-etat").textContent = ETAT0; effacer(); $("demo-cv").focus(); });
 
 choisir("soin");

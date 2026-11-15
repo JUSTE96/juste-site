@@ -41,6 +41,16 @@ html:not(.js) .demo-suivi { display: none; }
 #rapide-manques li[data-statut="partielle"]::before { border-color: var(--ambre); background: linear-gradient(90deg, var(--ambre) 50%, transparent 50%); }
 @media (max-width: 560px) { #rapide-manques li { grid-template-columns: 1fr; gap: .25rem; } }
 
+/* ---------- démo, « Coller mon CV » : une erreur se voit et se distingue de l'aide ----------
+   Texte et bordure en corail lisible, jamais en aplat (le corail plein reste celui des boutons). */
+#demo-cv { transition: border-color .2s, box-shadow .2s; }
+#demo-cv.invalide { border-color: var(--corail-texte); box-shadow: inset 0 0 0 1px var(--corail-texte); }
+#demo-aide { transition: color .2s; }
+#demo-aide.erreur { display: flex; align-items: flex-start; gap: .55rem; color: var(--corail-texte); font-weight: 600; }
+#demo-aide.erreur::before { content: "!"; flex: none; width: 1.3rem; height: 1.3rem; margin-top: .05rem; border-radius: 50%; display: grid; place-items: center;
+  font: 700 .8rem/1 var(--texte); color: #fff; background: var(--corail-texte); }
+html[data-nuit] #demo-aide.erreur::before { color: #141936; }
+
 /* ---------- démo sur téléphone : une seule liste, le suivi reste sous les yeux ---------- */
 @media (max-width: 860px) {
   /* En « 30 secondes », les questions portent déjà le texte et le niveau : la liste du profil s'efface

@@ -196,12 +196,12 @@
         </div>
         <div id="demo-saisie" hidden>
           <label class="sr" for="demo-cv">Texte de votre CV</label>
-          <textarea id="demo-cv" rows="9" placeholder="Collez ici le texte de votre CV : expériences, formation, compétences…"></textarea>
+          <textarea id="demo-cv" rows="9" aria-describedby="demo-aide" placeholder="Collez ici le texte de votre CV : expériences, formation, compétences…"></textarea>
+          <p class="aide" id="demo-aide">Votre CV reste dans votre navigateur. Rien n'est envoyé.</p>
           <div class="barre">
             <button class="btn plein" id="demo-comparer" type="button">Comparer</button>
             <button class="lien bouton-lien" id="demo-exemple" type="button">Voir avec un CV d'exemple</button>
           </div>
-          <p class="aide" id="demo-aide">Votre CV reste dans votre navigateur. Rien n'est envoyé.</p>
         </div>
         <div id="demo-resultat" hidden tabindex="-1">
           <p class="demo-score"><strong id="demo-score">–</strong><span>% du profil cible</span></p>
