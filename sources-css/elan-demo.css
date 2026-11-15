@@ -5,6 +5,13 @@
 
 /* ---------- galerie : la flèche du lien est décorative (hors du nom accessible quand le navigateur le permet) ---------- */
 .galerie figcaption .lien::after { content: "→"; content: "→" / ""; }
+/* Galerie : la première carte s'aligne sur la marge du titre au lieu du bord de l'écran ; la légende remplit
+   la carte (plus de bande d'image sous les légendes courtes) ; toute la carte mène au lien. */
+.galerie { scroll-padding-inline: var(--marge); }
+.galerie figure { display: grid; grid-template-rows: auto 1fr; }
+.galerie video { width: 100%; }
+.galerie figcaption { align-content: start; }
+.galerie figcaption .lien::before { content: ""; position: absolute; inset: 0; border-radius: inherit; }
 
 /* ---------- démo : le cadre ne coupe plus le collage ----------
    overflow: hidden faisait de la carte un conteneur de défilement : rien n'y collait.
