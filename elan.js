@@ -283,6 +283,12 @@ if (scene) {
   }
 }
 
+/* ---------- la page se repose : hors champ, le héros, le bandeau et les prix mettent leurs animations en pause ---------- */
+if (!calme) {
+  const champ = new IntersectionObserver((es) => es.forEach((e) => e.target.classList.toggle("hors-champ", !e.isIntersecting)), { rootMargin: "120px 0px" });
+  $$(".heros.plein, .defile, #prix").forEach((el) => champ.observe(el));
+}
+
 /* ---------- bandeau : il suit la vitesse et le sens du défilement ---------- */
 const piste = $(".defile-piste");
 if (piste && !calme) {

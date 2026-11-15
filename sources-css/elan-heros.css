@@ -123,3 +123,20 @@ html[data-nuit] .fiche-titre { color: var(--os); }
   .heros-texte .geant .ligne { white-space: nowrap; }
 }
 .fin .geant .l { display: block; white-space: nowrap; }
+
+/* ---------- la page se repose : pouls en transform/opacity, animations en pause hors champ ----------
+   Les pouls en box-shadow forçaient un recalcul de style à chaque image, même hors écran :
+   une onde (disque qui grandit et s'efface) les remplace. Elle s'arrête quand la lecture est finie. */
+@keyframes onde { from { transform: scale(1); opacity: .55; } to { transform: scale(3.2); opacity: 0; } }
+.lecture-tete i { position: relative; }
+.lecture.vive .lecture-tete i { animation: none; }
+.lecture.vive .lecture-tete i::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--corail); animation: onde 1.8s ease-out infinite; }
+.lecture.finie .lecture-tete i::after { content: none; animation: none; }
+/* prix : l'onde est un élément du même flux, posée exactement sur le point : ordre -1, marge négative = largeur + écart */
+.etat-prix.ouvert::before { animation: none; }
+.etat-prix.ouvert::after { content: ""; order: -1; flex: none; width: 7px; height: 7px; margin-right: calc(-7px - .5rem); border-radius: 50%; background: var(--vert); animation: onde 2.2s ease-out infinite; }
+/* hors champ : héros, bandeau et prix mettent en pause tout ce qui boucle */
+.hors-champ, .hors-champ::before, .hors-champ::after, .hors-champ *, .hors-champ *::before, .hors-champ *::after { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) {
+  .lecture-tete i::after, .etat-prix.ouvert::after { content: none; animation: none !important; }
+}
