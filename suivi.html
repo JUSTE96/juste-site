@@ -12,6 +12,7 @@
 <link rel="preload" href="fonts/lora-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="pages.css?v=4">
 <link rel="stylesheet" href="nuit.css?v=3">
+<script>document.documentElement.classList.add("js")</script>
 <script src="nuit.js?v=2"></script>
 </head>
 <body>
@@ -19,7 +20,7 @@
 <header class="nav"><div class="wrap">
   <a class="logo" href="./" aria-label="JusteCV, accueil"><span>Juste</span><span class="cv">CV</span></a>
   <nav class="nav-links" aria-label="Pages"><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html" aria-current="page">Suivi</a><a href="atelier.html">Atelier</a><a href="./#prix">Prix</a></nav>
-  <a class="btn btn-primary btn-sm nav-cta" href="atelier.html">Essayez vous aussi</a>
+  <a class="btn btn-primary btn-sm nav-cta" href="atelier.html">Mesurer une offre</a>
   <details class="nav-menu"><summary aria-label="Menu"><span></span><span></span><span></span></summary><nav aria-label="Pages (mobile)"><a href="./">Accueil</a><a href="atelier.html">Atelier</a><a href="app/">Analyse complète</a><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html" aria-current="page">Suivi</a><a href="./#prix">Prix</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a></nav></details>
 </div></header>
 <main id="contenu"><div class="wrap">
@@ -29,6 +30,7 @@
 
   <section class="card suivi-form" aria-labelledby="ajout">
     <div class="card-head"><h2 id="ajout">Ajouter une candidature</h2><p class="small muted">Seuls le poste et l'entreprise sont obligatoires.</p></div>
+    <noscript><p class="small muted">Le suivi enregistre la liste dans ce navigateur : il a besoin de JavaScript.</p></noscript>
     <form class="form" id="form" autocomplete="off">
       <label>Poste <input name="poste" required placeholder="Préparateur de commandes"></label>
       <label>Entreprise <input name="entreprise" required placeholder="Entrepôt Exemple"></label>
@@ -66,13 +68,13 @@
 </div></main>
 <footer><div class="wrap">
   <a href="./">Accueil</a><a href="atelier.html">Atelier</a><a href="app/">Analyse complète</a><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html">Suivi des candidatures</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a><a href="mailto:contact@justecv.fr">contact@justecv.fr</a>
-</div><div class="wrap"><p class="src">Données : ROME 4.0 version 62 (France Travail, <a href="https://www.data.gouv.fr/fr/datasets/repertoire-operationnel-des-metiers-et-des-emplois-rome/" target="_blank" rel="noopener">Licence Ouverte</a>), RNCP (France compétences), enquête BMO 2026. Pages générées sans IA par scripts/site/construire-metiers.py. JusteCV utilise une IA pour l'analyse des offres : relisez toujours votre CV avant de l'envoyer.</p></div></footer>
+</div><div class="wrap"><p class="src">Données : ROME 4.0 version 62 (France Travail, <a href="https://www.data.gouv.fr/fr/datasets/repertoire-operationnel-des-metiers-et-des-emplois-rome/" target="_blank" rel="noopener">Licence Ouverte</a>), RNCP (France compétences), enquête BMO 2026. Pages générées automatiquement, sans IA, à partir de ces données. JusteCV utilise une IA pour l'analyse des offres : relisez toujours votre CV avant de l'envoyer.</p></div></footer>
 <script>
 (function () {
   var KEY = "juste.suivi.v1";
   var LABELS = { brouillon: "À envoyer", envoyee: "Envoyée", relance: "À relancer", entretien: "Entretien", offre: "Proposition", refus: "Refus" };
   var $ = function (id) { return document.getElementById(id); };
-  var form = $("form"), rows = $("rows"), annonce = $("annonce"), annonceListe = $("annonce-liste"), editing = null;
+  var form = $("form"), rows = $("rows"), annonce = $("annonce"), annonceListe = $("annonce-liste"), editing = null, tuilesAvant = null;
   var cartes = window.matchMedia ? matchMedia("(max-width: 700px)") : { matches: false };
   var calme = function () { return window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches; };
   function load() { try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
@@ -96,7 +98,7 @@
     rows.innerHTML = shown.map(function (c) {
       var n = days(c.date), old = c.statut === "envoyee" && n > 10;
       var poste = c.lien ? '<a href="' + esc(c.lien) + '" target="_blank" rel="noopener">' + esc(c.poste) + "</a>" : esc(c.poste);
-      var depuis = c.date ? (old ? '<span class="small ecoule relancer">sans réponse depuis ' + n + " j</span>" : '<span class="small muted ecoule">il y a ' + n + " j</span>") : "";
+      var depuis = c.date ? (old ? '<span class="small ecoule relancer">sans réponse depuis ' + n + " j</span>" : '<span class="small muted ecoule">' + (n === 0 ? "aujourd'hui" : n === 1 ? "hier" : "il y a " + n + " j") + "</span>") : "";
       return '<tr id="c-' + esc(c.id) + '" data-id="' + esc(c.id) + '" tabindex="-1"><td class="poste"><strong>' + poste + "</strong>" + (c.lieu ? '<span class="small muted lieu">' + esc(c.lieu) + "</span>" : "") + '</td><td class="entreprise">' + esc(c.entreprise) + '</td><td class="quand">' + (c.date ? '<span class="date">' + esc(fmtDate(c.date)) + "</span>" : "") + depuis + '</td><td class="statut-cell">' + choix(c, old) + '</td><td class="small notes">' + esc(c.notes) + '</td><td class="row-actions actions-cell"><button type="button" data-act="edit" aria-label="Modifier ' + esc(c.poste) + '">Modifier</button> <button type="button" data-act="del" aria-label="Supprimer ' + esc(c.poste) + '">Supprimer</button></td></tr>';
     }).join("");
     // Un filtre sans résultat n'est pas une liste vide : on ne dit pas « Aucune candidature pour l'instant ».
@@ -106,8 +108,10 @@
     roles();
     var n = function (s) { return list.filter(function (c) { return c.statut === s; }).length; };
     var relance = list.filter(function (c) { return c.statut === "relance" || (c.statut === "envoyee" && days(c.date) > 10); }).length;
-    var tile = function (v, l, cls) { return '<div class="stat' + (cls ? " " + cls : "") + '"><strong>' + v + "</strong><span>" + l + "</span></div>"; };
-    $("stats").innerHTML = tile(list.length, list.length > 1 ? "candidatures" : "candidature") + tile(n("entretien"), n("entretien") > 1 ? "entretiens" : "entretien", n("entretien") ? "is-good" : "") + tile(relance, "à relancer", relance ? "is-warn" : "") + tile(n("offre"), n("offre") > 1 ? "propositions" : "proposition", n("offre") ? "is-good" : "");
+    var tile = function (v, l, cls) { return '<div class="stat' + (cls ? " " + cls : "") + '"><strong>' + v + "</strong> <span>" + l + "</span></div>"; };
+    // #stats est une zone live : on ne la réécrit que si les chiffres changent (un changement de filtre ne la fait pas relire).
+    var tuiles = tile(list.length, list.length > 1 ? "candidatures" : "candidature") + tile(n("entretien"), n("entretien") > 1 ? "entretiens" : "entretien", n("entretien") ? "is-good" : "") + tile(relance, "à relancer", relance ? "is-warn" : "") + tile(n("offre"), n("offre") > 1 ? "propositions" : "proposition", n("offre") ? "is-good" : "");
+    if (tuiles !== tuilesAvant) { tuilesAvant = tuiles; $("stats").innerHTML = tuiles; }
   }
   // Annonce visible (sous le formulaire, ou en tête de liste), lue aussi par les lecteurs d'écran (role=status).
   function annoncer(texte, id, ou) {
@@ -160,6 +164,7 @@
       if (confirm("Supprimer cette candidature ?")) {
         var suivant = tr.nextElementSibling || tr.previousElementSibling, sid = suivant && suivant.getAttribute("data-id");
         save(list.filter(function (x) { return x.id !== id; })); render(); oublier(id);
+        annoncer("Candidature supprimée : " + c.poste + ", " + c.entreprise + ".", null, annonceListe);
         var t = ligne(sid); (t ? t.querySelector('[data-act="edit"]') : $("filtre")).focus({ preventScroll: true });
       }
       return;

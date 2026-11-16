@@ -451,6 +451,26 @@ html[data-nuit] .fiche-titre { color: var(--os); }
    Vidéos du héros et de la fin baissées ; un voile sur les aperçus, sous la carte de lecture. */
 html[data-nuit] #film, html[data-nuit] .fin-clip video { filter: brightness(.8) saturate(.92); }
 html[data-nuit] .heros-media, html[data-nuit] .fin-clip { box-shadow: inset 0 0 0 100vmax rgba(20,25,54,.26), 0 30px 60px -30px #00000059; }
+
+/* ---------- recette ---------- */
+/* Grands écrans : le cadre vidéo du héros suit la grille de 1360 px, comme l'en-tête et le texte (en 1920, il touchait presque le bord droit).
+   La pastille, la carte de lecture et le bouton pause sont dedans : ils suivent. */
+@media (min-width: 901px) {
+  .heros.plein .heros-media { right: calc((100% - min(100%, var(--large))) / 2 + var(--marge)); left: calc((100% - min(100%, var(--large))) / 2 + min(100%, var(--large)) * .54); }
+}
+/* Le bouton pause du héros arrête aussi le bandeau défilant (elan.js pose .en-pause sur .defile). */
+.defile.en-pause .defile-piste { animation-play-state: paused !important; }
+/* 860 px et moins : le titre de la scène garde le rang des autres titres de section et passe au-dessus du cadran. */
+@media (max-width: 860px) {
+  .scene .scene-texte { display: contents; }
+  .scene .scene-grille > .scene-texte > .moyen { order: -2; font-size: clamp(2rem, 4vw, 3.6rem); }
+  /* la scène épinglée laisse la place de l'en-tête (76 px) : le titre ne passe pas sous la capsule ; le cadran cède un peu de hauteur */
+  .js .scene-fixe { box-sizing: border-box; padding-top: 76px; }
+  .scene .cadran { max-width: min(300px, 31svh); }
+}
+/* Le niveau « obligatoire » prend l'encre : le corail-texte reste réservé à « Absent ». */
+.cadran svg:not([data-temps="0"]) .seg[data-n="obligatoire"]:not(.juge) .seg-fond { fill: var(--os); }
+.cadran .valeur .niv-obligatoire { color: var(--os); }
 /* JusteCV — couche « élan » de la démo et des sections de l'accueil (galerie, démo, règle, prix, questions).
    Concaténée après elan.css par sources-css/assembler.py : elle surcharge, elle ne réécrit pas.
    Même principe que la couche élan : chaque mouvement montre une réponse prise en compte ou un résultat,
@@ -599,6 +619,18 @@ html[data-nuit] #demo-jalons i:not([data-s]) { background: #3b4482; }
   #demo-cible li, #demo-cible li::after, #rapide-suite { transition: none; }
   #demo-reste:not([hidden]), .demo-compte.tic, #rapide-manques li { animation: none; }
 }
+
+/* ---------- recette ---------- */
+/* « Absent » s'écrit en corail-texte (5,0:1 sur la crème), comme dans la carte de lecture du héros ; le corail des boutons ne passait pas (2,7:1). */
+.statut.absente { color: var(--corail-texte); }
+/* Le niveau « obligatoire » prend l'encre, en gras : le corail-texte ne veut dire qu'une chose, « Absent ». */
+.poids[data-niveau="obligatoire"] { color: var(--os); }
+.poids[data-niveau="obligatoire"]::before { background: var(--os); }
+/* Section de fin : .fin est en flex, son .cadre se réduisait à son contenu ; il reprend la largeur de la grille. */
+.fin > .cadre { width: 100%; }
+/* Sans script : la démo ne montre pas de commandes mortes, un message le dit. */
+html:not(.js) #demo .choix, html:not(.js) #demo-rapide { display: none; }
+#demo noscript .aide { margin-top: .4rem; }
 /* JusteCV — couche « navigation » de l'accueil (juste.css) : menu plein écran, en-tête, lune, barre d'action, cibles tactiles.
    Vient après elan.css : elle surcharge sans éditer. Sous prefers-reduced-motion, tout est instantané ; sans script, rien n'est caché. */
 
@@ -720,6 +752,50 @@ html[data-nuit] .menu-pied a { text-decoration-color: #f7f1e840; }
   .barre-mobile span { font-size: .82rem; }
   .barre-mobile .btn { padding-inline: .8rem; font-size: .86rem; }
 }
+
+/* ---------- recette : en-tête de l'atelier ----------
+   Ordinateur : les cinq liens avec le trait corail de l'accueil, la page en cours soulignée ; la capsule rend à « Prix » la marge du logo.
+   860 px et moins : le menu des pages de contenu (<details class="nav-menu">), refermé par passage.js (toucher à côté, Échap, lien). */
+.page-atelier .tete .cadre > nav a { display: inline-flex; align-items: center; min-height: 44px;
+  background: linear-gradient(var(--corail), var(--corail)) no-repeat 0 calc(100% - .5rem) / 0% 2px; transition: background-size .45s var(--elan), color .2s; }
+.page-atelier .tete .cadre > nav a:hover, .page-atelier .tete .cadre > nav a:focus-visible, .page-atelier .tete .cadre > nav a[aria-current] { color: var(--os); background-size: 100% 2px; }
+.page-atelier .tete.fond .cadre { padding-inline: 1.5rem; }
+.tete .nav-menu { display: none; }
+@media (max-width: 860px) {
+  .page-atelier .tete.fond .cadre { padding-inline: 1.5rem .55rem; }
+  .tete .cadre { position: relative; }
+  .tete .nav-menu { display: block; flex: none; }
+  .tete .ciel-btn.dans-barre:has(+ .nav-menu) { margin-left: auto; }
+  .tete .nav-menu summary { list-style: none; cursor: pointer; position: relative; display: block; width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--trait); background: #fff; }
+  .tete .nav-menu summary::-webkit-details-marker { display: none; }
+  .tete .nav-menu summary:focus-visible { outline: 2px solid var(--bleu); outline-offset: 2px; }
+  .tete .nav-menu summary span { position: absolute; left: 12px; width: 18px; height: 2px; border-radius: 2px; background: var(--os); transition: transform .25s ease, opacity .25s ease, top .25s ease; }
+  .tete .nav-menu summary span:nth-child(1) { top: 14px; } .tete .nav-menu summary span:nth-child(2) { top: 20px; } .tete .nav-menu summary span:nth-child(3) { top: 26px; }
+  .tete .nav-menu[open] summary span:nth-child(1) { top: 20px; transform: rotate(45deg); }
+  .tete .nav-menu[open] summary span:nth-child(2) { opacity: 0; }
+  .tete .nav-menu[open] summary span:nth-child(3) { top: 20px; transform: rotate(-45deg); }
+  .tete .nav-menu nav { display: grid; gap: 0; margin: 0; position: absolute; left: 0; right: 0; top: calc(100% + .6rem); max-height: calc(100dvh - 100px); overflow-y: auto; overscroll-behavior: contain;
+    padding: .5rem; border-radius: 18px; border: 1px solid var(--trait); background: #fffaf4; box-shadow: 0 24px 50px -24px rgba(28,32,64,.45); }
+  .tete .nav-menu nav a { display: flex; align-items: center; gap: .7rem; min-height: 50px; padding: 0 .9rem; border-radius: 10px; color: var(--os); font-size: 1rem; font-weight: 600; text-decoration: none; }
+  .tete .nav-menu nav a + a { box-shadow: 0 -1px 0 var(--trait); }
+  .tete .nav-menu nav a:hover { background: rgba(28,32,64,.05); }
+  .tete .nav-menu nav a[aria-current] { font-weight: 700; }
+  .tete .nav-menu nav a[aria-current]::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--corail); }
+  html[data-nuit] .tete .nav-menu summary { background: #232a5c; border-color: #f7f1e830; }
+  html[data-nuit] .tete .nav-menu nav { background: #232a5c; border-color: #f7f1e824; box-shadow: 0 24px 50px -24px #000c; }
+  html[data-nuit] .tete .nav-menu nav a { color: var(--os); }
+  html[data-nuit] .tete .nav-menu nav a + a { box-shadow: 0 -1px 0 #f7f1e81f; }
+  html[data-nuit] .tete .nav-menu nav a:hover { background: #f7f1e80f; }
+}
+@media (max-width: 860px) and (prefers-reduced-motion: no-preference) {
+  .tete .nav-menu[open] nav { transform-origin: 50% 0; animation: menu-pose .35s var(--elan) both; }
+  @keyframes menu-pose { from { opacity: 0; transform: translateY(-8px) scale(.98); } }
+}
+@media (prefers-reduced-motion: reduce) { .tete .nav-menu summary span { transition: none; } }
+
+/* ---------- recette : la capsule reste crème au-dessus des bandes sombres (défilé, règle) ----------
+   Le fond translucide laissait le flou du bleu nuit dominer : gris métallisé et bord sombre. */
+html:not([data-nuit]) .tete.fond .cadre { background: color-mix(in srgb, #fffaf4 94%, transparent); }
 /* JusteCV — couche « atelier » : l'outil se lit d'un geste, au pouce comme au bureau.
    Concaténée après elan.css : elle surcharge sans éditer. Les règles de nuit sont écrites à la main sous html[data-nuit]. */
 
@@ -850,3 +926,19 @@ html[data-nuit] .reperes .chevron::before { border-color: var(--os); }
   #ecart > .etape-gauche, #ecart .mesure { break-inside: avoid; break-after: avoid; page-break-after: avoid; }
   .plan > li:first-child { break-before: avoid; page-break-before: avoid; }
 }
+
+/* ---------- recette ---------- */
+/* Listes déroulantes : une seule flèche, la même de jour comme de nuit (nuit.css ajoutait la sienne à la flèche native). */
+select { appearance: none; -webkit-appearance: none; padding-right: 2.4rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231c2040' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .8rem center; background-size: 1rem; }
+html[data-nuit] select { appearance: none; -webkit-appearance: none; padding-right: 2.4rem; }
+/* Fil d'étapes au pouce : les libellés des autres étapes sont masqués à l'œil seulement, les lecteurs d'écran les lisent encore. */
+@media (max-width: 620px) {
+  .fil button span { display: inline; }
+  .fil button:not([aria-current="step"]) span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+}
+/* Une étape atteinte (bouton « Assembler », « Mesurer l'écart », fil) : le bouton de l'étape précédente passe sous la capsule
+   d'en-tête (au pouce : au-dessus du fil) au lieu de rester coincé entre les deux. Le numéro de l'étape reste sous le fil. */
+section.etape { scroll-margin-top: 120px; }
+@media (max-width: 860px) { section.etape { scroll-margin-top: 44px; } }

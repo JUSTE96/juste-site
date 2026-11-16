@@ -119,3 +119,47 @@ html[data-nuit] .menu-pied a { text-decoration-color: #f7f1e840; }
   .barre-mobile span { font-size: .82rem; }
   .barre-mobile .btn { padding-inline: .8rem; font-size: .86rem; }
 }
+
+/* ---------- recette : en-tête de l'atelier ----------
+   Ordinateur : les cinq liens avec le trait corail de l'accueil, la page en cours soulignée ; la capsule rend à « Prix » la marge du logo.
+   860 px et moins : le menu des pages de contenu (<details class="nav-menu">), refermé par passage.js (toucher à côté, Échap, lien). */
+.page-atelier .tete .cadre > nav a { display: inline-flex; align-items: center; min-height: 44px;
+  background: linear-gradient(var(--corail), var(--corail)) no-repeat 0 calc(100% - .5rem) / 0% 2px; transition: background-size .45s var(--elan), color .2s; }
+.page-atelier .tete .cadre > nav a:hover, .page-atelier .tete .cadre > nav a:focus-visible, .page-atelier .tete .cadre > nav a[aria-current] { color: var(--os); background-size: 100% 2px; }
+.page-atelier .tete.fond .cadre { padding-inline: 1.5rem; }
+.tete .nav-menu { display: none; }
+@media (max-width: 860px) {
+  .page-atelier .tete.fond .cadre { padding-inline: 1.5rem .55rem; }
+  .tete .cadre { position: relative; }
+  .tete .nav-menu { display: block; flex: none; }
+  .tete .ciel-btn.dans-barre:has(+ .nav-menu) { margin-left: auto; }
+  .tete .nav-menu summary { list-style: none; cursor: pointer; position: relative; display: block; width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--trait); background: #fff; }
+  .tete .nav-menu summary::-webkit-details-marker { display: none; }
+  .tete .nav-menu summary:focus-visible { outline: 2px solid var(--bleu); outline-offset: 2px; }
+  .tete .nav-menu summary span { position: absolute; left: 12px; width: 18px; height: 2px; border-radius: 2px; background: var(--os); transition: transform .25s ease, opacity .25s ease, top .25s ease; }
+  .tete .nav-menu summary span:nth-child(1) { top: 14px; } .tete .nav-menu summary span:nth-child(2) { top: 20px; } .tete .nav-menu summary span:nth-child(3) { top: 26px; }
+  .tete .nav-menu[open] summary span:nth-child(1) { top: 20px; transform: rotate(45deg); }
+  .tete .nav-menu[open] summary span:nth-child(2) { opacity: 0; }
+  .tete .nav-menu[open] summary span:nth-child(3) { top: 20px; transform: rotate(-45deg); }
+  .tete .nav-menu nav { display: grid; gap: 0; margin: 0; position: absolute; left: 0; right: 0; top: calc(100% + .6rem); max-height: calc(100dvh - 100px); overflow-y: auto; overscroll-behavior: contain;
+    padding: .5rem; border-radius: 18px; border: 1px solid var(--trait); background: #fffaf4; box-shadow: 0 24px 50px -24px rgba(28,32,64,.45); }
+  .tete .nav-menu nav a { display: flex; align-items: center; gap: .7rem; min-height: 50px; padding: 0 .9rem; border-radius: 10px; color: var(--os); font-size: 1rem; font-weight: 600; text-decoration: none; }
+  .tete .nav-menu nav a + a { box-shadow: 0 -1px 0 var(--trait); }
+  .tete .nav-menu nav a:hover { background: rgba(28,32,64,.05); }
+  .tete .nav-menu nav a[aria-current] { font-weight: 700; }
+  .tete .nav-menu nav a[aria-current]::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--corail); }
+  html[data-nuit] .tete .nav-menu summary { background: #232a5c; border-color: #f7f1e830; }
+  html[data-nuit] .tete .nav-menu nav { background: #232a5c; border-color: #f7f1e824; box-shadow: 0 24px 50px -24px #000c; }
+  html[data-nuit] .tete .nav-menu nav a { color: var(--os); }
+  html[data-nuit] .tete .nav-menu nav a + a { box-shadow: 0 -1px 0 #f7f1e81f; }
+  html[data-nuit] .tete .nav-menu nav a:hover { background: #f7f1e80f; }
+}
+@media (max-width: 860px) and (prefers-reduced-motion: no-preference) {
+  .tete .nav-menu[open] nav { transform-origin: 50% 0; animation: menu-pose .35s var(--elan) both; }
+  @keyframes menu-pose { from { opacity: 0; transform: translateY(-8px) scale(.98); } }
+}
+@media (prefers-reduced-motion: reduce) { .tete .nav-menu summary span { transition: none; } }
+
+/* ---------- recette : la capsule reste crème au-dessus des bandes sombres (défilé, règle) ----------
+   Le fond translucide laissait le flou du bleu nuit dominer : gris métallisé et bord sombre. */
+html:not([data-nuit]) .tete.fond .cadre { background: color-mix(in srgb, #fffaf4 94%, transparent); }

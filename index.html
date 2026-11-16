@@ -62,7 +62,7 @@
     <button class="pause" id="pause-film" type="button" aria-label="Mettre l'animation en pause" aria-pressed="false" hidden>
       <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><g class="i-pause"><rect x="2" y="1" width="2.5" height="10" fill="currentColor"/><rect x="7.5" y="1" width="2.5" height="10" fill="currentColor"/></g><path class="i-lecture" d="M3 1.2v9.6L10.6 6z" fill="currentColor"/></svg>
     </button>
-    <div class="puce puce-2" aria-hidden="true"><b id="puce-lues">6</b> exigences lues dans l'offre</div>
+    <div class="puce puce-2" aria-hidden="true"><b id="puce-lues">6</b> <span id="puce-lues-mot">exigences lues</span> dans l'offre</div>
     <div class="lecture" id="lecture" aria-hidden="true">
       <p class="lecture-tete"><i></i>Lecture de l'offre<span id="lecture-compte">6 / 6</span></p>
       <div class="lecture-fenetre"><ol id="lecture-lignes">
@@ -195,6 +195,7 @@
       <section aria-labelledby="v-cv">
         <h3 class="petit-titre" id="v-cv">Votre CV</h3>
         <span class="ref" id="demo-etat">Deux façons de vous situer</span>
+        <noscript><p class="aide">La démo a besoin de JavaScript. Le profil cible reste lisible.</p></noscript>
         <div class="choix" role="group" aria-label="Façon de répondre">
           <button type="button" id="mode-rapide" aria-pressed="true">En 30 secondes</button>
           <button type="button" id="mode-cv" aria-pressed="false">Coller mon CV</button>
@@ -281,7 +282,7 @@
   <div class="cadre">
     <div class="bloc-tete apparait">
       <h2 class="moyen" id="titre-prix">Trois formules.</h2>
-      <p>L'atelier est gratuit et sans compte. Les formules payantes ajoutent la réécriture assistée de votre CV et le suivi de vos candidatures.</p>
+      <p>L'atelier et le suivi des candidatures sont gratuits et sans compte. Les formules payantes ajoutent la réécriture assistée de votre CV.</p>
     </div>
     <div class="prix elan">
       <div>
@@ -301,7 +302,7 @@
         <span class="etat-prix">À la fin de la bêta</span>
         <h3 class="petit-titre">Pass recherche</h3>
         <p class="montant">19,99 € <small>TTC / 3 mois</small></p>
-        <ul><li>Tout Premium</li><li>Suivi des candidatures</li><li>Sans renouvellement automatique</li></ul>
+        <ul><li>Tout Premium, pendant 3 mois</li><li>Paiement unique</li><li>Sans renouvellement automatique</li></ul>
       </div>
     </div>
   </div>

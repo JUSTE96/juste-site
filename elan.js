@@ -18,7 +18,7 @@ const heros = $(".heros.plein"), lecture = $("#lecture");
 let figerLecture = () => {};
 if (lecture) {
   const ol = $("#lecture-lignes"), lignes = $$("li", ol), fenetre = ol.parentElement;
-  const elScore = $("#lecture-score"), jauge = $("#lecture-jauge"), compte = $("#lecture-compte"), lues = $("#puce-lues");
+  const elScore = $("#lecture-score"), jauge = $("#lecture-jauge"), compte = $("#lecture-compte"), lues = $("#puce-lues"), luesMot = $("#puce-lues-mot");
   const corr = lignes.map((li) => ({ competence: li.firstElementChild.textContent, exigence: li.dataset.n, statut: li.dataset.s }));
   const final = matchScore(corr)?.score ?? Number(elScore.textContent);
   const possible = corr.reduce((t, c) => t + WEIGHTS[c.exigence], 0);
@@ -41,6 +41,7 @@ if (lecture) {
     const poser = (n, signe = true) => {
       compte.textContent = `${n} / ${lignes.length}`;
       if (lues) lues.textContent = n;
+      if (luesMot) luesMot.textContent = n > 1 ? "exigences lues" : "exigence lue";   // accordé pendant le décompte
       if (signe) { rejouer(compte); if (lues) rejouer(lues); }
       const visibles = Number(getComputedStyle(fenetre).getPropertyValue("--n")) || 4;
       ol.style.transform = `translateY(calc(${-Math.max(0, n - visibles)} * var(--h)))`;
@@ -98,6 +99,7 @@ if (heros && pauseFilm && !calme) {
     const arret = pauseFilm.getAttribute("aria-pressed") !== "true";
     pauseFilm.setAttribute("aria-pressed", arret);
     heros.classList.toggle("en-pause", arret);
+    $(".defile")?.classList.toggle("en-pause", arret);   // le bandeau défilant s'arrête aussi (WCAG 2.2.2)
     if (arret) figerLecture();
     if (film) {
       if (arret) { film.dataset.arret = 1; film.pause(); }
@@ -265,6 +267,8 @@ if (scene) {
       rail.append(a);
     });
     barre?.after(rail); scene.classList.add("a-rail");
+    // « Voir la méthode » mène au premier temps, déjà dessiné, plutôt qu'au cadran encore vide du haut de la scène.
+    $$('.heros a[href="#mouvement"]').forEach((a) => { a.href = "#temps-1"; });
     const liens = $$("a", rail);
     let dernier = -1, demande = false;
     const maj = () => {
@@ -300,16 +304,22 @@ if (piste && !calme) {
   const anim = piste.getAnimations?.()[0];
   if (anim) {
     const DUREE = Number(anim.effect?.getComputedTiming().duration) || 38000;
+    const bandeau = piste.parentElement;
     let y = scrollY, v = 0, sens = 1, actif = false, image = 0;
+    // La boucle ne tourne que pendant un défilement : au repos, elle s'arrête ; le défilement la relance. En pause, rien ne bouge.
     const tic = () => {
+      image = 0;
+      if (!actif || bandeau.classList.contains("en-pause")) { v = 0; anim.playbackRate = sens; return; }
       const d = scrollY - y; y = scrollY;
       v += (Math.min(70, Math.abs(d)) - v) * .1;
       if (Math.abs(d) > 1) sens = d > 0 ? 1 : -1;
       if (sens < 0 && anim.currentTime < 3000) anim.currentTime += DUREE;   // à rebours, on ne bute jamais sur le début
+      if (Math.abs(d) < 1 && v < .5) { anim.playbackRate = sens; return; }
       anim.playbackRate = sens * (1 + v * .2);
-      image = actif ? requestAnimationFrame(tic) : 0;
+      image = requestAnimationFrame(tic);
     };
-    new IntersectionObserver(([e]) => { actif = e.isIntersecting; if (actif && !image) { y = scrollY; image = requestAnimationFrame(tic); } }).observe(piste.parentElement);
+    addEventListener("scroll", () => { if (actif && !image) image = requestAnimationFrame(tic); }, { passive: true });
+    new IntersectionObserver(([e]) => { actif = e.isIntersecting && e.intersectionRatio > 0; if (actif && !image) { y = scrollY; image = requestAnimationFrame(tic); } }, { threshold: [0, .01] }).observe(bandeau);
   }
 }
 

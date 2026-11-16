@@ -35,3 +35,34 @@ footer .wrap:first-child { row-gap: 0; }
   @keyframes menu-pose { from { opacity: 0; transform: translateY(-8px) scale(.98); } }
   @keyframes menu-lien { from { opacity: 0; transform: translateY(-4px); } }
 }
+
+/* ---------- recette : une seule grille pour tout le site ----------
+   Les pages de contenu prennent la grille de l'accueil (.cadre : 1360 px, marge clamp(20px, 5vw, 72px)) : le logo et la colonne
+   de texte ne sautent plus d'une page à l'autre. La capsule de l'en-tête garde ses 1180 px (.nav .wrap, plus spécifique). */
+:root { --marge: clamp(20px, 5vw, 72px); --large: 1360px; }
+.wrap { max-width: var(--large); padding-left: max(var(--marge), env(safe-area-inset-left, 0px)); padding-right: max(var(--marge), env(safe-area-inset-right, 0px)); }
+
+/* ---------- recette : la lune dans l'en-tête jusqu'à 1280 px ----------
+   En dessous, la colonne de texte s'approche à moins de 64 px du bord : la lune flottante (14 à 60 px) masquait le début des cartes.
+   nuit.js la range dans la capsule, après le bouton d'appel ; elle ne pousse les autres éléments qu'au-dessous de 900 px. */
+@media (min-width: 861px) and (max-width: 1280px) {
+  header.nav .ciel-btn.dans-barre { width: 44px; height: 44px; flex: none; margin-left: -.6rem; }
+}
+@media (min-width: 861px) and (max-width: 900px) {
+  header.nav .ciel-btn.dans-barre { margin-left: auto; }
+  header.nav .ciel-btn.dans-barre + .nav-menu { margin-left: 0; }
+}
+
+/* ---------- recette : liens à l'encre, soulignés de corail, comme sur l'accueil ----------
+   --sapin valait le corail-texte : le rouge de « Absent » servait aussi à « cliquez ici ». Il prend la couleur du texte ;
+   la marque garde son corail. */
+:root, html[data-nuit]:root { --sapin: var(--fg); }
+a { text-decoration-color: var(--corail); text-underline-offset: .2em; }
+.logo .cv { color: #c63a18; }
+html[data-nuit] .logo .cv { color: #ff8f73; }
+
+/* ---------- recette : le surlignage des titres garde sa bande, la nuit aussi (même teinte que l'accueil) ---------- */
+html[data-nuit] h1 .hl { background-image: linear-gradient(transparent 62%, #6f5c1d 62%, #6f5c1d 94%, transparent 94%); }
+
+/* ---------- recette : listes numérotées des guides, « 1. » et non « 1 . » ---------- */
+main ol li::marker { font-variant-numeric: normal; }

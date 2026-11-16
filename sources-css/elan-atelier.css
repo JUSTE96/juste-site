@@ -128,3 +128,19 @@ html[data-nuit] .reperes .chevron::before { border-color: var(--os); }
   #ecart > .etape-gauche, #ecart .mesure { break-inside: avoid; break-after: avoid; page-break-after: avoid; }
   .plan > li:first-child { break-before: avoid; page-break-before: avoid; }
 }
+
+/* ---------- recette ---------- */
+/* Listes déroulantes : une seule flèche, la même de jour comme de nuit (nuit.css ajoutait la sienne à la flèche native). */
+select { appearance: none; -webkit-appearance: none; padding-right: 2.4rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231c2040' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .8rem center; background-size: 1rem; }
+html[data-nuit] select { appearance: none; -webkit-appearance: none; padding-right: 2.4rem; }
+/* Fil d'étapes au pouce : les libellés des autres étapes sont masqués à l'œil seulement, les lecteurs d'écran les lisent encore. */
+@media (max-width: 620px) {
+  .fil button span { display: inline; }
+  .fil button:not([aria-current="step"]) span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+}
+/* Une étape atteinte (bouton « Assembler », « Mesurer l'écart », fil) : le bouton de l'étape précédente passe sous la capsule
+   d'en-tête (au pouce : au-dessus du fil) au lieu de rester coincé entre les deux. Le numéro de l'étape reste sous le fil. */
+section.etape { scroll-margin-top: 120px; }
+@media (max-width: 860px) { section.etape { scroll-margin-top: 44px; } }
