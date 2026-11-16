@@ -6,7 +6,7 @@ Usage, depuis la racine du site : python3 sources-css/assembler.py"""
 import os
 RACINE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 JUSTE = ['elan.css', 'elan-heros.css', 'elan-demo.css', 'elan-nav.css', 'elan-atelier.css']
-PAGES = ['pages-elan.css', 'pages-outils.css', 'pages-nav.css']
+PAGES = ['pages-elan.css', 'pages-outils.css', 'pages-nav.css', 'pages-modeles.css']
 def refaire(cible, marque, couches):
     p = os.path.join(RACINE, cible); s = open(p, encoding='utf-8').read()
     i = s.find(marque); assert i > 0, (cible, 'marque introuvable')

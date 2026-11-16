@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Modèles de CV – JusteCV</title>
+<meta name="description" content="Ce qu'il faut mettre dans un CV, rubrique par rubrique, et des modèles gratuits lisibles par les logiciels de tri : collez votre CV, il se range tout seul, puis imprimez-le en PDF.">
+<link rel="icon" href="favicon-32.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#fffaf4">
+<link rel="preload" href="fonts/schibsted-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/lora-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="pages.css?v=7">
+<link rel="stylesheet" href="nuit.css?v=3">
+<script>document.documentElement.classList.add("js")</script>
+<script src="nuit.js?v=3"></script>
+</head>
+<body>
+<a class="sr-lien" href="#contenu">Aller au contenu</a>
+<header class="nav"><div class="wrap">
+  <a class="logo" href="./" aria-label="JusteCV, accueil"><span>Juste</span><span class="cv">CV</span></a>
+  <nav class="nav-links" aria-label="Pages"><a href="metiers.html">Métiers</a><a href="modeles.html" aria-current="page">Modèles</a><a href="guides.html">Guides</a><a href="suivi.html">Suivi</a><a href="atelier.html">Atelier</a></nav>
+  <a class="btn btn-primary btn-sm nav-cta" href="atelier.html">Mesurer une offre</a>
+  <details class="nav-menu"><summary aria-label="Menu"><span></span><span></span><span></span></summary><nav aria-label="Pages (mobile)"><a href="./">Accueil</a><a href="atelier.html">Atelier</a><a href="modeles.html" aria-current="page">Modèles de CV</a><a href="app/">Analyse complète</a><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html">Suivi</a><a href="./#prix">Prix</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a></nav></details>
+</div></header>
+<main id="contenu"><div class="wrap">
+  <p class="eyebrow">Modèles de CV</p>
+  <h1>Ce qu'il faut mettre dans un CV, <span class="hl">et rien d'autre</span>.</h1>
+  <p class="lede">Sept rubriques, dans cet ordre. Choisissez un exemple ou collez votre CV : il se range tout seul dans le modèle. Vous corrigez sur la feuille, puis vous l'enregistrez en PDF. Gratuit, sans compte, rien ne quitte votre navigateur.</p>
+
+  <div class="modele-corps">
+    <div class="modele-outils">
+      <section class="card modele-carte" aria-labelledby="t-depart">
+        <h2 id="t-depart">1. Partir d'un exemple</h2>
+        <p class="m-note">Des personnages fictifs, un par métier.</p>
+        <div class="modele-exemples" id="modele-exemples" role="group" aria-label="Exemples de CV"></div>
+      </section>
+      <section class="card modele-carte" aria-labelledby="t-vous">
+        <h2 id="t-vous">2. Ou mettre votre CV</h2>
+        <label class="sr-only" for="modele-cv">Texte de votre CV</label>
+        <textarea id="modele-cv" rows="7" aria-describedby="modele-aide" placeholder="Collez ici le texte de votre CV : nom, puis Expériences, Formation, Compétences…"></textarea>
+        <p class="m-note" id="modele-aide">Une rubrique par titre (Expériences, Formation, Compétences…), une expérience par ligne qui commence par ses dates.</p>
+        <button class="btn btn-primary" type="button" id="modele-remplir">Ranger mon CV dans le modèle</button>
+      </section>
+      <section class="card modele-carte" aria-labelledby="t-style">
+        <h2 id="t-style">3. Choisir la mise en page</h2>
+        <fieldset class="modele-styles" id="modele-styles">
+          <legend class="sr-only">Mise en page</legend>
+          <label><input type="radio" name="style" value="classique" checked><span><b>Classique</b>Sobre, à l'ancienne</span></label>
+          <label><input type="radio" name="style" value="moderne"><span><b>Moderne</b>Un filet de couleur</span></label>
+          <label><input type="radio" name="style" value="compact"><span><b>Compact</b>Tout sur une page</span></label>
+        </fieldset>
+        <p class="m-note">Les trois sont sur une seule colonne, avec de vrais titres : les logiciels de tri les lisent sans erreur.</p>
+      </section>
+    </div>
+
+    <section class="modele-apercu" aria-labelledby="t-apercu">
+      <div class="modele-barre">
+        <h2 id="t-apercu">Votre CV</h2>
+        <button class="btn btn-primary btn-sm" type="button" id="modele-pdf">Enregistrer en PDF</button>
+      </div>
+      <p class="m-note modele-etat" id="modele-etat" role="status"></p>
+      <div class="feuille-cadre"><div class="feuille" id="feuille" data-style="classique">
+        <noscript><p>Le modèle se remplit avec JavaScript. Les conseils ci-dessous restent lisibles.</p></noscript>
+      </div></div>
+      <p class="m-note">Pour le PDF : dans la fenêtre d'impression, choisissez « Enregistrer au format PDF ». Sur téléphone : Partager, puis Imprimer.</p>
+    </section>
+  </div>
+
+  <section class="modele-guide" aria-labelledby="t-guide">
+    <h2 id="t-guide">Rubrique par rubrique</h2>
+    <ol class="modele-regles">
+      <li><h3>Nom et contact</h3><p>Prénom et nom, ville, téléphone, une adresse e-mail sérieuse. L'adresse complète, l'âge, la situation familiale et la photo ne sont pas obligatoires en France.</p></li>
+      <li><h3>Le titre</h3><p>Le métier que vous visez, écrit comme dans l'offre : « Aide-soignant », pas « Professionnel du soin ». C'est souvent le premier mot cherché par le recruteur.</p></li>
+      <li><h3>Le profil</h3><p>Deux lignes : votre métier, vos années d'expérience, ce que vous savez faire. Facultatif, mais utile pour une reconversion.</p></li>
+      <li><h3>L'expérience</h3><p>De la plus récente à la plus ancienne. Pour chaque poste : dates, intitulé, employeur et ville, puis deux à quatre lignes sur ce que vous faisiez vraiment, avec vos chiffres s'ils sont exacts.</p></li>
+      <li><h3>La formation</h3><p>Diplômes, titres professionnels et certifications avec leur année : DEAS, CAP, CACES, SST… Un diplôme exigé par l'offre doit se voir du premier coup d'œil.</p></li>
+      <li><h3>Compétences et qualités</h3><p>Les savoir-faire du métier, avec les mots de l'offre quand ils décrivent ce que vous avez fait. Trois qualités suffisent : l'expérience les prouve mieux qu'une liste.</p></li>
+      <li><h3>Les informations utiles</h3><p>Langues avec leur niveau, permis et véhicule si le poste se déplace, disponibilité. Le reste peut attendre l'entretien.</p></li>
+    </ol>
+    <div class="card modele-eviter">
+      <h3>À éviter</h3>
+      <ul>
+        <li>Deux ou trois colonnes de texte : les logiciels de tri mélangent souvent les lignes.</li>
+        <li>Les barres et les étoiles de niveau : elles ne veulent rien dire pour un recruteur.</li>
+        <li>Les icônes à la place des mots, le texte dans une image, les rubriques aux noms originaux.</li>
+        <li>Inventer une compétence pour coller à l'offre : elle tombe à l'entretien.</li>
+      </ul>
+      <p><a href="atelier.html">Mesurer l'écart entre votre CV et une offre</a> · <a href="guides.html#ats">Le guide des logiciels de tri</a></p>
+    </div>
+  </section>
+</div></main>
+<footer><div class="wrap">
+  <a href="./">Accueil</a><a href="atelier.html">Atelier</a><a href="modeles.html">Modèles de CV</a><a href="app/">Analyse complète</a><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html">Suivi des candidatures</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a><a href="mailto:contact@justecv.fr">contact@justecv.fr</a>
+</div></footer>
+<script type="module" src="modeles.js?v=1"></script>
+<script src="passage.js?v=5" defer></script>
+</body>
+</html>
