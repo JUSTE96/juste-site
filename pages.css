@@ -583,3 +583,7 @@ html[data-nuit] h1 .hl { background-image: linear-gradient(transparent 62%, #6f5
 
 /* ---------- recette : listes numérotées des guides, « 1. » et non « 1 . » ---------- */
 main ol li::marker { font-variant-numeric: normal; }
+
+/* ---------- recette : « Métiers proches » en deux colonnes, alignées en haut ----------
+   La marge haute des éléments était rognée en tête de la 2e colonne seulement (5 px de décalage) : un retrait intérieur la remplace. */
+ul.cols2 > li { margin-top: 0; padding-top: .3em; break-inside: avoid; }

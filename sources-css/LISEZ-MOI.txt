@@ -12,4 +12,4 @@ Pour le reconstruire :
 La couche « élan » (elan.css, pages-elan.css, et le script ../elan.js) porte le motion design :
 lecture en direct dans le héros, titres mot à mot, fil d'étapes du cadran, retour visuel de la démo et de l'atelier.
 Ses règles de nuit sont écrites à la main à la fin d'elan.css (sous html[data-nuit]) : elles ne passent pas par generer_nuit.py.
-Les pages appellent juste.css?v=3 et pages.css?v=3 : penser à reporter ce numéro dans le générateur des fiches métiers.
+Les pages appellent juste.css?v=5 et pages.css?v=5 : penser à reporter ce numéro dans le générateur des fiches métiers.
