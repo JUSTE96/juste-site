@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#fffaf4">
 <link rel="preload" href="fonts/schibsted-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/lora-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="pages.css?v=7">
+<link rel="stylesheet" href="pages.css?v=8">
 <link rel="stylesheet" href="nuit.css?v=3">
 <script>document.documentElement.classList.add("js")</script>
 <script src="nuit.js?v=3"></script>
@@ -26,44 +26,75 @@
 <main id="contenu"><div class="wrap">
   <p class="eyebrow">Modèles de CV</p>
   <h1>Ce qu'il faut mettre dans un CV, <span class="hl">et rien d'autre</span>.</h1>
-  <p class="lede">Sept rubriques, dans cet ordre. Choisissez un exemple ou collez votre CV : il se range tout seul dans le modèle. Vous corrigez sur la feuille, puis vous l'enregistrez en PDF. Gratuit, sans compte, rien ne quitte votre navigateur.</p>
+  <p class="lede">Choisissez un exemple ou collez votre CV : il se range tout seul. Écrivez sur la feuille, réglez la mise en page et l'espace, puis enregistrez en PDF. Gratuit, sans compte, rien ne quitte votre navigateur.</p>
 
-  <div class="modele-corps">
-    <div class="modele-outils">
-      <section class="card modele-carte" aria-labelledby="t-depart">
-        <h2 id="t-depart">1. Partir d'un exemple</h2>
+  <div class="studio">
+    <div class="studio-reglages">
+      <div class="onglets" role="tablist" aria-label="Réglages du CV">
+        <button type="button" role="tab" id="o-contenu" aria-controls="p-contenu" aria-selected="true">Contenu</button>
+        <button type="button" role="tab" id="o-style" aria-controls="p-style" aria-selected="false" tabindex="-1">Style</button>
+        <button type="button" role="tab" id="o-espace" aria-controls="p-espace" aria-selected="false" tabindex="-1">Espace</button>
+        <button type="button" role="tab" id="o-rubriques" aria-controls="p-rubriques" aria-selected="false" tabindex="-1">Rubriques</button>
+      </div>
+
+      <div class="panneau" role="tabpanel" id="p-contenu" aria-labelledby="o-contenu">
+        <h2 class="panneau-titre">Partir d'un exemple</h2>
         <p class="m-note">Des personnages fictifs, un par métier.</p>
         <div class="modele-exemples" id="modele-exemples" role="group" aria-label="Exemples de CV"></div>
-      </section>
-      <section class="card modele-carte" aria-labelledby="t-vous">
-        <h2 id="t-vous">2. Ou mettre votre CV</h2>
+        <h2 class="panneau-titre">Ou ranger votre CV</h2>
         <label class="sr-only" for="modele-cv">Texte de votre CV</label>
-        <textarea id="modele-cv" rows="7" aria-describedby="modele-aide" placeholder="Collez ici le texte de votre CV : nom, puis Expériences, Formation, Compétences…"></textarea>
+        <textarea id="modele-cv" rows="6" aria-describedby="modele-aide" placeholder="Collez ici le texte de votre CV : nom, puis Expériences, Formation, Compétences…"></textarea>
         <p class="m-note" id="modele-aide">Une rubrique par titre (Expériences, Formation, Compétences…), une expérience par ligne qui commence par ses dates.</p>
-        <button class="btn btn-primary" type="button" id="modele-remplir">Ranger mon CV dans le modèle</button>
-      </section>
-      <section class="card modele-carte" aria-labelledby="t-style">
-        <h2 id="t-style">3. Choisir la mise en page</h2>
-        <fieldset class="modele-styles" id="modele-styles">
-          <legend class="sr-only">Mise en page</legend>
-          <label><input type="radio" name="style" value="classique" checked><span><b>Classique</b>Sobre, à l'ancienne</span></label>
-          <label><input type="radio" name="style" value="moderne"><span><b>Moderne</b>Un filet de couleur</span></label>
-          <label><input type="radio" name="style" value="compact"><span><b>Compact</b>Tout sur une page</span></label>
+        <div class="rangee"><button class="btn btn-primary" type="button" id="modele-remplir">Ranger mon CV</button><button class="btn btn-ghost" type="button" id="modele-vider">Feuille vide</button></div>
+      </div>
+
+      <div class="panneau" role="tabpanel" id="p-style" aria-labelledby="o-style" hidden>
+        <fieldset class="choix-modele"><legend class="panneau-titre">Modèle</legend>
+          <label><input type="radio" name="modele" value="classique"><span><i class="mini mini-classique" aria-hidden="true"><b></b><b></b><b></b><b></b></i><b>Classique</b><small>Nom en serif, filets fins</small></span></label><label><input type="radio" name="modele" value="moderne"><span><i class="mini mini-moderne" aria-hidden="true"><b></b><b></b><b></b><b></b></i><b>Moderne</b><small>Bandeau de couleur</small></span></label><label><input type="radio" name="modele" value="elegant"><span><i class="mini mini-elegant" aria-hidden="true"><b></b><b></b><b></b><b></b></i><b>Élégant</b><small>En-tête centré</small></span></label><label><input type="radio" name="modele" value="marge"><span><i class="mini mini-marge" aria-hidden="true"><b></b><b></b><b></b><b></b></i><b>Titres en marge</b><small>Titres à gauche</small></span></label><label><input type="radio" name="modele" value="compact"><span><i class="mini mini-compact" aria-hidden="true"><b></b><b></b><b></b><b></b></i><b>Compact</b><small>Dense, sans fioriture</small></span></label>
         </fieldset>
-        <p class="m-note">Les trois sont sur une seule colonne, avec de vrais titres : les logiciels de tri les lisent sans erreur.</p>
-      </section>
+        <fieldset class="choix-couleur"><legend class="panneau-titre">Couleur</legend>
+          <label><input type="radio" name="accent" value="#1c2040"><span style="--c:#1c2040"><span class="sr-only">Encre</span></span></label><label><input type="radio" name="accent" value="#c63a18"><span style="--c:#c63a18"><span class="sr-only">Corail</span></span></label><label><input type="radio" name="accent" value="#1f6b4f"><span style="--c:#1f6b4f"><span class="sr-only">Sapin</span></span></label><label><input type="radio" name="accent" value="#2a4fb5"><span style="--c:#2a4fb5"><span class="sr-only">Bleu</span></span></label><label><input type="radio" name="accent" value="#6b2f6b"><span style="--c:#6b2f6b"><span class="sr-only">Prune</span></span></label><label><input type="radio" name="accent" value="#3d4350"><span style="--c:#3d4350"><span class="sr-only">Graphite</span></span></label>
+        </fieldset>
+        <fieldset class="choix-police"><legend class="panneau-titre">Police</legend>
+          <label><input type="radio" name="police" value="lora"><span class="police-lora"><b>Lora</b><small>Serif</small></span></label><label><input type="radio" name="police" value="schibsted"><span class="police-schibsted"><b>Schibsted</b><small>Sans-serif</small></span></label><label><input type="radio" name="police" value="arial"><span class="police-arial"><b>Arial</b><small>Standard</small></span></label><label><input type="radio" name="police" value="georgia"><span class="police-georgia"><b>Georgia</b><small>Serif classique</small></span></label>
+        </fieldset>
+        <div class="curseur"><label for="modele-taille">Taille du texte <output id="modele-taille-v" for="modele-taille"></output></label><input type="range" id="modele-taille" min="8.5" max="12" step="0.25"><p class="m-note">10 pt est la taille la plus courante.</p></div>
+        <p class="m-note">Tous les modèles gardent une seule colonne et de vrais titres : les logiciels de tri les lisent sans erreur.</p>
+      </div>
+
+      <div class="panneau" role="tabpanel" id="p-espace" aria-labelledby="o-espace" hidden>
+        <h2 class="panneau-titre">Espacement</h2>
+        <div class="rangee presets"><button type="button" class="btn btn-ghost btn-sm" data-preset="aere">Aéré</button><button type="button" class="btn btn-ghost btn-sm" data-preset="equilibre">Équilibré</button><button type="button" class="btn btn-ghost btn-sm" data-preset="serre">Serré</button></div>
+        <div class="curseur"><label for="modele-marge">Marges <output id="modele-marge-v" for="modele-marge"></output></label><input type="range" id="modele-marge" min="10" max="25" step="1"><p class="m-note">Au moins 12 mm pour que l'imprimante ne coupe rien.</p></div>
+        <div class="curseur"><label for="modele-lh">Interligne <output id="modele-lh-v" for="modele-lh"></output></label><input type="range" id="modele-lh" min="1.2" max="1.7" step="0.05"><p class="m-note">L'espace entre deux lignes d'un même paragraphe.</p></div>
+        <div class="curseur"><label for="modele-gap">Espace entre rubriques <output id="modele-gap-v" for="modele-gap"></output></label><input type="range" id="modele-gap" min="0.6" max="2.4" step="0.1"><p class="m-note">Profil, Expérience, Formation…</p></div>
+        <div class="curseur"><label for="modele-gapexp">Espace entre expériences <output id="modele-gapexp-v" for="modele-gapexp"></output></label><input type="range" id="modele-gapexp" min="0.35" max="1.6" step="0.05"><p class="m-note">Entre deux postes d'une même rubrique.</p></div>
+        <button class="btn btn-primary" type="button" id="modele-ajuster-2">Ajuster sur une page</button>
+        <p class="m-note">Resserre d'abord l'espace, puis l'interligne et les marges, et en dernier la taille du texte.</p>
+      </div>
+
+      <div class="panneau" role="tabpanel" id="p-rubriques" aria-labelledby="o-rubriques" hidden>
+        <h2 class="panneau-titre">Ordre et affichage</h2>
+        <p class="m-note">Décochez une rubrique pour la retirer, flèches pour la déplacer. Pour la renommer, écrivez directement sur son titre dans la feuille.</p>
+        <ol class="liste-rubriques" id="modele-rubriques"></ol>
+        <button class="btn btn-ghost btn-sm" type="button" id="modele-reglages-zero">Rétablir la mise en page d'origine</button>
+      </div>
     </div>
 
-    <section class="modele-apercu" aria-labelledby="t-apercu">
+    <section class="studio-apercu" aria-labelledby="t-apercu">
       <div class="modele-barre">
         <h2 id="t-apercu">Votre CV</h2>
+        <span class="pages" id="modele-pages" data-ok="1">Tient sur 1 page</span>
+        <button class="btn btn-ghost btn-sm" type="button" id="modele-ajuster" hidden>Ajuster sur une page</button>
+        <button class="btn btn-ghost btn-sm zoom" type="button" id="modele-zoom" aria-pressed="false">Taille réelle</button>
         <button class="btn btn-primary btn-sm" type="button" id="modele-pdf">Enregistrer en PDF</button>
       </div>
-      <p class="m-note modele-etat" id="modele-etat" role="status"></p>
-      <div class="feuille-cadre"><div class="feuille" id="feuille" data-style="classique">
-        <noscript><p>Le modèle se remplit avec JavaScript. Les conseils ci-dessous restent lisibles.</p></noscript>
+      <p class="m-note modele-etat" id="modele-etat"></p>
+      <p class="sr-only" id="modele-annonce" role="status"></p>
+      <div class="feuille-cadre" id="feuille-cadre"><div class="feuille" id="feuille">
+        <noscript><p>L'éditeur a besoin de JavaScript. Les conseils ci-dessous restent lisibles.</p></noscript>
       </div></div>
-      <p class="m-note">Pour le PDF : dans la fenêtre d'impression, choisissez « Enregistrer au format PDF ». Sur téléphone : Partager, puis Imprimer.</p>
+      <p class="m-note">Pour le PDF : dans la fenêtre d'impression, choisissez « Enregistrer au format PDF », marges « Aucune ». Sur téléphone : Partager, puis Imprimer.</p>
     </section>
   </div>
 
@@ -93,7 +124,7 @@
 <footer><div class="wrap">
   <a href="./">Accueil</a><a href="atelier.html">Atelier</a><a href="modeles.html">Modèles de CV</a><a href="app/">Analyse complète</a><a href="metiers.html">Métiers</a><a href="guides.html">Guides</a><a href="suivi.html">Suivi des candidatures</a><a href="https://chromewebstore.google.com/detail/bgdhendedbikcjndmjladddmgkkiaakl" target="_blank" rel="noopener">Extension Chrome</a><a href="mentions-legales.html">Mentions légales</a><a href="cgv.html">CGV</a><a href="confidentialite.html">Confidentialité</a><a href="mailto:contact@justecv.fr">contact@justecv.fr</a>
 </div></footer>
-<script type="module" src="modeles.js?v=1"></script>
+<script type="module" src="modeles.js?v=2"></script>
 <script src="passage.js?v=5" defer></script>
 </body>
 </html>
