@@ -318,7 +318,7 @@ footer .src { max-width: 62rem; margin: 0; }
    Les trois savoir-faire des cartes sont masqués ici seulement : la fiche les détaille. */
 @media (max-width: 640px) {
   .search ~ .toc { position: sticky; top: 72px; z-index: 5; display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; overscroll-behavior-x: contain;
-    margin: .4rem -16px 1.2rem; padding: 8px 48px 8px 16px; scroll-padding-inline: 16px 48px;
+    margin: .4rem calc(-1 * var(--marge)) 1.2rem; padding: 8px 48px 8px var(--marge); scroll-padding-inline: var(--marge) 48px;
     background: rgba(255,250,244,.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line);
     scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
   .search ~ .toc::-webkit-scrollbar { display: none; }
@@ -511,6 +511,10 @@ html[data-nuit] .annonce:not(:empty)::before { background-color: #2f9e6c; }
   .merci > :nth-child(4) { animation-delay: .24s; }
   .merci > :nth-child(n+5) { animation-delay: .32s; }
 }
+
+/* ---------- recette : suivi sans script ----------
+   Le formulaire enregistre dans ce navigateur : sans JavaScript, il ne ferait que recharger la page. Un message le remplace. */
+html:not(.js) #form { display: none; }
 /* JusteCV — couche « navigation » des pages de contenu (pages.css) : lune dans l'en-tête, menu mobile, pied de page.
    Vient après pages-elan.css. Elle vaut aussi pour les 94 fiches, qu'on ne régénère pas. */
 
@@ -548,3 +552,34 @@ footer .wrap:first-child { row-gap: 0; }
   @keyframes menu-pose { from { opacity: 0; transform: translateY(-8px) scale(.98); } }
   @keyframes menu-lien { from { opacity: 0; transform: translateY(-4px); } }
 }
+
+/* ---------- recette : une seule grille pour tout le site ----------
+   Les pages de contenu prennent la grille de l'accueil (.cadre : 1360 px, marge clamp(20px, 5vw, 72px)) : le logo et la colonne
+   de texte ne sautent plus d'une page à l'autre. La capsule de l'en-tête garde ses 1180 px (.nav .wrap, plus spécifique). */
+:root { --marge: clamp(20px, 5vw, 72px); --large: 1360px; }
+.wrap { max-width: var(--large); padding-left: max(var(--marge), env(safe-area-inset-left, 0px)); padding-right: max(var(--marge), env(safe-area-inset-right, 0px)); }
+
+/* ---------- recette : la lune dans l'en-tête jusqu'à 1280 px ----------
+   En dessous, la colonne de texte s'approche à moins de 64 px du bord : la lune flottante (14 à 60 px) masquait le début des cartes.
+   nuit.js la range dans la capsule, après le bouton d'appel ; elle ne pousse les autres éléments qu'au-dessous de 900 px. */
+@media (min-width: 861px) and (max-width: 1280px) {
+  header.nav .ciel-btn.dans-barre { width: 44px; height: 44px; flex: none; margin-left: -.6rem; }
+}
+@media (min-width: 861px) and (max-width: 900px) {
+  header.nav .ciel-btn.dans-barre { margin-left: auto; }
+  header.nav .ciel-btn.dans-barre + .nav-menu { margin-left: 0; }
+}
+
+/* ---------- recette : liens à l'encre, soulignés de corail, comme sur l'accueil ----------
+   --sapin valait le corail-texte : le rouge de « Absent » servait aussi à « cliquez ici ». Il prend la couleur du texte ;
+   la marque garde son corail. */
+:root, html[data-nuit]:root { --sapin: var(--fg); }
+a { text-decoration-color: var(--corail); text-underline-offset: .2em; }
+.logo .cv { color: #c63a18; }
+html[data-nuit] .logo .cv { color: #ff8f73; }
+
+/* ---------- recette : le surlignage des titres garde sa bande, la nuit aussi (même teinte que l'accueil) ---------- */
+html[data-nuit] h1 .hl { background-image: linear-gradient(transparent 62%, #6f5c1d 62%, #6f5c1d 94%, transparent 94%); }
+
+/* ---------- recette : listes numérotées des guides, « 1. » et non « 1 . » ---------- */
+main ol li::marker { font-variant-numeric: normal; }

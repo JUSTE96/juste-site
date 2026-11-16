@@ -154,3 +154,23 @@ html[data-nuit] .fiche-titre { color: var(--os); }
    Vidéos du héros et de la fin baissées ; un voile sur les aperçus, sous la carte de lecture. */
 html[data-nuit] #film, html[data-nuit] .fin-clip video { filter: brightness(.8) saturate(.92); }
 html[data-nuit] .heros-media, html[data-nuit] .fin-clip { box-shadow: inset 0 0 0 100vmax rgba(20,25,54,.26), 0 30px 60px -30px #00000059; }
+
+/* ---------- recette ---------- */
+/* Grands écrans : le cadre vidéo du héros suit la grille de 1360 px, comme l'en-tête et le texte (en 1920, il touchait presque le bord droit).
+   La pastille, la carte de lecture et le bouton pause sont dedans : ils suivent. */
+@media (min-width: 901px) {
+  .heros.plein .heros-media { right: calc((100% - min(100%, var(--large))) / 2 + var(--marge)); left: calc((100% - min(100%, var(--large))) / 2 + min(100%, var(--large)) * .54); }
+}
+/* Le bouton pause du héros arrête aussi le bandeau défilant (elan.js pose .en-pause sur .defile). */
+.defile.en-pause .defile-piste { animation-play-state: paused !important; }
+/* 860 px et moins : le titre de la scène garde le rang des autres titres de section et passe au-dessus du cadran. */
+@media (max-width: 860px) {
+  .scene .scene-texte { display: contents; }
+  .scene .scene-grille > .scene-texte > .moyen { order: -2; font-size: clamp(2rem, 4vw, 3.6rem); }
+  /* la scène épinglée laisse la place de l'en-tête (76 px) : le titre ne passe pas sous la capsule ; le cadran cède un peu de hauteur */
+  .js .scene-fixe { box-sizing: border-box; padding-top: 76px; }
+  .scene .cadran { max-width: min(300px, 31svh); }
+}
+/* Le niveau « obligatoire » prend l'encre : le corail-texte reste réservé à « Absent ». */
+.cadran svg:not([data-temps="0"]) .seg[data-n="obligatoire"]:not(.juge) .seg-fond { fill: var(--os); }
+.cadran .valeur .niv-obligatoire { color: var(--os); }

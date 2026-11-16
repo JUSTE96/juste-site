@@ -91,17 +91,18 @@
     b.addEventListener("click", () => { const v = !nuit; noter(v ? "nuit" : "jour"); appliquer(v, true); });
     // Où vit le bouton : dans la barre d'outils si la page en a une ; sur téléphone (860 px et moins), dans l'en-tête,
     // pour ne plus flotter sur le contenu ; sinon en bas de l'écran. Il change de place si la largeur franchit 860 px.
-    const etroit = matchMedia("(max-width: 860px)");
+    // Pages de contenu (header.nav) : leur colonne de texte s'approche du bord jusqu'à 1280 px, la lune y reste dans l'en-tête.
+    const etroit = matchMedia("(max-width: 860px)"), moyen = matchMedia("(max-width: 1280px)");
     const placer = () => {
       const outils = document.querySelector(".top-actions");
       let parent = document.body, avant = null;
       if (outils) { parent = outils; avant = outils.firstElementChild; }
-      else if (etroit.matches) {
+      else if (etroit.matches || (moyen.matches && document.querySelector("header.nav .wrap"))) {
         // L'en-tête de l'accueil ne le loge que si la feuille qui lui fait la place est chargée (--lune-tete, posé par juste.css) :
         // avec une ancienne feuille restée en cache, le bouton Menu sortirait de la pilule ; la lune reste alors flottante.
         const loge = getComputedStyle(html).getPropertyValue("--lune-tete").trim() === "1";
-        const cadre = loge && document.querySelector(".tete .cadre"), wrap = document.querySelector("header.nav .wrap");
-        if (cadre) { parent = cadre; avant = cadre.querySelector("#menu-btn"); }
+        const cadre = etroit.matches && loge && document.querySelector(".tete .cadre"), wrap = document.querySelector("header.nav .wrap");
+        if (cadre) { parent = cadre; avant = cadre.querySelector("#menu-btn, details.nav-menu"); }
         else if (wrap) { parent = wrap; avant = wrap.querySelector("details.nav-menu"); }
       }
       b.classList.toggle("dans-barre", parent !== document.body);
@@ -113,7 +114,7 @@
       if (focus) b.focus({ preventScroll: true });
     };
     placer();
-    etroit.addEventListener?.("change", placer);
+    etroit.addEventListener?.("change", placer); moyen.addEventListener?.("change", placer);
     const etat = nuit; nuit = !etat; appliquer(etat, false);
     setInterval(() => appliquer(veutNuit(), true), 60000);
   };

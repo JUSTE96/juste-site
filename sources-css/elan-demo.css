@@ -146,3 +146,15 @@ html[data-nuit] #demo-jalons i:not([data-s]) { background: #3b4482; }
   #demo-cible li, #demo-cible li::after, #rapide-suite { transition: none; }
   #demo-reste:not([hidden]), .demo-compte.tic, #rapide-manques li { animation: none; }
 }
+
+/* ---------- recette ---------- */
+/* « Absent » s'écrit en corail-texte (5,0:1 sur la crème), comme dans la carte de lecture du héros ; le corail des boutons ne passait pas (2,7:1). */
+.statut.absente { color: var(--corail-texte); }
+/* Le niveau « obligatoire » prend l'encre, en gras : le corail-texte ne veut dire qu'une chose, « Absent ». */
+.poids[data-niveau="obligatoire"] { color: var(--os); }
+.poids[data-niveau="obligatoire"]::before { background: var(--os); }
+/* Section de fin : .fin est en flex, son .cadre se réduisait à son contenu ; il reprend la largeur de la grille. */
+.fin > .cadre { width: 100%; }
+/* Sans script : la démo ne montre pas de commandes mortes, un message le dit. */
+html:not(.js) #demo .choix, html:not(.js) #demo-rapide { display: none; }
+#demo noscript .aide { margin-top: .4rem; }

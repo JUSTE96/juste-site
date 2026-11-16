@@ -129,3 +129,7 @@ html[data-nuit] .annonce:not(:empty)::before { background-color: #2f9e6c; }
   .merci > :nth-child(4) { animation-delay: .24s; }
   .merci > :nth-child(n+5) { animation-delay: .32s; }
 }
+
+/* ---------- recette : suivi sans script ----------
+   Le formulaire enregistre dans ce navigateur : sans JavaScript, il ne ferait que recharger la page. Un message le remplace. */
+html:not(.js) #form { display: none; }
