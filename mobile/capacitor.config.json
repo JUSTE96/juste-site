@@ -1,0 +1,7 @@
+{
+  "appId": "fr.justecv.app",
+  "appName": "JusteCV",
+  "webDir": "www",
+  "backgroundColor": "#fffaf4",
+  "ios": { "contentInset": "always" }
+}
